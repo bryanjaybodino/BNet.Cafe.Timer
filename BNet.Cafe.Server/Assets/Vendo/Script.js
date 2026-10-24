@@ -159,7 +159,7 @@ function resetModalCloseTimer() {
     if (modalCloseTimer) clearTimeout(modalCloseTimer);
     if (modalCountdownInterval) clearInterval(modalCountdownInterval);
 
-    remainingSeconds = 5;
+    remainingSeconds = 15;
     modalTimerText.innerText = `Closing in ${remainingSeconds}s`;
 
     modalCountdownInterval = setInterval(() => {

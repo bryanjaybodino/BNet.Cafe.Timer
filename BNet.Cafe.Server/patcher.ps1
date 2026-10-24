@@ -11,6 +11,7 @@ $Repo        = "BNet.Cafe.Timer"
 $Branch      = "main"
 $SourceFolder = "BNet.Cafe.Server"
 $ManifestName = "server-manifest.txt"
+$ExcludeExt   = @(".config")   # never download or overwrite these (keeps local settings)
 
 # The script relaunches itself from TEMP, where $PSScriptRoot is TEMP and NOT the real folder.
 # So the real folder is handed over twice: as -TargetDir and in a small state file.
@@ -79,9 +80,12 @@ function Update-FromZip {
     Expand-Archive -Path $TempZip -DestinationPath $TempExtract -Force
     $src = Get-ChildItem -Path $TempExtract -Recurse -Directory | Where-Object { $_.Name -eq $SourceFolder } | Select-Object -First 1
     if (-not $src) { throw "Could not find '$SourceFolder' folder in the downloaded archive." }
-    Get-ChildItem -Path $src.FullName | ForEach-Object {
-        Write-Host "  -> Updating: $($_.Name)" -ForegroundColor Cyan
-        Copy-Item -Path $_.FullName -Destination $TargetDir -Recurse -Force
+    Get-ChildItem -Path $src.FullName -Recurse -File | Where-Object { $ExcludeExt -notcontains $_.Extension.ToLower() } | ForEach-Object {
+        $rel  = $_.FullName.Substring($src.FullName.Length).TrimStart('\', '/')
+        $dest = Join-Path $TargetDir $rel
+        Write-Host "  -> Updating: $rel" -ForegroundColor Cyan
+        New-Item -ItemType Directory -Path (Split-Path $dest -Parent) -Force | Out-Null
+        Copy-Item -Path $_.FullName -Destination $dest -Force
     }
     if (Test-Path $TempZip)     { Remove-Item $TempZip -Force }
     if (Test-Path $TempExtract) { Remove-Item $TempExtract -Recurse -Force }
@@ -124,6 +128,7 @@ try {
         if (-not $line) { continue }
         $parts = $line -split "`t", 2
         if ($parts.Count -ne 2) { continue }
+        if ($ExcludeExt -contains [IO.Path]::GetExtension($parts[1]).ToLower()) { continue }   # skip .config files
         $files += [pscustomobject]@{ sha = $parts[0]; path = $parts[1] }
     }
     if ($files.Count -eq 0) { throw "Manifest is empty or invalid." }
