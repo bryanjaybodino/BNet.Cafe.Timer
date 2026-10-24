@@ -150,8 +150,11 @@ try {
 
         try {
             Write-Host "  -> Updating: $($f.path)" -ForegroundColor Cyan
-            $lastUrl = $rawUrl
-            Invoke-WebRequest -Uri $rawUrl -OutFile $tmp -UseBasicParsing
+            $lastUrl = "${rawUrl}?t=$([DateTime]::UtcNow.Ticks)"   # cache-buster: raw.githubusercontent.com caches files for ~5 min
+            Invoke-WebRequest -Uri $lastUrl -OutFile $tmp -UseBasicParsing
+            if ((Get-GitBlobSha $tmp) -ne $f.sha) {
+                Write-Host "     [WARNING] Downloaded file does not match the manifest hash (manifest may be older than the file, or GitHub is still caching)." -ForegroundColor DarkYellow
+            }
             New-Item -ItemType Directory -Path (Split-Path $localPath -Parent) -Force | Out-Null
             Move-Item -Path $tmp -Destination $localPath -Force
             $updated++
@@ -187,11 +190,16 @@ Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Auto-run the application without prompting
-$ExePath = Join-Path $TargetDir "$ProcessName.exe"
-if (Test-Path $ExePath) {
-    Write-Host "[INFO] Automatically starting $ProcessName.exe..." -ForegroundColor Yellow
-    Start-Process $ExePath
+# The server exe lives in the "bin" subfolder; also accept the root folder as a fallback
+$ExePath = @(
+    (Join-Path $TargetDir "bin\$ProcessName.exe"),
+    (Join-Path $TargetDir "$ProcessName.exe")
+) | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+
+if ($ExePath) {
+    Write-Host "[INFO] Automatically starting $ExePath..." -ForegroundColor Yellow
+    Start-Process -FilePath $ExePath -WorkingDirectory (Split-Path $ExePath -Parent)
 } else {
-    Write-Host "[WARNING] Executable not found to auto-launch." -ForegroundColor DarkYellow
+    Write-Host "[WARNING] Executable not found to auto-launch (looked in bin\ and the root folder)." -ForegroundColor DarkYellow
     Start-Sleep -Seconds 3
 }
