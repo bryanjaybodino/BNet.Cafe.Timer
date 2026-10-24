@@ -1,4 +1,4 @@
-31d9db22490879c275e4cf0547c3f0be70058b27	BNet.Cafe.Client.exe
+038f18f2fa50103e88ed2ccb6e97b726088506b3	BNet.Cafe.Client.exe
 8d9c982c5f663c510dad0bac4ae98f8072bede59	BNet.Cafe.Client.exe.config
 d2d9e8d3b5c1701db821212ee0bfdf97e4d9dfe7	BNet.Cafe.Client.pdb
 77a5d89e605cf08d4826b1ba7580a582736acd7f	Newtonsoft.Json.dll
