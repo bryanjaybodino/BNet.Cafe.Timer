@@ -1,0 +1,20 @@
+﻿INSERT INTO `rentals`
+(
+	DBComputerId,
+	DBUserId,
+	DBDuration,
+	DBAmount,
+	DBDateCreated,
+	DBTimeCreated,
+	DBIsDeleted
+) 
+VALUES 
+(
+	'{DBComputerId}',
+	'{DBUserId}',
+	'{DBDuration}',
+	'{DBAmount}',
+	'{DBDateCreated}',
+	'{DBTimeCreated}',
+	'{DBIsDeleted}'
+)

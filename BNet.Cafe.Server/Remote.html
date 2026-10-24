@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Remote Control Stream</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #f8fafc;
+            --bg2: #ffffff;
+            --bg3: #e2e8f0;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --accent: #2563eb;
+            --red: #dc2626;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .remote-app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            height: 50px;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .back-link {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--bg3);
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .client-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .topbar-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .screen-tab {
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text);
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+            .screen-tab.active {
+                background: var(--accent);
+                border-color: var(--accent);
+                color: #ffffff;
+            }
+
+        .stream-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 0;
+            background: #eef2f6;
+        }
+
+            /* Pure stream mode when in native full-screen */
+            .stream-area:fullscreen {
+                background: #000000;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            .stream-area:-webkit-full-screen {
+                background: #000000;
+                width: 100vw;
+                height: 100vh;
+            }
+
+        #zoomWrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #screen {
+            max-width: 100%;
+            max-height: 100%;
+            background: #ffffff;
+            cursor: default;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .stream-area:fullscreen #screen,
+        .stream-area:-webkit-full-screen #screen {
+            box-shadow: none;
+        }
+
+        .fps-badge {
+            bottom: 12px;
+            right: 12px;
+            position: absolute;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            background: rgba(255,255,255,.8);
+            color: var(--text);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .lag-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--red);
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            display: none;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: var(--bg3);
+            color: var(--text);
+        }
+
+        /* On-screen exit floating button (visible only in full-screen) */
+        .exit-fs-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 99;
+            background: rgba(15, 23, 42, 0.7);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            opacity: 0.3;
+            transition: opacity 0.2s ease;
+            display: none;
+        }
+
+        .stream-area:fullscreen .exit-fs-btn,
+        .stream-area:-webkit-full-screen .exit-fs-btn {
+            display: block;
+        }
+
+        .exit-fs-btn:hover {
+            opacity: 1;
+        }
+        /* Remove default browser focus outlines */
+        .btn:focus,
+        .exit-fs-btn:focus,
+        .screen-tab:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        /* Mobile styling */
+        @media (max-width: 768px), (pointer: coarse) {
+            .toggle-btn {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="remote-app">
+        <header class="topbar">
+            <a href="BNetPage.aspx?Form=Remote" class="back-link">← Back</a>
+            <div class="client-title" id="clientTitle">Target: Offline</div>
+            <div class="topbar-actions">
+                <button class="btn btn-secondary" id="fullscreenBtn">⛶ Fullscreen</button>
+                <button class="btn toggle-btn" id="remoteToggleBtn">Start Control</button>
+            </div>
+        </header>
+
+        <div class="tab-bar" id="tabBar"></div>
+
+        <div class="stream-area" id="streamArea">
+            <button class="exit-fs-btn" id="exitFullscreenBtn">✕ Exit Fullscreen</button>
+            <div class="lag-badge" id="lagBadge">⚠ BUFFERED</div>
+            <div id="zoomWrapper">
+                <canvas id="screen"></canvas>
+            </div>
+            <div class="fps-badge" id="fpsBadge">-- fps</div>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+
+        /* Disable Inspect Element and Context Menu */
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+
+        window.addEventListener('keydown', function (e) {
+            // Prevent F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
+            if (
+                e.keyCode === 123 ||
+                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) ||
+                (e.ctrlKey && e.keyCode === 85)
+            ) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+
+        var streamArea = document.getElementById('streamArea');
+        var fullscreenBtn = document.getElementById('fullscreenBtn');
+        var exitFullscreenBtn = document.getElementById('exitFullscreenBtn');
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (streamArea.requestFullscreen) {
+                    streamArea.requestFullscreen();
+                } else if (streamArea.webkitRequestFullscreen) {
+                    streamArea.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+        exitFullscreenBtn.addEventListener('click', toggleFullscreen);
+
+        var urlParams = new URLSearchParams(window.location.search);
+        var currentClient = urlParams.get('client').toUpperCase().replace(' ', '') || '';
+        var currentScreen = 'screen_1';
+        var currentScreenIndex = 0;
+        var screenCount = 1;
+        var remoteActive = false;
+
+        document.getElementById('clientTitle').textContent = currentClient ? currentClient : 'No Client Selected';
+
+        var canvas = document.getElementById('screen');
+        var ctx2d = canvas.getContext('2d', { alpha: false });
+        ctx2d.imageSmoothingEnabled = false;
+        var frameNaturalW = 1920, frameNaturalH = 1080;
+        var pendingFrame = null, decodeInFlight = 0, lastFrameAt = 0, frameCount = 0, lastFpsTime = performance.now();
+
+        setInterval(function () {
+            var now = performance.now();
+            var fps = Math.round(frameCount / ((now - lastFpsTime) / 1000));
+            frameCount = 0; lastFpsTime = now;
+            document.getElementById('fpsBadge').textContent = fps + ' fps';
+            document.getElementById('lagBadge').style.display = (lastFrameAt > 0 && (Date.now() - lastFrameAt) > 3000) ? 'block' : 'none';
+        }, 1000);
+
+        function renderLoop() {
+            requestAnimationFrame(renderLoop);
+
+            // Skip cycle if there is no frame OR if browser is still decoding previous frame
+            if (!pendingFrame || decodeInFlight > 0) return;
+
+            var buf = pendingFrame;
+            pendingFrame = null; // Clear queue reference immediately
+            decodeInFlight++;
+
+            createImageBitmap(new Blob([new Uint8Array(buf, 1)], { type: 'image/jpeg' }))
+                .then(function (bm) {
+                    if (canvas.width !== bm.width || canvas.height !== bm.height) {
+                        frameNaturalW = bm.width;
+                        frameNaturalH = bm.height;
+                        canvas.width = bm.width;
+                        canvas.height = bm.height;
+                    }
+                    ctx2d.drawImage(bm, 0, 0);
+                    bm.close();
+                    frameCount++;
+                    lastFrameAt = Date.now();
+                })
+                .finally(function () {
+                    decodeInFlight--;
+                });
+        }
+        renderLoop();
+
+
+
+        var ws = null, wsReady = false, _encoder = new TextEncoder(), _decoder = new TextDecoder('utf-8');
+        function connectWS() {
+            var endpoint = 'ws://' + window.location.hostname + ':2050/ws/browser';
+            ws = new WebSocket(endpoint);
+            ws.binaryType = 'arraybuffer';
+            ws.onopen = function () {
+                wsReady = true;
+                if (currentClient) sendSubscribe(currentScreen + '_' + currentClient);
+            };
+            ws.onmessage = function (evt) {
+                if (!(evt.data instanceof ArrayBuffer)) return;
+                var view = new Uint8Array(evt.data);
+
+                // Frame identifier header Check (0x10)
+                if (view[0] === 0x10) {
+                    // Always overwrite with the LATEST frame and drop queued frame
+                    pendingFrame = evt.data;
+                }
+           
+                try {
+                    const jsonString = _decoder.decode(view.subarray(1));
+                    const data = JSON.parse(jsonString);
+
+                    // Get screenCount (with a fallback to 1 if it doesn't exist)
+                    if (data.screenCount !== undefined) {
+                        screenCount = parseInt(data.screenCount, 10) || 1;
+                        renderTabs(); // Re-render the UI tabs for multiple screens
+                    }
+                } catch (err) {
+                }
+
+            };
+            ws.onclose = function () { wsReady = false; setTimeout(connectWS, 3000); };
+        }
+
+        function sendSubscribe(screenKey) {
+            var kb = _encoder.encode(screenKey);
+            var msg = new Uint8Array(1 + kb.length); msg[0] = 0x21; msg.set(kb, 1);
+            if (wsReady) ws.send(msg.buffer);
+        }
+
+        function sendInput(payload) {
+            if (!currentClient || !wsReady || !remoteActive) return;
+            payload.screenIndex = currentScreenIndex;
+            var jb = _encoder.encode(JSON.stringify(payload));
+            var msg = new Uint8Array(1 + jb.length); msg[0] = 0x20; msg.set(jb, 1);
+            ws.send(msg.buffer);
+        }
+
+        var remoteToggleBtn = document.getElementById('remoteToggleBtn');
+        remoteToggleBtn.addEventListener('click', function () {
+            remoteActive = !remoteActive;
+            remoteToggleBtn.textContent = remoteActive ? 'Stop Control' : 'Start Control';
+            remoteToggleBtn.style.background = remoteActive ? 'var(--red)' : 'var(--accent)';
+            canvas.classList.toggle('remote-mode', remoteActive);
+            this.blur();
+        });
+
+        function getScaledCoords(e) {
+            var rect = canvas.getBoundingClientRect();
+            return { x: Math.round((e.clientX - rect.left) * frameNaturalW / rect.width), y: Math.round((e.clientY - rect.top) * frameNaturalH / rect.height) };
+        }
+
+        /* Desktop Mouse and Keyboard Controls */
+        /* Optimized Throttled MouseMove */
+        var lastMousePosition = null;
+        var mouseMovePending = false;
+
+        canvas.addEventListener('mousemove', function (e) {
+            if (!remoteActive) return;
+
+            var c = getScaledCoords(e);
+            lastMousePosition = {
+                type: 'mousemove',
+                x: c.x,
+                y: c.y,
+                frameW: frameNaturalW,
+                frameH: frameNaturalH
+            };
+
+            if (!mouseMovePending) {
+                mouseMovePending = true;
+                requestAnimationFrame(function () {
+                    if (lastMousePosition && remoteActive) {
+                        sendInput(lastMousePosition);
+                    }
+                    mouseMovePending = false;
+                });
+            }
+        });
+        canvas.addEventListener('mousedown', function (e) { if (remoteActive) { e.preventDefault(); var c = getScaledCoords(e); sendInput({ type: 'mousedown', x: c.x, y: c.y, button: e.button, frameW: frameNaturalW, frameH: frameNaturalH }); } });
+        canvas.addEventListener('mouseup', function (e) { if (remoteActive) { e.preventDefault(); var c = getScaledCoords(e); sendInput({ type: 'mouseup', x: c.x, y: c.y, button: e.button, frameW: frameNaturalW, frameH: frameNaturalH }); } });
+
+        window.addEventListener('keydown', function (e) {
+            // Allow press 'F' to toggle full-screen when not actively controlling remote input
+            if (!remoteActive && (e.key === 'f' || e.key === 'F')) {
+                toggleFullscreen();
+                return;
+            }
+            if (remoteActive) sendInput({ type: 'keydown', key: e.key, code: e.code, keyCode: e.keyCode, ctrl: e.ctrlKey, alt: e.altKey, shift: e.shiftKey, meta: e.metaKey });
+        });
+
+        window.addEventListener('keyup', function (e) { if (remoteActive) sendInput({ type: 'keyup', key: e.key, code: e.code, keyCode: e.keyCode, ctrl: e.ctrlKey, alt: e.altKey, shift: e.shiftKey, meta: e.metaKey }); });
+
+        function renderTabs() {
+            var bar = document.getElementById('tabBar');
+            bar.innerHTML = '';
+            if (screenCount <= 1) return;
+            for (var i = 1; i <= screenCount; i++) {
+                (function (idx) {
+                    var id = 'screen_' + idx;
+                    var btn = document.createElement('button');
+                    btn.className = 'screen-tab' + (currentScreen === id ? ' active' : '');
+                    btn.textContent = 'Screen ' + idx;
+                    btn.addEventListener('click', function () {
+                        currentScreen = id; currentScreenIndex = idx - 1;
+                        document.querySelectorAll('.screen-tab').forEach(function (t) { t.classList.remove('active'); });
+                        btn.classList.add('active'); sendSubscribe(currentScreen + '_' + currentClient);
+                    });
+                    bar.appendChild(btn);
+                })(i);
+            }
+        }
+
+
+        connectWS();
+    </script>
+</body>
+</html>

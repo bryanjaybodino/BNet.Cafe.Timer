@@ -1,0 +1,20 @@
+{
+  "name": "BNet Cafe",
+  "short_name": "BNet Cafe",
+  "start_url": "http://192.168.1.2:2000/BNet.Cafe.Server/Login.aspx",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#353535",
+  "icons": [
+    {
+      "src": "http://192.168.1.2:2000/BNet.Cafe.Server/App/icon.png?v=f0c35853-bc34-4dcf-9c0f-d298ffafdec0",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "http://192.168.1.2:2000/BNet.Cafe.Server/App/icon.png?v=f0c35853-bc34-4dcf-9c0f-d298ffafdec0",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

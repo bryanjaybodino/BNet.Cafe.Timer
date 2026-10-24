@@ -1,0 +1,31 @@
+﻿SELECT 
+    r.DBId,
+    r.DBComputerId,
+    c.DBComputerName,
+    r.DBUserId,
+    IFNULL(u.DBEmail, '--') AS DBEmail,
+    IFNULL(u.DBName, 'Guest / Walk-in') AS DBName,
+    r.DBDuration,
+    CASE 
+        WHEN r.DBDuration IS NULL OR r.DBDuration = 0 THEN '0 min'
+        WHEN FLOOR(r.DBDuration / 60) > 0 AND (r.DBDuration % 60) > 0 THEN 
+            CONCAT(FLOOR(r.DBDuration / 60), IF(FLOOR(r.DBDuration / 60) = 1, ' hr ', ' hrs '), (r.DBDuration % 60), IF((r.DBDuration % 60) = 1, ' min', ' mins'))
+        WHEN FLOOR(r.DBDuration / 60) > 0 THEN 
+            CONCAT(FLOOR(r.DBDuration / 60), IF(FLOOR(r.DBDuration / 60) = 1, ' hr', ' hrs'))
+        ELSE 
+            CONCAT((r.DBDuration % 60), IF((r.DBDuration % 60) = 1, ' min', ' mins'))
+    END AS DBFormattedDuration,
+    FORMAT(r.DBAmount, 2) AS DBAmount,
+    r.DBDateCreated,
+    r.DBTimeCreated,
+    r.DBIsDeleted
+FROM rentals r
+LEFT JOIN computers c ON r.DBComputerId = c.DBId
+LEFT JOIN users u ON r.DBUserId = u.DBId
+WHERE 1 = 1 
+  AND r.DBIsDeleted = '{DBIsDeleted}'
+  AND r.DBComputerId = '{DBComputerId}'
+  AND r.DBDateCreated BETWEEN '{DBDateStart}' AND '{DBDateEnd}'
+  AND (c.DBComputerName LIKE '%{DBSearch}%'  OR u.DBEmail LIKE '%{DBSearch}%'   OR u.DBName LIKE '%{DBSearch}%'  )
+ORDER BY r.DBId DESC
+{LIMIT}
