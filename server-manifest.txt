@@ -76,7 +76,7 @@ c0f885efc78bf186568b84516dbcfe5332e9dc54	Assets/Portal/Script.js
 05040ff052bbca19b0988c4a9dc88bec34a2d91e	Assets/ResetPassword/Style.css
 bb93fd4488e4131a656920f77786e97b1be961ae	Assets/Shop/Script.js
 54ef1096bff57a94e45554bc4c81a8bb6997e46c	Assets/Shop/Style.css
-1781c0f80a89d33ec390b82cb7a04dddeca11b29	Assets/Vendo/Script.js
+4c55eb7f18d99908723b7e488552628bdeaac15b	Assets/Vendo/Script.js
 6da70fc527537343cae056d94714e059cf1eed7a	Assets/Vendo/Style.css
 dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Assets/fontawesome/font-awesome.min.css
 71e31852689289b8d7b94ce0541953df40f76500	Assets/fontawesome/webfonts/fa-brands-400.woff2
@@ -237,8 +237,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-76894a3493c6be317f8dee55a5694d636c33da6d	bin/BNet.Cafe.Server.dll
-df6cb2fb2a102c30c342dfee24e54f6162da21a6	bin/BNet.Cafe.Server.pdb
+e361f6122e6dde42e12d9c02190698d3aa40004a	bin/BNet.Cafe.Server.dll
+316cdb50aa4bc7d4756d3381dfa3028734b248d2	bin/BNet.Cafe.Server.pdb
 b7e27195f795a7c9622a63f15049587eaa9c7382	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 eb94f058dd3579d730db4070399f779b71fc46fd	bin/BNet.Cafe.Websocket.pdb
@@ -257,6 +257,6 @@ eeec92852705946904d0e2fa0443d454075781f5	bin/System.Threading.Tasks.Extensions.d
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	bin/zxing.dll
 cc06aab4ca07af3d773e45816d910e1f84f9c5dd	kiosk-mode.bat
 c9869f8686fb6fea3be99d09f67568a5bd3eae4c	patcher.bat
-1d4277778f66aef27677a96f82888646dd84625c	patcher.ps1
+688245869965222b6f26567c90fbf9b548a874f9	patcher.ps1
 5f282702bb03ef11d7184d19c80927b47f919764	temp_files/Barcodes/placeholder.txt
 5f282702bb03ef11d7184d19c80927b47f919764	temp_files/QRCodes/placeholder.txt
