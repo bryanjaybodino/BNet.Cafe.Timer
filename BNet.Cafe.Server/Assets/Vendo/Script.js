@@ -173,7 +173,7 @@ function resetModalCloseTimer() {
 
     modalCloseTimer = setTimeout(() => {
         hideNumberModal();
-    }, 5000);
+    }, 15000);
 }
 
 function handleNumberInput(digit) {
