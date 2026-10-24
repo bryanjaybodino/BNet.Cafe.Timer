@@ -20,7 +20,16 @@
     <div class="psp-container" style="display: none" id="pspContainer">
         <div class="psp-carousel" id="pspCarousel"></div>
     </div>
-    <!-- Press Any Key Overlay Screen: display-only PC status board (not selectable) -->
+
+    <!-- Independent Idle Countdown Footer (Visible when pspContainer is unlocked) -->
+    <div class="attract-footer" id="idleCountdownFooter" style="display: none; position: fixed; bottom: 10px; left: 0; width: 100%; z-index: 99; pointer-events: none;">
+        <div class="attract-banner" id="attractBanner">
+            <i class="fas fa-lock" id="bannerIcon"></i>
+            <span id="bannerText">LOCKING IN 10s</span>
+        </div>
+    </div>
+
+    <!-- Press Any Key Overlay Screen: full screen cover when locked -->
     <div id="pressAnyKeyScreen">
         <div class="attract-header">
             <span class="attract-brand">BNet Cafe</span>
