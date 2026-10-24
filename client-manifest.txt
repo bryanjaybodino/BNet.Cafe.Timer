@@ -3,4 +3,4 @@
 d2d9e8d3b5c1701db821212ee0bfdf97e4d9dfe7	BNet.Cafe.Client.pdb
 77a5d89e605cf08d4826b1ba7580a582736acd7f	Newtonsoft.Json.dll
 c98719f04eaf0d70a7449dc8800d1c9a70b1a2a4	patcher.bat
-886ce59fcc9233f554a8b049b007eaab74e18a90	patcher.ps1
+3be4056d7ae72d1d4b089f204285259fc81fc1c9	patcher.ps1
