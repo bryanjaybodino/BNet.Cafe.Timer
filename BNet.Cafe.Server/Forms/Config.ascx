@@ -96,6 +96,11 @@
             </div>
 
             <div class="card">
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= TextBox_ComshopName.ClientID %>">Comshop Name</label>
+                    <asp:TextBox ID="TextBox_ComshopName" runat="server" CssClass="form-control" placeholder="Enter Comshop Name" MaxLength="100"></asp:TextBox>
+                </div>
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="<%= CheckBox_AccountCreationAllowed.ClientID %>" class="toggle-label">
                         <div class="toggle-text">
@@ -142,6 +147,55 @@
                         </label>
                     </label>
                 </div>
+
+                <!-- ==========================================
+                   SCHEDULE SETTINGS DIVIDER & SECTION
+                   ========================================== -->
+                <hr style="border: 0; border-top: 1px solid var(--border-light); margin: 30px 0 24px 0;" />
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-clock" style="color: var(--primary);"></i>Schedule Settings
+                    </h3>
+                    <p style="font-size: 12px; color: var(--text-light-secondary);">Configure automated shop operating hours and shutdown closing alarms.</p>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= CheckBox_EnableScheduler.ClientID %>" class="toggle-label">
+                        <div class="toggle-text">
+                            <span class="toggle-title">Enable Scheduler</span>
+                            <span class="toggle-desc">Turn on automated closing hours schedule configuration.</span>
+                        </div>
+                        <label class="switch">
+                            <asp:CheckBox ID="CheckBox_EnableScheduler" runat="server" />
+                            <span class="slider round"></span>
+                        </label>
+                    </label>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= TextBox_OpeningTime.ClientID %>">Opening Time</label>
+                    <asp:TextBox ID="TextBox_OpeningTime" runat="server" CssClass="form-control" TextMode="Time" placeholder="08:00" MaxLength="10"></asp:TextBox>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= TextBox_ClosingTime.ClientID %>">Closing Time</label>
+                    <asp:TextBox ID="TextBox_ClosingTime" runat="server" CssClass="form-control" TextMode="Time" placeholder="22:00" MaxLength="10"></asp:TextBox>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= TextBox_ClosingTimeMessage.ClientID %>">Closing Time Message</label>
+                    <asp:TextBox ID="TextBox_ClosingTimeMessage" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" placeholder="Message to display when closing"></asp:TextBox>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= TextBox_WarningTime.ClientID %>">Warning Time (Minutes Before Closing)</label>
+                    <asp:TextBox ID="TextBox_WarningTime" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="15" MaxLength="5"></asp:TextBox>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= TextBox_WarningTimeMessage.ClientID %>">Warning Time Message</label>
+                    <asp:TextBox ID="TextBox_WarningTimeMessage" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" placeholder="Warning message text"></asp:TextBox>
+                </div>
+                <!-- ========================================== -->
 
                 <div class="form-grid-action" style="margin-top: 24px;">
                     <span onclick="navigateTo('BNetPage.aspx?Form=Config')" class="btn btn-secondary">Reload</span>

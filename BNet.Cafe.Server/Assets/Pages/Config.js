@@ -6,14 +6,39 @@ function ValidateConfig() {
     var intervalInput = document.querySelector('[id$="TextBox_AutoShutDownInterval"]');
     var inputId = intervalInput ? intervalInput.id : 'TextBox_AutoShutDownInterval';
 
-    var isValidInterval = requiredValidation(inputId);
+    var openingTimeInput = document.querySelector('[id$="TextBox_OpeningTime"]');
+    var openingTimeId = openingTimeInput ? openingTimeInput.id : 'TextBox_OpeningTime';
 
+    var closingTimeInput = document.querySelector('[id$="TextBox_ClosingTime"]');
+    var closingTimeId = closingTimeInput ? closingTimeInput.id : 'TextBox_ClosingTime';
+
+    var warningTimeInput = document.querySelector('[id$="TextBox_WarningTime"]');
+    var warningTimeId = warningTimeInput ? warningTimeInput.id : 'TextBox_WarningTime';
+
+    var isValidInterval = requiredValidation(inputId);
     if (!isValidInterval) {
         ShowAlert('Please enter an auto shutdown interval.');
         return false;
     }
 
-    // Disable button and add loading spinner upon successful client-side validation
+    var isValidOpeningTime = requiredValidation(openingTimeId);
+    if (!isValidOpeningTime) {
+        ShowAlert('Please enter the opening time.');
+        return false;
+    }
+
+    var isValidClosingTime = requiredValidation(closingTimeId);
+    if (!isValidClosingTime) {
+        ShowAlert('Please enter the closing time.');
+        return false;
+    }
+
+    var isValidWarningTime = requiredValidation(warningTimeId);
+    if (!isValidWarningTime) {
+        ShowAlert('Please enter the warning time before closing.');
+        return false;
+    }
+
     disableSubmitButton();
     return true;
 }
