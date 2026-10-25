@@ -66,6 +66,9 @@
                        <asp:HyperLink ID="HyperLink_PointsSettings" runat="server" ToolTip="PointsSettings" onclick="navigateTo('?Form=PointsSettings'); return false;">
                            <i class="fas fa-coins"></i><span>Points Setting</span>
                        </asp:HyperLink>
+                        <asp:HyperLink ID="HyperLink_AutoCreditSettings" runat="server" ToolTip="AutoCreditSettings" onclick="navigateTo('?Form=AutoCreditSettings'); return false;">
+                            <i class="fas fa-credit-card"></i><span>Auto Credit Setting</span>
+                        </asp:HyperLink>
                         <asp:HyperLink ID="HyperLink_Billings" runat="server" ToolTip="Billing" onclick="navigateTo('?Form=Billings'); return false;">
                             <i class="fa-solid fa-file-invoice-dollar"></i><span>Billings</span>
                         </asp:HyperLink>

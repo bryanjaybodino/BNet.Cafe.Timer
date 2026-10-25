@@ -1,5 +1,5 @@
 ﻿// =============================================================================
-// BNetDatePicker Component (Single & Range with Working Shortcuts & UI Formatting)
+// BNetDatePicker Component (Single, Range & MonthDay Modes)
 // =============================================================================
 class BNetDatePicker {
     constructor(options) {
@@ -7,8 +7,8 @@ class BNetDatePicker {
             ? document.querySelector(options.container)
             : options.container;
 
-        this.mode = options.mode || 'single';
-        this.placeholder = options.placeholder || (this.mode === 'range' ? 'Select date range...' : 'Select date...');
+        this.mode = options.mode || 'single'; // 'single', 'range', 'monthday'
+        this.placeholder = options.placeholder || (this.mode === 'range' ? 'Select date range...' : this.mode === 'monthday' ? 'Select month & day...' : 'Select date...');
         this.onChange = options.onChange || null;
 
         this.currentDate = new Date();
@@ -17,6 +17,8 @@ class BNetDatePicker {
 
         this.selectedStartDate = null;
         this.selectedEndDate = null;
+        this.selectedMonth = null;
+        this.selectedDay = null;
         this.hoverDate = null;
 
         this.initDOM();
@@ -28,6 +30,8 @@ class BNetDatePicker {
         this.container.classList.add('bnet-datepicker-container');
         if (this.mode === 'range') {
             this.container.classList.add('mode-range');
+        } else if (this.mode === 'monthday') {
+            this.container.classList.add('mode-monthday');
         }
 
         const sidebarHTML = this.mode === 'range' ? `
@@ -103,7 +107,12 @@ class BNetDatePicker {
         this.daysContainer.addEventListener('click', (e) => {
             const cell = e.target.closest('.bnet-dp-day:not(.empty)');
             if (!cell) return;
-            this.handleDateSelect(cell.dataset.date);
+
+            if (this.mode === 'monthday') {
+                this.handleMonthDaySelect(cell.dataset.month, cell.dataset.day);
+            } else {
+                this.handleDateSelect(cell.dataset.date);
+            }
         });
 
         this.daysContainer.addEventListener('mouseover', (e) => {
@@ -145,7 +154,6 @@ class BNetDatePicker {
     adjustPosition() {
         this.dropdown.classList.remove('align-right');
 
-        // Skip dropdown edge shifting on mobile viewports
         if (window.innerWidth <= 480) {
             return;
         }
@@ -170,6 +178,12 @@ class BNetDatePicker {
         const [y, m, d] = dateStr.split('-');
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         return `${months[parseInt(m, 10) - 1]} ${parseInt(d, 10)}, ${y}`;
+    }
+
+    formatDisplayMonthDay(monthStr, dayStr) {
+        if (!monthStr || !dayStr) return '';
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return `${months[parseInt(monthStr, 10) - 1]} ${parseInt(dayStr, 10)}`;
     }
 
     applyShortcut(type) {
@@ -235,7 +249,7 @@ class BNetDatePicker {
 
     renderCalendar() {
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        this.monthYearText.textContent = `${months[this.viewMonth]} ${this.viewYear}`;
+        this.monthYearText.textContent = `${months[this.viewMonth]} ${this.mode === 'monthday' ? '' : this.viewYear}`.trim();
 
         this.daysContainer.innerHTML = '';
         const firstDay = new Date(this.viewYear, this.viewMonth, 1).getDay();
@@ -247,25 +261,53 @@ class BNetDatePicker {
             this.daysContainer.appendChild(emptyCell);
         }
 
-        const todayStr = this.formatDate(new Date());
+        const today = new Date();
+        const todayStr = this.formatDate(today);
+        const currentMonth = String(today.getMonth() + 1).padStart(2, '0');
+        const currentDay = String(today.getDate()).padStart(2, '0');
 
         for (let day = 1; day <= daysInMonth; day++) {
             const dateObj = new Date(this.viewYear, this.viewMonth, day);
             const dateStr = this.formatDate(dateObj);
+            const monthStr = String(this.viewMonth + 1).padStart(2, '0');
+            const dayStr = String(day).padStart(2, '0');
 
             const dayCell = document.createElement('div');
             dayCell.className = 'bnet-dp-day';
             dayCell.textContent = day;
-            dayCell.dataset.date = dateStr;
 
-            if (dateStr === todayStr) {
-                dayCell.classList.add('today');
+            if (this.mode === 'monthday') {
+                dayCell.dataset.month = monthStr;
+                dayCell.dataset.day = dayStr;
+
+                if (monthStr === currentMonth && dayStr === currentDay) {
+                    dayCell.classList.add('today');
+                }
+                if (this.selectedMonth === monthStr && this.selectedDay === dayStr) {
+                    dayCell.classList.add('selected');
+                }
+            } else {
+                dayCell.dataset.date = dateStr;
+                if (dateStr === todayStr) {
+                    dayCell.classList.add('today');
+                }
             }
 
             this.daysContainer.appendChild(dayCell);
         }
 
-        this.highlightRange();
+        if (this.mode !== 'monthday') {
+            this.highlightRange();
+        }
+    }
+
+    handleMonthDaySelect(monthStr, dayStr) {
+        this.selectedMonth = monthStr;
+        this.selectedDay = dayStr;
+        this.updateValueDisplay();
+        this.renderCalendar();
+        this.close();
+        this.triggerChange();
     }
 
     handleDateSelect(dateStr) {
@@ -339,6 +381,8 @@ class BNetDatePicker {
             const startLabel = this.formatDisplayDate(this.selectedStartDate);
             const endLabel = this.formatDisplayDate(this.selectedEndDate);
             displayText = `${startLabel} &ndash; ${endLabel}`;
+        } else if (this.mode === 'monthday' && this.selectedMonth && this.selectedDay) {
+            displayText = this.formatDisplayMonthDay(this.selectedMonth, this.selectedDay);
         }
 
         if (displayText) {
@@ -362,9 +406,13 @@ class BNetDatePicker {
     getValue() {
         if (this.mode === 'single') {
             return this.selectedStartDate || '';
-        } else {
+        } else if (this.mode === 'range') {
             return (this.selectedStartDate && this.selectedEndDate)
                 ? `${this.selectedStartDate},${this.selectedEndDate}`
+                : '';
+        } else if (this.mode === 'monthday') {
+            return (this.selectedMonth && this.selectedDay)
+                ? `${this.selectedMonth}-${this.selectedDay}`
                 : '';
         }
     }
@@ -391,6 +439,13 @@ class BNetDatePicker {
                 this.viewYear = y;
                 this.viewMonth = m - 1;
             }
+        } else if (this.mode === 'monthday' && value.includes('-')) {
+            const [m, d] = value.split('-');
+            this.selectedMonth = m;
+            this.selectedDay = d;
+            if (m) {
+                this.viewMonth = parseInt(m, 10) - 1;
+            }
         }
         this.updateValueDisplay();
         this.renderCalendar();
@@ -404,7 +459,7 @@ function initBNetDatePickers(selector = 'input.bnet-datepicker') {
         if (input.dataset.bnetDpInitialized === "true") return;
 
         const mode = input.getAttribute('data-mode') || 'single';
-        const placeholder = input.placeholder || (mode === 'range' ? 'Select date range...' : 'Select date...');
+        const placeholder = input.placeholder || (mode === 'range' ? 'Select date range...' : mode === 'monthday' ? 'Select month & day...' : 'Select date...');
 
         input.style.display = 'none';
 
