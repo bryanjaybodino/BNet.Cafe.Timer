@@ -4,5 +4,6 @@ SET
     `DBPassword` = '{DBPassword}',
     `DBName` = '{DBName}',
     `DBRole` = '{DBRole}',
+    `DBDateOfBirth` = '{DBDateOfBirth}',
     `DBId` = '{DBId}' 
 WHERE `DBId` = '{DBId}';

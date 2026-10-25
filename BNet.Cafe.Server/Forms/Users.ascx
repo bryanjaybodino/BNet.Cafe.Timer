@@ -121,6 +121,13 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
+                        <asp:TemplateField HeaderText="Birthday" ItemStyle-Width="150px">
+                            <ItemTemplate>
+                                <asp:Label ID="Label_DBDateOfBirth" runat="server" Text='<%# Eval("DBDateOfBirth") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+
                         <asp:TemplateField HeaderText="Balance" ItemStyle-Width="150px">
                             <ItemTemplate>
                                 <asp:Label ID="Label_DBFormattedTotalDuration" runat="server" Text='<%# Eval("DBFormattedTotalDuration") %>'></asp:Label>

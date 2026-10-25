@@ -1,19 +1,16 @@
-﻿/**
- * Validates the User Creation form fields, applies error styles, and triggers alert
- * @returns {boolean} True if valid, false to cancel ASP.NET postback
- */
-function Validate() {
+﻿function Validate() {
     var nameInput = document.querySelector('[id$="TextBox_Name"]');
     var emailInput = document.querySelector('[id$="TextBox_Email"]');
     var passwordInput = document.querySelector('[id$="TextBox_Password"]');
+    var dobInput = document.querySelector('[id$="TextBox_DateOfBirth"]');
 
     var errors = [];
-    var emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
     // Reset validation states
     if (nameInput) nameInput.classList.remove('is-invalid', 'is-valid');
     if (emailInput) emailInput.classList.remove('is-invalid', 'is-valid');
     if (passwordInput) passwordInput.classList.remove('is-invalid', 'is-valid');
+    if (dobInput) dobInput.classList.remove('is-invalid', 'is-valid');
 
     // Name Validation
     if (!nameInput || !nameInput.value.trim()) {
@@ -27,9 +24,6 @@ function Validate() {
     if (!emailInput || !emailInput.value.trim()) {
         if (emailInput) emailInput.classList.add('is-invalid');
         errors.push('Please enter an email address.');
-    //} else if (!emailRegex.test(emailInput.value.trim())) {
-    //    emailInput.classList.add('is-invalid');
-    //    errors.push('Please enter a valid email address.');
     } else {
         emailInput.classList.add('is-valid');
     }
@@ -40,6 +34,14 @@ function Validate() {
         errors.push('Please enter a password.');
     } else {
         passwordInput.classList.add('is-valid');
+    }
+
+    // Date of Birth Validation
+    if (!dobInput || !dobInput.value.trim()) {
+        if (dobInput) dobInput.classList.add('is-invalid');
+        errors.push('Please enter a date of birth.');
+    } else {
+        dobInput.classList.add('is-valid');
     }
 
     // Handle Errors

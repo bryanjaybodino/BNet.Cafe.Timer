@@ -11,6 +11,7 @@
     DBClosingTimeMessage,
     DBWarningTime,
     DBWarningTimeMessage,
+    DBBirthdayCredits,
     DBDateCreated,
     DBTimeCreated,
     DBIsDeleted
@@ -28,6 +29,7 @@ VALUES (
     '{DBClosingTimeMessage}',
     '{DBWarningTime}',
     '{DBWarningTimeMessage}',
+    '{DBBirthdayCredits}',
     '{DBDateCreated}',
     '{DBTimeCreated}',
     '{DBIsDeleted}'

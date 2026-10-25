@@ -37,6 +37,12 @@
                         <asp:ListItem Text="Admin" Value="ADMIN"></asp:ListItem>
                     </asp:DropDownList>
                 </div>
+
+                <!-- Date of Birth -->
+                <div class="form-group">
+                    <label for="<%= TextBox_DateOfBirth.ClientID %>">Date of Birth <span style="color: #ef4444;">*</span></label>
+                    <asp:TextBox ID="TextBox_DateOfBirth" runat="server" TextMode="Date" CssClass="form-control bnet-datepicker"></asp:TextBox>
+                </div>
             </div>
 
             <!-- Actions -->

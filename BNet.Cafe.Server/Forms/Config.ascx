@@ -148,6 +148,10 @@
                     </label>
                 </div>
 
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= TextBox_BirthdayCredits.ClientID %>">Birthday Credits (Auto Credit Points for Member/VIP)</label>
+                    <asp:TextBox ID="TextBox_BirthdayCredits" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="0" MaxLength="10"></asp:TextBox>
+                </div>
                 <!-- ==========================================
                    SCHEDULE SETTINGS DIVIDER & SECTION
                    ========================================== -->

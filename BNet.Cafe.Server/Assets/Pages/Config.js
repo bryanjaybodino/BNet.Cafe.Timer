@@ -15,6 +15,8 @@ function ValidateConfig() {
     var warningTimeInput = document.querySelector('[id$="TextBox_WarningTime"]');
     var warningTimeId = warningTimeInput ? warningTimeInput.id : 'TextBox_WarningTime';
 
+    var birthdayCreditsInput = document.querySelector('[id$="TextBox_BirthdayCredits"]');
+    
     var isValidInterval = requiredValidation(inputId);
     if (!isValidInterval) {
         ShowAlert('Please enter an auto shutdown interval.');
@@ -39,38 +41,11 @@ function ValidateConfig() {
         return false;
     }
 
+    // Optional: Auto-fill '0' if left completely blank before submitting
+    if (birthdayCreditsInput && birthdayCreditsInput.value.trim() === '') {
+        birthdayCreditsInput.value = '0';
+    }
+
     disableSubmitButton();
     return true;
-}
-
-function disableSubmitButton() {
-    var btn = document.querySelector('[id$="LinkButton_Submit"]');
-    if (btn) {
-        btn.classList.add('disabled');
-        btn.style.pointerEvents = 'none';
-        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
-    }
-}
-
-if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager) {
-    var prm = Sys.WebForms.PageRequestManager.getInstance();
-
-    // Triggered after UpdatePanel content updates
-    prm.add_pageLoaded(function (sender, args) {
-        var panelsUpdated = args.get_panelsUpdated();
-        if (panelsUpdated.length > 0) {
-            // Re-disable button during redirect window if needed
-            disableSubmitButton();
-        }
-    });
-
-    // Triggered when an async postback finishes (success or error)
-    prm.add_endRequest(function (sender, args) {
-        var btn = document.querySelector('[id$="LinkButton_Submit"]');
-        if (btn) {
-            btn.classList.remove('disabled');
-            btn.style.pointerEvents = 'auto';
-            btn.innerHTML = '<i class="fa fa-save"></i> Save Configuration'; // Restore original button state
-        }
-    });
 }

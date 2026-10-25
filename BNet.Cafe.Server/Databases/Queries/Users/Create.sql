@@ -19,7 +19,8 @@ INSERT INTO users (
     DBRole,
     DBDateCreated,
     DBTimeCreated,
-    DBIsDeleted
+    DBIsDeleted,
+    DBDateOfBirth
 )
 SELECT 
     '{DBEmail}',
@@ -28,7 +29,8 @@ SELECT
     '{DBRole}',
     '{DBDateCreated}',
     '{DBTimeCreated}',
-    '{DBIsDeleted}'
+    '{DBIsDeleted}',
+    '{DBDateOfBirth}'
 FROM DUAL
 WHERE NOT EXISTS (
     SELECT 1

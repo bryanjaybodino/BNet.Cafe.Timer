@@ -25,7 +25,7 @@
                 <!-- Password -->
                 <div class="form-group">
                     <label for="<%= TextBox_Password.ClientID %>">Password <span style="color: #ef4444;">*</span></label>
-                    <asp:TextBox ID="TextBox_Password" runat="server"  Text="USER@123" CssClass="form-control" placeholder="Enter password" MaxLength="100"></asp:TextBox>
+                    <asp:TextBox ID="TextBox_Password" runat="server" Text="USER@123" CssClass="form-control" placeholder="Enter password" MaxLength="100"></asp:TextBox>
                 </div>
 
                 <!-- Role -->
@@ -36,6 +36,12 @@
                         <asp:ListItem Text="VIP" Value="VIP"></asp:ListItem>
                         <asp:ListItem Text="Admin" Value="ADMIN"></asp:ListItem>
                     </asp:DropDownList>
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="form-group">
+                    <label for="<%= TextBox_DateOfBirth.ClientID %>">Date of Birth <span style="color: #ef4444;">*</span></label>
+                    <asp:TextBox ID="TextBox_DateOfBirth" runat="server" TextMode="Date" CssClass="form-control bnet-datepicker"></asp:TextBox>
                 </div>
             </div>
 

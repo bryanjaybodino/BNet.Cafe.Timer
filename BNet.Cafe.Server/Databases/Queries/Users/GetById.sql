@@ -7,6 +7,7 @@
     u.DBDateCreated,
     u.DBTimeCreated,
     u.DBIsDeleted,
+    u.DBDateOfBirth,
     IFNULL(b.DBTotalDuration, 0) AS DBTotalDuration,
     CASE 
         WHEN b.DBTotalDuration IS NULL OR b.DBTotalDuration <= 0 THEN '0 min'

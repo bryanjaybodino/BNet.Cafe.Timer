@@ -11,5 +11,6 @@ SET
     DBClosingTime = '{DBClosingTime}',
     DBClosingTimeMessage = '{DBClosingTimeMessage}',
     DBWarningTime = '{DBWarningTime}',
-    DBWarningTimeMessage = '{DBWarningTimeMessage}'
+    DBWarningTimeMessage = '{DBWarningTimeMessage}',
+    DBBirthdayCredits = '{DBBirthdayCredits}'
 WHERE DBId = '{DBId}';
