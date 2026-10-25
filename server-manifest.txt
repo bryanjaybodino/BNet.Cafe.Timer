@@ -76,7 +76,7 @@ c0f885efc78bf186568b84516dbcfe5332e9dc54	Assets/Portal/Script.js
 05040ff052bbca19b0988c4a9dc88bec34a2d91e	Assets/ResetPassword/Style.css
 bb93fd4488e4131a656920f77786e97b1be961ae	Assets/Shop/Script.js
 54ef1096bff57a94e45554bc4c81a8bb6997e46c	Assets/Shop/Style.css
-4c55eb7f18d99908723b7e488552628bdeaac15b	Assets/Vendo/Script.js
+c8ba5a459e6ba93bbbe98b9c7134e175bc405b43	Assets/Vendo/Script.js
 6da70fc527537343cae056d94714e059cf1eed7a	Assets/Vendo/Style.css
 dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Assets/fontawesome/font-awesome.min.css
 71e31852689289b8d7b94ce0541953df40f76500	Assets/fontawesome/webfonts/fa-brands-400.woff2
@@ -237,11 +237,11 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-412bd59d24608c3da4f7d7b7ac98fde4e2882b29	bin/BNet.Cafe.Server.dll
-7f543c753bf418372f5a4cee29393d951e6e96fe	bin/BNet.Cafe.Server.pdb
-b7e27195f795a7c9622a63f15049587eaa9c7382	bin/BNet.Cafe.Websocket.exe
+7ce251a95f9a9f41993e0e32307891ded716a0dd	bin/BNet.Cafe.Server.dll
+f45d168f124c8fa6e3acbd747f6d70bcf8c2e28a	bin/BNet.Cafe.Server.pdb
+3273fef12eb44d5fcb853b9ec1fe0396077bb8fb	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
-eb94f058dd3579d730db4070399f779b71fc46fd	bin/BNet.Cafe.Websocket.pdb
+e45f07d844e953973419c9ade7d724cd91c02142	bin/BNet.Cafe.Websocket.pdb
 f4453a5a2ab054ba4df04ed431dcebc366a613a4	bin/BNet.FTPServer.dll
 1b1f204165327bd0fbd04378350e87e793645b59	bin/Microsoft.Extensions.Logging.Abstractions.dll
 1acaf092a11563a6ad8608e898a6761e9a14afa4	bin/MySqlConnector.dll
