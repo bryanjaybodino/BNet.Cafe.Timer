@@ -97,10 +97,16 @@
 
             <div class="card">
 
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="<%= TextBox_ComshopName.ClientID %>">Comshop Name</label>
-                    <asp:TextBox ID="TextBox_ComshopName" runat="server" CssClass="form-control" placeholder="Enter Comshop Name" MaxLength="100"></asp:TextBox>
+                <!-- ==========================================
+                   BNET TIMER CONFIG SECTION
+                   ========================================== -->
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-stopwatch" style="color: var(--primary);"></i>BNet Timer Config
+                    </h3>
+                    <p style="font-size: 12px; color: var(--text-light-secondary);">Configure core system accounts, time zones, and timer features.</p>
                 </div>
+
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="<%= CheckBox_AccountCreationAllowed.ClientID %>" class="toggle-label">
                         <div class="toggle-text">
@@ -113,10 +119,12 @@
                         </label>
                     </label>
                 </div>
+
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="<%= DropDownList_TimeZone.ClientID %>">Server/Client Time Zone <span class="required">*</span></label>
                     <asp:DropDownList ID="DropDownList_TimeZone" runat="server" CssClass="form-control bnet-select" />
                 </div>
+
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="<%= TextBox_AutoShutDownInterval.ClientID %>">Auto Shutdown Interval (Seconds) <span class="required">*</span></label>
                     <asp:TextBox ID="TextBox_AutoShutDownInterval" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="300" MaxLength="10"></asp:TextBox>
@@ -148,6 +156,23 @@
                     </label>
                 </div>
 
+
+                <!-- ==========================================
+                   GAME MENU DIVIDER & SECTION
+                   ========================================== -->
+                <hr style="border: 0; border-top: 1px solid var(--border-light); margin: 30px 0 24px 0;" />
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-gamepad" style="color: var(--primary);"></i>Game Menu
+                    </h3>
+                    <p style="font-size: 12px; color: var(--text-light-secondary);">Configure comshop branding and built-in game menu launcher features.</p>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= TextBox_ComshopName.ClientID %>">Comshop Name</label>
+                    <asp:TextBox ID="TextBox_ComshopName" runat="server" CssClass="form-control" placeholder="Enter Comshop Name" MaxLength="100"></asp:TextBox>
+                </div>
+
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="<%= CheckBox_EnableGameMenu.ClientID %>" class="toggle-label">
                         <div class="toggle-text">
@@ -162,9 +187,15 @@
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="<%= TextBox_BirthdayCredits.ClientID %>">Birthday Credits (Auto Credit Points for Member/VIP)</label>
-                    <asp:TextBox ID="TextBox_BirthdayCredits" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="0" MaxLength="10"></asp:TextBox>
+                    <label for="<%= DropDownList_LayoutMode.ClientID %>">Layout Mode</label>
+                    <asp:DropDownList ID="DropDownList_LayoutMode" runat="server" CssClass="form-control bnet-select">
+                        <asp:ListItem Value="GRID" Text="Grid"></asp:ListItem>
+                        <asp:ListItem Value="CAROUSEL" Text="Carousel"></asp:ListItem>
+                        <asp:ListItem Value="ICON" Text="Icon"></asp:ListItem>
+                    </asp:DropDownList>
                 </div>
+
+
                 <!-- ==========================================
                    SCHEDULE SETTINGS DIVIDER & SECTION
                    ========================================== -->
@@ -174,6 +205,11 @@
                         <i class="fa-solid fa-clock" style="color: var(--primary);"></i>Schedule Settings
                     </h3>
                     <p style="font-size: 12px; color: var(--text-light-secondary);">Configure automated shop operating hours and shutdown closing alarms.</p>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= TextBox_BirthdayCredits.ClientID %>">Birthday Credits (Auto Credit Points for Member/VIP)</label>
+                    <asp:TextBox ID="TextBox_BirthdayCredits" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="0" MaxLength="10"></asp:TextBox>
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
@@ -188,6 +224,7 @@
                         </label>
                     </label>
                 </div>
+
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="<%= TextBox_OpeningTime.ClientID %>">Opening Time</label>
                     <asp:TextBox ID="TextBox_OpeningTime" runat="server" CssClass="form-control" TextMode="Time" placeholder="08:00" MaxLength="10"></asp:TextBox>

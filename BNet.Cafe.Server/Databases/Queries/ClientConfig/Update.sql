@@ -13,5 +13,6 @@ SET
     DBWarningTime = '{DBWarningTime}',
     DBWarningTimeMessage = '{DBWarningTimeMessage}',
     DBBirthdayCredits = '{DBBirthdayCredits}',
-    DBEnableGameMenu = '{DBEnableGameMenu}'
+    DBEnableGameMenu = '{DBEnableGameMenu}',
+    DBLayoutMode = '{DBLayoutMode}'
 WHERE DBId = '{DBId}';
