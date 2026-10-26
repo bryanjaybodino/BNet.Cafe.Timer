@@ -14,6 +14,8 @@
     DBBirthdayCredits,
     DBEnableGameMenu,
     DBLayoutMode,
+    DBEnableMinimize,
+    DBEnableWindowsKey,
     DBDateCreated,
     DBTimeCreated,
     DBIsDeleted
@@ -34,6 +36,8 @@ VALUES (
     '{DBBirthdayCredits}',
     '{DBEnableGameMenu}',
     '{DBLayoutMode}',
+    '{DBEnableMinimize}',
+    '{DBEnableWindowsKey}',
     '{DBDateCreated}',
     '{DBTimeCreated}',
     '{DBIsDeleted}'

@@ -14,5 +14,7 @@ SET
     DBWarningTimeMessage = '{DBWarningTimeMessage}',
     DBBirthdayCredits = '{DBBirthdayCredits}',
     DBEnableGameMenu = '{DBEnableGameMenu}',
-    DBLayoutMode = '{DBLayoutMode}'
+    DBLayoutMode = '{DBLayoutMode}',
+    DBEnableMinimize = '{DBEnableMinimize}',
+    DBEnableWindowsKey = '{DBEnableWindowsKey}'
 WHERE DBId = '{DBId}';

@@ -195,7 +195,31 @@
                     </asp:DropDownList>
                 </div>
 
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= CheckBox_EnableMinimize.ClientID %>" class="toggle-label">
+                        <div class="toggle-text">
+                            <span class="toggle-title">Enable Minimize</span>
+                            <span class="toggle-desc">Allow client users to minimize the game menu window.</span>
+                        </div>
+                        <label class="switch">
+                            <asp:CheckBox ID="CheckBox_EnableMinimize" runat="server" />
+                            <span class="slider round"></span>
+                        </label>
+                    </label>
+                </div>
 
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= CheckBox_EnableWindowsKey.ClientID %>" class="toggle-label">
+                        <div class="toggle-text">
+                            <span class="toggle-title">Enable Windows Key</span>
+                            <span class="toggle-desc">Allow using the Windows key while the game menu is open.</span>
+                        </div>
+                        <label class="switch">
+                            <asp:CheckBox ID="CheckBox_EnableWindowsKey" runat="server" />
+                            <span class="slider round"></span>
+                        </label>
+                    </label>
+                </div>
                 <!-- ==========================================
                    SCHEDULE SETTINGS DIVIDER & SECTION
                    ========================================== -->
