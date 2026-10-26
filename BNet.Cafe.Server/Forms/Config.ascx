@@ -149,6 +149,19 @@
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= CheckBox_EnableGameMenu.ClientID %>" class="toggle-label">
+                        <div class="toggle-text">
+                            <span class="toggle-title">Enable Game Menu</span>
+                            <span class="toggle-desc">Enable or disable the built-in game launcher menu on client terminals.</span>
+                        </div>
+                        <label class="switch">
+                            <asp:CheckBox ID="CheckBox_EnableGameMenu" runat="server" />
+                            <span class="slider round"></span>
+                        </label>
+                    </label>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
                     <label for="<%= TextBox_BirthdayCredits.ClientID %>">Birthday Credits (Auto Credit Points for Member/VIP)</label>
                     <asp:TextBox ID="TextBox_BirthdayCredits" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="0" MaxLength="10"></asp:TextBox>
                 </div>

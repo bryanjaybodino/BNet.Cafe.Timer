@@ -12,6 +12,7 @@
     DBWarningTime,
     DBWarningTimeMessage,
     DBBirthdayCredits,
+    DBEnableGameMenu,
     DBDateCreated,
     DBTimeCreated,
     DBIsDeleted
@@ -30,6 +31,7 @@ VALUES (
     '{DBWarningTime}',
     '{DBWarningTimeMessage}',
     '{DBBirthdayCredits}',
+    '{DBEnableGameMenu}',
     '{DBDateCreated}',
     '{DBTimeCreated}',
     '{DBIsDeleted}'

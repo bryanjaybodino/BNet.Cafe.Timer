@@ -12,5 +12,6 @@ SET
     DBClosingTimeMessage = '{DBClosingTimeMessage}',
     DBWarningTime = '{DBWarningTime}',
     DBWarningTimeMessage = '{DBWarningTimeMessage}',
-    DBBirthdayCredits = '{DBBirthdayCredits}'
+    DBBirthdayCredits = '{DBBirthdayCredits}',
+    DBEnableGameMenu = '{DBEnableGameMenu}'
 WHERE DBId = '{DBId}';
