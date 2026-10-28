@@ -103,8 +103,8 @@ function hidePressAnyKey() {
     window.addEventListener(event, resetIdleTimer, { passive: true });
 });
 // --- NUMBER TYPING & MODAL LOGIC ---
-let totalAmount = 0;          // coins already committed (each coin ends with Enter)
-let pendingDigits = "";       // digits of the coin currently being typed by the Arduino
+let totalAmount = 0;          // bills already committed (each bill ends with Enter)
+let pendingDigits = "";       // digits of the bill currently being typed by the Arduino
 let modalCloseTimer = null;
 let modalCountdownInterval = null;
 let remainingSeconds = 5;
@@ -133,20 +133,31 @@ function hideNumberModal() {
     if (modalCloseTimer) clearTimeout(modalCloseTimer);
     if (modalCountdownInterval) clearInterval(modalCountdownInterval);
 
-    // If coins were inserted, pass data to hidden fields and click the LinkButton
-    if (insertedAmount > 0 && activeCard) {
+    if (activeCard) {
         const titleEl = activeCard.querySelector('.pc-title');
         const computerName = titleEl ? titleEl.innerText : "PC-01";
 
-        const amountField = document.querySelector('[id$="HiddenField_ModalAmount"]');
-        const nameField = document.querySelector('[id$="HiddenField_ModalComputerName"]');
-        const triggerBtn = document.querySelector('[id$="LinkButton_ProcessVendo"]');
+        // Check if the active card is the Bill Changer
+        const isBillChangerCard = activeCard.classList.contains('status-coin-changer') || computerName === "Bill Changer";
 
-        if (amountField) amountField.value = insertedAmount;
-        if (nameField) nameField.value = computerName;
+        if (isBillChangerCard) {
+            // Send command 'D' to board ONLY when the Bill Changer modal closes
+            sendSerialCommand('D');
+            console.log(`Bill Changer processed amount: ${insertedAmount}`);
+        } else {
+            // If coins/bills were inserted for a normal PC, pass data to hidden fields and click the LinkButton
+            if (insertedAmount > 0) {
+                const amountField = document.querySelector('[id$="HiddenField_ModalAmount"]');
+                const nameField = document.querySelector('[id$="HiddenField_ModalComputerName"]');
+                const triggerBtn = document.querySelector('[id$="LinkButton_ProcessVendo"]');
 
-        if (triggerBtn) {
-            triggerBtn.click(); // Triggers the C# server-side Click event
+                if (amountField) amountField.value = insertedAmount;
+                if (nameField) nameField.value = computerName;
+
+                if (triggerBtn) {
+                    triggerBtn.click(); // Triggers the C# server-side Click event
+                }
+            }
         }
     }
 
@@ -154,7 +165,6 @@ function hideNumberModal() {
     pendingDigits = "";
     resetIdleTimer();
 }
-
 function resetModalCloseTimer() {
     if (modalCloseTimer) clearTimeout(modalCloseTimer);
     if (modalCountdownInterval) clearInterval(modalCountdownInterval);
@@ -184,11 +194,9 @@ function handleNumberInput(digit) {
         if (titleEl) currentPcName = titleEl.innerText;
     }
 
-    // Play coin sound on every input
+    // Play bill insertion sound on every input
     playCoinSound();
 
-    // Instead of string concatenation ("1" + "1" = "11"), 
-    // we add them numerically (1 + 1 = 2)
     const currentPending = parseInt(pendingDigits, 10) || 0;
     const incomingDigit = parseInt(digit, 10) || 0;
     pendingDigits = currentPending + incomingDigit;
@@ -197,7 +205,8 @@ function handleNumberInput(digit) {
     showNumberModal(currentPcName);
     resetModalCloseTimer();
 }
-// Enter = the Arduino finished typing one coin -> add it to the total
+
+// Enter = the Arduino finished typing one bill -> add it to the total
 function handleEnterInput() {
     if (pendingDigits) {
         totalAmount += parseInt(pendingDigits, 10) || 0;
@@ -274,7 +283,6 @@ function nextSlide() {
 function getClientStatus(client) {
     if (!client) return "Offline";
 
-    // Use pre-calculated status from handler (supports both camelCase and PascalCase)
     const status = client.status || client.Status;
     if (status) {
         return status;
@@ -303,14 +311,15 @@ async function fetchClientData() {
             if (JSON.stringify(data) !== JSON.stringify(clientData)) {
                 clientData = data;
                 renderPSPMenu();
-                renderAttractGrid();  // display-only board on the Press Any Key screen
-                syncArduinoState();   // lock/unlock coins depending on PC availability
+                renderAttractGrid();
+                syncArduinoState();
             }
         }
     } catch (err) {
         console.error('Failed to fetch computer data from handler:', err);
     }
 }
+
 function renderPSPMenu() {
     pspCarousel.innerHTML = '';
 
@@ -319,19 +328,33 @@ function renderPSPMenu() {
         return status === "Available" || status === "Occupied" || status === "Offline" || status === "Paused" || status === "Administrator";
     });
 
+    if (document.getElementById('Label_Layers').innerHTML === '3') {
+        // Added Bill Changer item at the end of the menu
+        filteredData.push({
+            clientName: "Bill Changer",
+            status: "Available",
+            isCoinChanger: true,
+            ipAddress: "-",
+            timeStart: null,
+            timeEnd: null
+        });
+    }
+
     filteredClientData = filteredData.sort((a, b) => {
         const nameA = a.clientName || a.ClientName || '';
         const nameB = b.clientName || b.ClientName || '';
         return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
     });
 
-    if (selectedIndex >= filteredClientData.length) {
-        selectedIndex = Math.max(0, filteredClientData.length - 1);
+    const totalItems = filteredClientData.length;
+    if (selectedIndex >= totalItems) {
+        selectedIndex = Math.max(0, totalItems - 1);
     }
 
     filteredClientData.forEach((client, index) => {
+        const isBillChanger = client.isCoinChanger;
         const status = getClientStatus(client);
-        const statusClass = `status-${status.toLowerCase()}`;
+        const statusClass = isBillChanger ? `status-coin-changer` : `status-${status.toLowerCase()}`;
 
         const timeStart = client.timeStart || client.TimeStart;
         const timeEnd = client.timeEnd || client.TimeEnd;
@@ -344,18 +367,32 @@ function renderPSPMenu() {
         const card = document.createElement('div');
         card.className = `psp-card ${index === selectedIndex ? 'active' : ''} ${statusClass}`;
 
-        card.innerHTML = `
-            <div class="pc-icon-wrapper">💻</div>
-            <div class="pc-title">${clientName || `PC-${String(index + 1).padStart(2, '0')}`}</div>
-            <div class="pc-details">
-                ${ipAddress && ipAddress !== '-' ? `${ipAddress}<br>` : ''}
-                ${formattedStart ? `${formattedStart}<br>` : ''}
-                ${formattedEnd ? `${formattedEnd}` : ''}
-            </div>
-            <div class="psp-badge ${statusClass}">
-                ${status}
-            </div>
-        `;
+        if (isBillChanger) {
+            card.innerHTML = `
+                <div class="pc-icon-wrapper">💵</div>
+                <div class="pc-title">Bill Changer</div>
+                <div class="pc-details">
+                    Utility / Bills<br>
+                    Insert & Exchange
+                </div>
+                <div class="psp-badge status-coin-changer">
+                    Active
+                </div>
+            `;
+        } else {
+            card.innerHTML = `
+                <div class="pc-icon-wrapper">💻</div>
+                <div class="pc-title">${clientName || `PC-${String(index + 1).padStart(2, '0')}`}</div>
+                <div class="pc-details">
+                    ${ipAddress && ipAddress !== '-' ? `${ipAddress}<br>` : ''}
+                    ${formattedStart ? `${formattedStart}<br>` : ''}
+                    ${formattedEnd ? `${formattedEnd}` : ''}
+                </div>
+                <div class="psp-badge ${statusClass}">
+                    ${status}
+                </div>
+            `;
+        }
 
         card.addEventListener('click', () => {
             if (isModalOpen()) return;
@@ -370,6 +407,7 @@ function renderPSPMenu() {
 
     requestAnimationFrame(() => updateCarouselPosition(0));
 }
+
 let lastSpokenPC = "";
 function updateCarouselPosition(extraOffset = 0) {
     const cards = document.querySelectorAll('.psp-card');
@@ -383,14 +421,13 @@ function updateCarouselPosition(extraOffset = 0) {
 
     const target = cards[selectedIndex];
 
-    // --- ADD SOUND WHEN SELECTING / MOVING TO A PC ---
     if (target) {
         const titleEl = target.querySelector('.pc-title');
         const pcName = titleEl ? titleEl.innerText : `PC-${String(selectedIndex + 1).padStart(2, '0')}`;
 
         if (pcName !== lastSpokenPC) {
             lastSpokenPC = pcName;
-            speakText(pcName); // e.g. says "PC-01"
+            speakText(pcName);
         }
     }
 
@@ -469,14 +506,12 @@ pspContainer.addEventListener('wheel', (e) => {
     isWheelCoolingDown = true;
     setTimeout(() => { isWheelCoolingDown = false; }, 200);
 });
+
 document.addEventListener('keydown', (e) => {
-    // 1. If the "Press Any Key" screen is visible
     if (isPressAnyKeyVisible()) {
-        // If the user presses Left/Right arrow, numbers, or Ctrl+A / Ctrl+C, dismiss the attract screen
         if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || (e.key >= '0' && e.key <= '9') || (e.ctrlKey && (e.key.toLowerCase() === 'a' || e.key.toLowerCase() === 'c'))) {
             e.preventDefault();
 
-            // Execute the serial port routine (matching what the click event does)
             serialTask(async () => {
                 if (await openSerial(true)) {
                     hidePressAnyKey();
@@ -485,12 +520,10 @@ document.addEventListener('keydown', (e) => {
             });
             return;
         }
-        // Ignore all other keys while the attract screen is showing
         e.preventDefault();
         return;
     }
 
-    // --- Block number typing if the currently selected PC is Offline or Admin ---
     if (e.key >= '0' && e.key <= '9') {
         if (filteredClientData && filteredClientData.length > 0 && selectedIndex >= 0 && selectedIndex < filteredClientData.length) {
             const currentClient = filteredClientData[selectedIndex];
@@ -508,7 +541,6 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
-    // --- Enter input for coins ---
     if (e.key === 'Enter' && (pendingDigits || isModalOpen())) {
         if (filteredClientData && filteredClientData.length > 0 && selectedIndex >= 0 && selectedIndex < filteredClientData.length) {
             const currentClient = filteredClientData[selectedIndex];
@@ -528,7 +560,6 @@ document.addEventListener('keydown', (e) => {
 
     if (isModalOpen() || filteredClientData.length === 0) return;
 
-    // --- Carousel Navigation (Arrow Keys & Ctrl Shortcuts) ---
     if (e.key === 'ArrowRight' || (e.ctrlKey && e.key.toLowerCase() === 'c')) {
         e.preventDefault();
         if (selectedIndex < filteredClientData.length - 1) {
@@ -542,11 +573,11 @@ document.addEventListener('keydown', (e) => {
             updateCarouselPosition();
         }
     } else {
-        // Block and swallow any other unexpected keystrokes
         e.preventDefault();
         e.stopPropagation();
     }
 });
+
 // --- 6. INITIALIZATION & SSE ---
 window.addEventListener('load', function () {
     const endpoint = window.location.protocol + '//' + window.location.hostname + ':2050/sse';
@@ -757,11 +788,9 @@ function isPressAnyKeyVisible() {
     return !!screen && screen.style.display !== 'none';
 }
 
-
 function escapeHtml(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
-
 
 let serverTimeOffset = null;
 
@@ -844,6 +873,7 @@ function buildAttractCard(client, index) {
           </div></div>
         </div>`;
 }
+
 function renderAttractGrid() {
     const grid = document.getElementById('attractGrid');
     if (!grid) return;
@@ -857,13 +887,11 @@ function renderAttractGrid() {
         return;
     }
 
-    let cols = 4; // default fallback
+    let cols = 4;
 
-    // Tailored symmetric layouts for specific counts:
     if (count <= 4) {
         cols = count;
     } else {
-        // Dynamic scaling for in-between numbers
         const screenAspect = window.innerWidth / Math.max(1, window.innerHeight);
         cols = Math.ceil(Math.sqrt(count * screenAspect * 0.7));
         cols = Math.max(2, Math.min(cols, count));
@@ -874,6 +902,7 @@ function renderAttractGrid() {
     grid.innerHTML = list.map(buildAttractCard).join('');
     tickAttractTimes();
 }
+
 window.addEventListener('resize', () => {
     if (isPressAnyKeyVisible()) {
         renderAttractGrid();
@@ -907,19 +936,17 @@ setInterval(syncServerTime, 5 * 60 * 1000);
 
 setInterval(() => { if (isPressAnyKeyVisible()) tickAttractTimes(); }, 1000);
 
-
-// --- HELPER: Text-to-Speech Function ---
 function speakText(text) {
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.5; // Speed (0.1 to 10)
-        utterance.pitch = 2.0; // Pitch (0 to 2)
+        utterance.rate = 1.5;
+        utterance.pitch = 2.0;
         window.speechSynthesis.speak(utterance);
     }
 }
-// --- SHARED AUDIO CONTEXT (Prevents browser audio crash on rapid drops) ---
+
 let sharedAudioCtx = null;
 
 function getAudioContext() {
@@ -942,12 +969,10 @@ function playCoinSound() {
 
         const now = ctx.currentTime;
 
-        // Master gain container
         const masterGain = ctx.createGain();
         masterGain.gain.setValueAtTime(0.35, now);
         masterGain.connect(ctx.destination);
 
-        // Crisp dual metallic coin frequencies (tuned for a clearer coin clink)
         const metallicFrequencies = [2400, 3100];
 
         metallicFrequencies.forEach((freq, i) => {
@@ -956,10 +981,8 @@ function playCoinSound() {
 
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, now);
-            // Natural metallic pitch decay
             osc.frequency.exponentialRampToValueAtTime(freq * 0.9, now + 0.12);
 
-            // Clean decay envelope
             gain.gain.setValueAtTime(0.12, now);
             gain.gain.exponentialRampToValueAtTime(0.0001, now + (i === 0 ? 0.1 : 0.15));
 
@@ -970,7 +993,6 @@ function playCoinSound() {
             osc.stop(now + 0.16);
         });
 
-        // Short impact thud/clink component
         const thudOsc = ctx.createOscillator();
         const thudGain = ctx.createGain();
 

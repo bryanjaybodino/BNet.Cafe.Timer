@@ -44,7 +44,7 @@
     <div class="number-modal-overlay" id="numberModal">
         <div class="number-modal-box">
             <div class="number-modal-pc-target" id="modalPcTarget">PC-01</div>
-            <div class="number-modal-label">Inserted Coins</div>
+            <div class="number-modal-label">Inserted Bills</div>
             <div class="number-modal-display" id="modalNumberDisplay">0</div>
             <div class="number-modal-timer" id="modalTimerText">Closing in 5s</div>
         </div>
@@ -53,6 +53,7 @@
         <asp:ScriptManager ID="ScriptManager1" EnableCdn="false" EnablePageMethods="true" EnablePartialRendering="true" AsyncPostBackTimeout="99999999" ScriptMode="Release" ValidateRequestMode="Enabled" EnableScriptLocalization="true" EnableScriptGlobalization="true" LoadScriptsBeforeUI="false" CompositeScript-ScriptMode="Release" CompositeScript-ResourceUICultures="Release" runat="server"></asp:ScriptManager>
         <asp:UpdatePanel ID="UpdatePanelModalTrigger" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
+                <asp:Label ID="Label_Layers" ClientIDMode="Static" runat="server" Text="0"></asp:Label>
                 <asp:LinkButton ID="LinkButton_ProcessVendo" runat="server"
                     OnClick="LinkButton_ProcessVendo_Click" Style="display: none;" />
                 <asp:HiddenField ID="HiddenField_ModalAmount" runat="server" />

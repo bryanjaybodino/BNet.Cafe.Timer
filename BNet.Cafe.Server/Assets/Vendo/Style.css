@@ -142,6 +142,10 @@ html, body {
         border-color: rgba(127, 140, 141, 0.6);
     }
 
+    .psp-card.status-coin-changer {
+        border-color: rgba(241, 196, 15, 0.6);
+    }
+
     .psp-card.active.status-administrator {
         border-color: #9b59b6;
         box-shadow: 0 0 25px rgba(155, 89, 182, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
@@ -165,6 +169,11 @@ html, body {
     .psp-card.active.status-offline {
         border-color: #7f8c8d;
         box-shadow: 0 0 25px rgba(127, 140, 141, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
+    }
+
+    .psp-card.active.status-coin-changer {
+        border-color: #f1c40f;
+        box-shadow: 0 0 25px rgba(241, 196, 15, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
     }
 
 .pc-icon-wrapper {
@@ -241,6 +250,11 @@ html, body {
         box-shadow: 0 4px 12px rgba(127, 140, 141, 0.4);
     }
 
+    .psp-badge.status-coin-changer {
+        background: linear-gradient(135deg, #f1c40f, #d68910);
+        box-shadow: 0 4px 12px rgba(241, 196, 15, 0.4);
+    }
+
 .loading {
     position: absolute;
     top: 50%;
@@ -264,7 +278,7 @@ html, body {
     background: rgba(0, 0, 0, 0.6);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
-    z-index: 1000;
+    z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -272,7 +286,6 @@ html, body {
     pointer-events: none;
     transition: opacity 0.3s ease;
     padding: 20px;
-    z-index:9999;
 }
 
     .number-modal-overlay.visible {
@@ -410,7 +423,7 @@ textarea {
     background: rgba(10, 12, 28, 0.2);
     color: #fff;
     cursor: pointer;
-    overflow: hidden; /* Change or remove if it clips children */
+    overflow: hidden;
 }
 
 .attract-header {
@@ -426,15 +439,15 @@ textarea {
     color: #fff;
     text-shadow: 0 0 10px rgba(0, 200, 255, 0.8), 0 0 22px rgba(255, 0, 200, 0.5);
 }
+
 .attract-grid {
     flex: 1;
     width: 100%;
-    max-width: 1920px; /* Expanded slightly to fit more columns */
+    max-width: 1920px;
     height: 100%;
     display: grid;
-    /* Uses dynamic --cols set by JavaScript, but safely handles wrap */
     grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr));
-    gap: clamp(4px, 0.6vw, 10px); /* Slightly tighter gap for many items */
+    gap: clamp(4px, 0.6vw, 10px);
     pointer-events: none;
     justify-content: center;
     align-content: center;
@@ -443,7 +456,6 @@ textarea {
     overflow-y: auto;
     max-height: 85vh;
 }
-
 
 @media (max-width: 700px) {
     .attract-grid {
@@ -454,7 +466,6 @@ textarea {
 .atc-wrap {
     container-type: size;
     width: 100%;
-    /* Maintain proper vertical card height proportions */
     aspect-ratio: 16 / 11;
     max-height: 100%;
     min-width: 0;
@@ -644,71 +655,6 @@ textarea {
     font-weight: 700;
     letter-spacing: .5px;
     text-transform: uppercase;
-}
-
-.atc-user {
-    display: flex;
-    align-items: center;
-    gap: calc(var(--u) * 3);
-    padding: calc(var(--u) * 1.5) calc(var(--u) * 3);
-    border-radius: calc(var(--u) * 2.5);
-    border: max(1px, calc(var(--u) * .5)) solid color-mix(in srgb, var(--c) 40%, transparent);
-    background: rgba(0, 0, 0, 0.35);
-    min-width: 0;
-}
-
-.atc-avatar {
-    width: calc(var(--u) * 10);
-    height: calc(var(--u) * 10);
-    flex: 0 0 auto;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(var(--u) * 5.5);
-    color: #fff;
-    background: rgba(255, 255, 255, 0.12);
-}
-
-.atc-user.vip .atc-avatar {
-    color: #ffc926;
-    background: rgba(255, 201, 38, 0.15);
-    box-shadow: 0 0 8px rgba(255, 201, 38, 0.5);
-}
-
-.atc-user.member .atc-avatar {
-    color: var(--c);
-}
-
-.atc-user-text {
-    min-width: 0;
-    line-height: 1.15;
-}
-
-    .atc-user-text small {
-        display: block;
-        font-size: calc(var(--u) * 3);
-        color: rgba(255, 255, 255, 0.65);
-        letter-spacing: 1px;
-    }
-
-    .atc-user-text b {
-        display: block;
-        font-size: calc(var(--u) * 5.2);
-        font-weight: 800;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-.atc-user.vip .atc-user-text b {
-    color: #ffc926;
-}
-
-.atc-user.member .atc-user-text b {
-    color: var(--c);
 }
 
 .attract-footer {
