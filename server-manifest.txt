@@ -222,6 +222,7 @@ a108f527c1d6f09d67c76bc23adb81d812d3ebf1	Forms/Users.ascx
 0dba21775cc1079f5be61f640378576d61a47e08	Forms/Wallpaper.ascx
 876028b73c489292bbcb2db6c2366f10f7a65661	Global.asax
 6e9b3f33f948c26d753385efcde5af59b8dc036e	Login.aspx
+253230fcbe9e7923b913711766fdacd130051ce5	Mailer/Template.html
 77a5d89e605cf08d4826b1ba7580a582736acd7f	Offline Packages/Newtonsoft.Json/Newtonsoft.Json.dll
 4e5343e67c9171ca551b8ac3785dde4c81ee220a	Offline Packages/RestSharp/RestSharp.dll
 6b4526203cc2d49e02eb4eadad90217d93ea49a3	Offline Packages/System.Runtime.Caching/System.Configuration.ConfigurationManager.dll
@@ -245,8 +246,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-ea04c18a9388d5b3e47d8180b06fef7048c5ac76	bin/BNet.Cafe.Server.dll
-c11495598420f1f8615cf5f790ffca94a905ebd8	bin/BNet.Cafe.Server.pdb
+37b55967c96c3b38ed05ca6e5ce7b3f0deaf44fb	bin/BNet.Cafe.Server.dll
+fcb72fc7aad25b3a76535519b800d57e97c76bde	bin/BNet.Cafe.Server.pdb
 bb6bc22591f5560a7ab1d052a3a024fcd4b13ab2	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 e45f07d844e953973419c9ade7d724cd91c02142	bin/BNet.Cafe.Websocket.pdb
