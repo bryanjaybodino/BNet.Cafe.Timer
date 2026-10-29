@@ -59,8 +59,16 @@ document.addEventListener('DOMContentLoaded', () => {
             parentDetails.setAttribute('open', '');
         }
     }
-});
 
+    // Populate data-tooltip for all menu links and headers
+    document.querySelectorAll('.sidebar-menu a, .menu-header').forEach(item => {
+        const span = item.querySelector('span');
+        const tooltipText = item.getAttribute('title') || (span ? span.textContent.trim() : '');
+        if (tooltipText) {
+            item.setAttribute('data-tooltip', tooltipText);
+        }
+    });
+});
 // Initialize theme icon on DOM load
 const currentTheme = html.getAttribute('data-theme') || 'light';
 updateThemeIcon(currentTheme);
@@ -308,4 +316,3 @@ function limitTo24(el) {
     if (value < 0) el.value = 0;
     if (value > 24) el.value = 24;
 }
-

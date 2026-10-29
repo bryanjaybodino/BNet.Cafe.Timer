@@ -45,13 +45,13 @@
 
                 <!-- SECTION: COMPUTER RENTAL -->
                 <details class="menu-group" id="group_Computers" runat="server">
-                    <summary class="menu-header">
+                    <summary class="menu-header" title="Computer Rental">
                         <i class="fas fa-desktop"></i>
                         <span>Computer Rental</span>
                         <i class="fas fa-chevron-down arrow"></i>
                     </summary>
                     <div class="menu-sub-items">
-                        <asp:HyperLink ID="HyperLink_Computers" runat="server" ToolTip="Computer" onclick="navigateTo('?Form=Computers'); return false;">
+                        <asp:HyperLink ID="HyperLink_Computers" runat="server" ToolTip="Computers" onclick="navigateTo('?Form=Computers'); return false;">
                             <i class="fas fa-computer"></i><span>Computers</span>
                         </asp:HyperLink>
                         <asp:HyperLink ID="HyperLink_SeatMap" runat="server" ToolTip="SeatMap" onclick="navigateTo('?Form=SeatMap'); return false;">
@@ -63,9 +63,9 @@
                         <asp:HyperLink ID="HyperLink_PricingSettings" runat="server" ToolTip="PricingSettings" onclick="navigateTo('?Form=PricingSettings'); return false;">
                             <i class="fas fa-cash-register"></i><span>Pricing Setting</span>
                         </asp:HyperLink>
-                       <asp:HyperLink ID="HyperLink_PointsSettings" runat="server" ToolTip="PointsSettings" onclick="navigateTo('?Form=PointsSettings'); return false;">
+                        <asp:HyperLink ID="HyperLink_PointsSettings" runat="server" ToolTip="PointsSettings" onclick="navigateTo('?Form=PointsSettings'); return false;">
                            <i class="fas fa-coins"></i><span>Points Setting</span>
-                       </asp:HyperLink>
+                        </asp:HyperLink>
                         <asp:HyperLink ID="HyperLink_AutoCreditSettings" runat="server" ToolTip="AutoCreditSettings" onclick="navigateTo('?Form=AutoCreditSettings'); return false;">
                             <i class="fas fa-credit-card"></i><span>Auto Credit Setting</span>
                         </asp:HyperLink>
@@ -78,12 +78,15 @@
                         <asp:HyperLink ID="HyperLink_Points" runat="server" ToolTip="Points" onclick="navigateTo('?Form=Points'); return false;">
                             <i class="fas fa-star"></i><span>Points</span>
                         </asp:HyperLink>
+                        <asp:HyperLink ID="HyperLink_GameMonitoring" runat="server" ToolTip="GameMonitoring" onclick="navigateTo('?Form=GameMonitoring'); return false;">
+                            <i class="fas fa-gamepad"></i><span>Game Monitoring</span>
+                        </asp:HyperLink>
                     </div>
                 </details>
 
                 <!-- SECTION: POS & INVENTORY -->
                 <details class="menu-group" id="group_POS" runat="server">
-                    <summary class="menu-header">
+                    <summary class="menu-header" title="POS & Inventory">
                         <i class="fas fa-boxes-packing"></i>
                         <span>POS & Inventory</span>
                         <i class="fas fa-chevron-down arrow"></i>
@@ -108,8 +111,8 @@
                 </details>
 
                 <!-- SECTION: SPORT TIMER -->
-                <details class="menu-group" id="group_SportTimer" runat="server">
-                    <summary class="menu-header">
+                <details class="menu-group d-none" id="group_SportTimer" runat="server">
+                    <summary class="menu-header" title="Sport Timer">
                         <i class="fas fa-stopwatch"></i>
                         <span>Sport Timer</span>
                         <i class="fas fa-chevron-down arrow"></i>
@@ -123,7 +126,7 @@
 
                 <!-- SECTION: MANAGEMENT -->
                 <details class="menu-group" id="group_Management" runat="server">
-                    <summary class="menu-header">
+                    <summary class="menu-header" title="Management">
                         <i class="fas fa-sliders"></i>
                         <span>Management</span>
                         <i class="fas fa-chevron-down arrow"></i>

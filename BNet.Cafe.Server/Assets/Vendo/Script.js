@@ -141,8 +141,8 @@ function hideNumberModal() {
         const isBillChangerCard = activeCard.classList.contains('status-coin-changer') || computerName === "Bill Changer";
 
         if (isBillChangerCard) {
-            // Send command 'D' to board ONLY when the Bill Changer modal closes
-            sendSerialCommand('D');
+            // Send 'D<amount>' to the board ONLY when the Bill Changer modal closes (e.g. D100\n = give 100 pesos change)
+            if (insertedAmount > 0) sendSerialCommand('D' + insertedAmount + '\n');
             console.log(`Bill Changer processed amount: ${insertedAmount}`);
         } else {
             // If coins/bills were inserted for a normal PC, pass data to hidden fields and click the LinkButton

@@ -117,12 +117,11 @@
     }
 
     function openPOSWithOrder() {
-        const pcName = document.getElementById('chatModalComputerName').innerText;
-        if (!pcName) return;
+        const msgId = document.getElementById('chatMessageModal_DeleteId').value;
+        if (!msgId) return;
 
-        // Encode parsed order items into query parameter string
-        let orderPayload = encodeURIComponent(JSON.stringify(currentParsedOrderItems));
-        window.location.href = `BNetPage.aspx?Form=POS&ComputerName=${encodeURIComponent(pcName)}&OrderItems=${orderPayload}`;
+        // Pass only the ChatId query parameter
+        window.location.href = `BNetPage.aspx?Form=POS&ChatId=${encodeURIComponent(msgId)}`;
     }
 
     function executeChatMessageDelete() {

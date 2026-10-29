@@ -11,7 +11,7 @@
                 runat="server"></asp:TextBox>
         </div>
 
-        <!-- KPI Cards Grid -->
+        <!-- KPI Cards Grid - Row 1 -->
         <div class="cards-grid cards-grid-compact">
             <!-- Transactions -->
             <div class="card card-compact">
@@ -72,6 +72,7 @@
                 </div>
                 <span class="bnet-badge-status yellow">Rentals</span>
             </div>
+
             <!-- Top-Up Load -->
             <div class="card card-compact">
                 <div class="card-inline-content">
@@ -87,6 +88,8 @@
                 <span class="bnet-badge-status green">Credits</span>
             </div>
         </div>
+
+        <!-- KPI Cards Grid - Row 2 -->
         <div class="cards-grid cards-grid-compact">
             <!-- Product Sales Revenue -->
             <div class="card card-compact">
@@ -149,6 +152,21 @@
                 </div>
                 <span class="bnet-badge-status blue">Active</span>
             </div>
+
+            <!-- Total Games (Game Menu) -->
+            <div class="card card-compact">
+                <div class="card-inline-content">
+                    <div class="card-icon-sm">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <div class="card-details">
+                        <span class="card-title-sm">Total Games</span>
+                        <b>
+                            <asp:Label ID="Label_DashboardGameMenus" runat="server" Text="0"></asp:Label></b>
+                    </div>
+                </div>
+                <span class="bnet-badge-status yellow">Game Menu</span>
+            </div>
         </div>
 
         <!-- Charts Row 1: Revenue trend + Customer types -->
@@ -204,9 +222,9 @@
             </div>
         </div>
 
-        <!-- Charts Row 3: Computer usage & Leaderboard -->
+        <!-- Charts Row 3: Computer usage -->
         <div class="charts-grid">
-            <div class="card-chart span-2">
+            <div class="card-chart span-3">
                 <div class="chart-header">
                     <span class="chart-title">Computer Usage (Transactions per Terminal)</span>
                 </div>
@@ -214,7 +232,10 @@
                     <svg id="DashboardBarChart" viewBox="0 0 800 240"></svg>
                 </div>
             </div>
+        </div>
 
+        <!-- Leaderboards Row: Top Member Spenders & Top Games -->
+        <div class="charts-grid">
             <!-- Top 10 Member Spenders Leaderboard -->
             <div class="card-chart">
                 <div class="chart-header">
@@ -231,6 +252,27 @@
                             </tr>
                         </thead>
                         <tbody id="TableTopUsersBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Top 10 Games Leaderboard -->
+            <div class="card-chart span-2">
+                <div class="chart-header">
+                    <span class="chart-title">Top 10 Popular Games</span>
+                </div>
+                <div class="bnet-table-container">
+                    <table class="bnet-table" id="TableTopGames">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Game Name</th>
+                                <th>Category</th>
+                                <th>Total Count</th>
+                            </tr>
+                        </thead>
+                        <tbody id="TableTopGamesBody">
                         </tbody>
                     </table>
                 </div>
@@ -262,6 +304,27 @@
             });
         }
 
+        function renderTopGamesTable(topGames) {
+            var tbody = document.getElementById("TableTopGamesBody");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+
+            if (!topGames || topGames.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>No games configured</td></tr>";
+                return;
+            }
+
+            topGames.forEach(function (game, index) {
+                var tr = document.createElement("tr");
+                tr.innerHTML =
+                    "<td><b>#" + (index + 1) + "</b></td>" +
+                    "<td><b>" + game.name + "</b></td>" +
+                    "<td><span class='bnet-badge-status green'>" + game.category + "</span></td>" +
+                    "<td><strong style='color: var(--primary, #3b82f6);'>" + game.playCount + "</strong></td>";
+                tbody.appendChild(tr);
+            });
+        }
+
         function renderSalesVsCostChart(salesVsCost) {
             var svg = document.getElementById("DashboardSalesVsCostChart");
             if (!svg) return;
@@ -289,9 +352,8 @@
                 if (d.sales > maxVal) maxVal = d.sales;
                 if (d.cost > maxVal) maxVal = d.cost;
             });
-            maxVal *= 1.15; // Padding above highest bar
+            maxVal *= 1.15;
 
-            // Horizontal Grid Lines & Y-Axis Scale
             for (var k = 0; k <= 4; k++) {
                 var yPos = (height - padding.bottom) - (k / 4) * chartH;
                 var gridValue = (maxVal * (k / 4)).toFixed(0);
@@ -443,6 +505,7 @@
 
             renderSalesVsCostChart(data.salesVsCost || []);
             renderTopUsersTable(data.topUsers || []);
+            renderTopGamesTable(data.topGames || []);
         }
 
         document.addEventListener("DOMContentLoaded", initBNetDashboardCharts);

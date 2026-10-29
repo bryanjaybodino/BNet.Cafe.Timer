@@ -1,4 +1,6 @@
 ﻿SELECT * FROM chat_messages 
-WHERE DBId = '{DBId}'
+WHERE 
+DBIsDeleted ='FALSE'
+AND DBId = '{DBId}'
 ORDER BY DBId DESC 
 {LIMIT}
