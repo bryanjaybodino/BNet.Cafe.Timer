@@ -171,6 +171,11 @@ html, body {
         box-shadow: 0 0 25px rgba(127, 140, 141, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
     }
 
+    .psp-card.active.status-user-vip {
+        border-color: #FFC107;
+        box-shadow: 0 0 25px rgba(255, 193, 7, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
+    }
+
     .psp-card.active.status-coin-changer {
         border-color: #f1c40f;
         box-shadow: 0 0 25px rgba(241, 196, 15, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
@@ -191,7 +196,7 @@ html, body {
 }
 
 .pc-title {
-    font-size: clamp(1.1rem, 3vw, 1.8rem);
+    font-size: clamp(1.1rem, 3vw, 3rem);
     font-weight: 900;
     color: #ffffff;
     letter-spacing: 1px;
@@ -565,16 +570,16 @@ textarea {
 }
 
 .atc-pill {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: calc(var(--u) * 1.5);
     padding: calc(var(--u) * 0.8) calc(var(--u) * 2.5);
     border-radius: 999px;
     border: max(1px, calc(var(--u) * .5)) solid var(--pill);
     color: var(--pill);
-    font-size: calc(var(--u) * 4);
+    font-size: calc(var(--u) * 3.5);
     font-weight: 800;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
     white-space: nowrap;
 }
@@ -697,4 +702,85 @@ textarea {
         opacity: .65;
         transform: scale(.98);
     }
+}
+
+/* =====================================================
+   VIP MEMBER = ALL GOLD (replaces the red/orange color)
+   Change the gold here:  #FFC107  /  255, 193, 7
+   ===================================================== */
+
+/* Carousel card border */
+.psp-card.status-occupied.vip-gold,
+.psp-card.status-paused.vip-gold {
+    border-color: rgba(255, 193, 7, 0.6);
+}
+
+.psp-card.active.status-occupied.vip-gold,
+.psp-card.active.status-paused.vip-gold {
+    border-color: #FFC107;
+    box-shadow: 0 0 25px rgba(255, 193, 7, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
+}
+
+.psp-card.vip-gold .pc-title {
+    color: #FFD54F;
+}
+
+/* Carousel badge */
+.psp-badge.status-occupied.user-vip,
+.psp-badge.status-paused.user-vip {
+    background: linear-gradient(135deg, #FFD54F, #FFC107, #B8860B);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.5);
+    color: white;
+}
+
+/* Lock screen card (border, glow, time digits, labels) */
+.atc-wrap.theme-red.vip-gold,
+.atc-wrap.theme-orange.vip-gold {
+    --c: #FFC107;
+    --c-glow: rgba(255, 193, 7, 0.55);
+    --digit: #FFE082;
+}
+
+/* Lock screen pill */
+.atc-pill.user-vip {
+    --pill: #FFC107;
+}
+
+
+/* =====================================================
+   MEMBER = SKY BLUE (replaces the red/orange color)
+   Change the sky blue here:  #00BFFF  /  0, 191, 255
+   ===================================================== */
+
+.psp-card.status-occupied.member-sky,
+.psp-card.status-paused.member-sky {
+    border-color: rgba(0, 191, 255, 0.6);
+}
+
+.psp-card.active.status-occupied.member-sky,
+.psp-card.active.status-paused.member-sky {
+    border-color: #00BFFF;
+    box-shadow: 0 0 25px rgba(0, 191, 255, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
+}
+
+.psp-card.member-sky .pc-title {
+    color: #87CEEB;
+}
+
+.psp-badge.status-occupied.user-member,
+.psp-badge.status-paused.user-member {
+    background: linear-gradient(135deg, #87CEEB, #00BFFF, #0A7FB5);
+    box-shadow: 0 4px 12px rgba(0, 191, 255, 0.5);
+    color: white;
+}
+
+.atc-wrap.theme-red.member-sky,
+.atc-wrap.theme-orange.member-sky {
+    --c: #00BFFF;
+    --c-glow: rgba(0, 191, 255, 0.55);
+    --digit: #B3E5FC;
+}
+
+.atc-pill.user-member {
+    --pill: #00BFFF;
 }

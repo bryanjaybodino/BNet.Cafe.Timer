@@ -286,8 +286,8 @@ function resetModalCloseTimer() {
     }, closeSeconds * 1000);
 }
 
-function handleNumberInput(digit) {
-    if (changerDispensing) return;   // change is being dispensed: ignore inserted-money keys
+function handleNumberInput(amount) {
+    if (changerDispensing) return;   // change is being dispensed: ignore input keys
     const activeCard = document.querySelector('.psp-card.active');
     let currentPcName = "PC-01";
     if (activeCard) {
@@ -298,11 +298,11 @@ function handleNumberInput(digit) {
     // Play bill insertion sound on every input
     playCoinSound();
 
-    // Append each digit as TEXT so "1","0","0" becomes "100" (not 1+0+0).
-    pendingDigits = String(pendingDigits) + String(digit);
+    // Increment/Add the incoming amount directly to totalAmount instead of appending text digits
+    const numericValue = parseInt(amount, 10) || 0;
+    totalAmount += numericValue;
 
-    // totalAmount is a number, pendingDigits is text -> convert before adding.
-    modalNumberDisplay.innerText = totalAmount + (parseInt(pendingDigits, 10) || 0);
+    modalNumberDisplay.innerText = totalAmount;
     showNumberModal(currentPcName);
     resetModalCloseTimer();
 }
@@ -310,12 +310,9 @@ function handleNumberInput(digit) {
 // Enter = the Arduino finished typing one bill -> add it to the total
 function handleEnterInput() {
     if (changerDispensing) return;
-    if (pendingDigits) {
-        totalAmount += parseInt(pendingDigits, 10) || 0;
-        pendingDigits = "";
-    }
+
     modalNumberDisplay.innerText = totalAmount;
-    cancelIdleLock();   // keep lock off after each bill
+    cancelIdleLock();   // keep lock off after entering
     resetModalCloseTimer();
 }
 
@@ -502,6 +499,17 @@ function getClientStatus(client) {
     return "Available";
 }
 
+function getUserType(client) {
+    const raw = client.userType || client.UserType || client.memberType || client.accountType || '';
+    const t = String(raw).trim();
+    if (/vip/i.test(t)) return { text: 'VIP', cls: 'vip', colorClass: 'vip-gold', userClass: 'user-vip' };
+    if (t && !/guest/i.test(t)) {
+        const isMem = /member/i.test(t);
+        return { text: isMem ? 'MEMBER' : t.toUpperCase(), cls: 'member', colorClass: 'member-sky', userClass: 'user-member' };
+    }
+    return { text: 'GUEST', cls: 'guest', colorClass: 'member-sky', userClass: 'user-member' };
+}
+
 // --- 4. FETCH CLIENT DATA & CAROUSEL RENDERING ---
 const pspContainer = document.getElementById('pspContainer');
 const pspCarousel = document.getElementById('pspCarousel');
@@ -564,7 +572,17 @@ function renderPSPMenu() {
     filteredClientData.forEach((client, index) => {
         const isBillChanger = client.isCoinChanger;
         const status = getClientStatus(client);
-        const statusClass = isBillChanger ? `status-coin-changer` : `status-${status.toLowerCase()}`;
+
+        let statusClass = isBillChanger ? `status-coin-changer` : `status-${status.toLowerCase()}`;
+        let badgeText = status;
+        let extraCardClasses = '';
+
+        if (status === "Occupied") {
+            const user = getUserType(client);
+            badgeText = user.text;
+            statusClass = `status-occupied ${user.userClass}`;
+            extraCardClasses = user.colorClass;
+        }
 
         const timeStart = client.timeStart || client.TimeStart;
         const timeEnd = client.timeEnd || client.TimeEnd;
@@ -575,7 +593,7 @@ function renderPSPMenu() {
         const formattedEnd = formatDateTimeString(timeEnd);
 
         const card = document.createElement('div');
-        card.className = `psp-card ${index === selectedIndex ? 'active' : ''} ${statusClass}`;
+        card.className = `psp-card ${index === selectedIndex ? 'active' : ''} ${statusClass} ${extraCardClasses}`;
 
         if (isBillChanger) {
             card.innerHTML = `
@@ -590,16 +608,22 @@ function renderPSPMenu() {
                 </div>
             `;
         } else {
+
+            //${ipAddress && ipAddress !== '-' ? `${ipAddress}<br>` : ''} Backup pag gusto pa mag lagay ng IP Address
             card.innerHTML = `
                 <div class="pc-icon-wrapper">💻</div>
                 <div class="pc-title">${clientName || `PC-${String(index + 1).padStart(2, '0')}`}</div>
                 <div class="pc-details">
-                    ${ipAddress && ipAddress !== '-' ? `${ipAddress}<br>` : ''}
-                    ${formattedStart ? `${formattedStart}<br>` : ''}
-                    ${formattedEnd ? `${formattedEnd}` : ''}
+                    ${ipAddress && ipAddress !== '-' || formattedStart || formattedEnd
+                    ? `
+                        ${formattedStart ? `${formattedStart}<br>` : ''}
+                        ${formattedEnd ? `${formattedEnd}` : ''}
+                      `
+                    : 'Not Available'
+                }
                 </div>
                 <div class="psp-badge ${statusClass}">
-                    ${status}
+                    ${badgeText}
                 </div>
             `;
         }
@@ -719,7 +743,6 @@ pspContainer.addEventListener('wheel', (e) => {
 
 document.addEventListener('keydown', (e) => {
     if (isPressAnyKeyVisible()) {
-        // Removed number keys (e.key >= '0' && e.key <= '9') from waking up/unlocking the screen
         if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || (e.ctrlKey && (e.key.toLowerCase() === 'a' || e.key.toLowerCase() === 'c'))) {
             e.preventDefault();
 
@@ -739,7 +762,7 @@ document.addEventListener('keydown', (e) => {
         if (filteredClientData && filteredClientData.length > 0 && selectedIndex >= 0 && selectedIndex < filteredClientData.length) {
             const currentClient = filteredClientData[selectedIndex];
             const currentStatus = getClientStatus(currentClient);
-            if (currentStatus === "Offline" || currentStatus === "Administrator") {
+            if (currentStatus === "Offline" || currentStatus === "Administrator" || currentStatus === "Paused") {
                 e.preventDefault();
                 e.stopPropagation();
                 return;
@@ -894,7 +917,6 @@ let serialWriter = null;
 let serialQueue = Promise.resolve();
 let serialReader = null;
 
-// Reads what the board prints and hands each line to handleArduinoLine
 async function readSerialLoop(port) {
     if (serialReader || !port.readable) return;
     const decoder = new TextDecoder();
@@ -1075,53 +1097,68 @@ function getRemainingSeconds(client) {
 
     return Math.max(0, Math.floor((end - getServerNow()) / 1000));
 }
-
-function getUserType(client) {
-    const raw = client.userType || client.UserType || client.memberType || client.accountType || '';
-    const t = String(raw).trim();
-    if (/vip/i.test(t)) return { text: 'VIP', cls: 'vip', icon: 'fa-crown' };
-    if (t && !/guest/i.test(t)) return { text: /member/i.test(t) ? 'MEMBER' : t, cls: 'member', icon: 'fa-user' };
-    return { text: 'GUEST', cls: 'guest', icon: 'fa-user' };
-}
-
 function buildAttractCard(client, index) {
     const status = getClientStatus(client);
-    const running = (status === 'Occupied' || status === 'Paused' || status === 'Administrator');
+    const running = (status === 'Occupied');
 
-    const theme = status === 'Paused' ? 'theme-orange'
+    let theme = status === 'Paused' ? 'theme-orange'
         : status === 'Administrator' ? 'theme-purple'
-            : status === 'Occupied' ? 'theme-red'
-                : status === 'Available' ? 'theme-green' : 'theme-gray';
+            : status === 'Available' ? 'theme-green' : 'theme-gray';
 
-    const pill = status === 'Occupied' ? { cls: 'pill-occupied', text: 'OCCUPIED' }
-        : status === 'Paused' ? { cls: 'pill-paused', text: 'PAUSED' }
-            : status === 'Administrator' ? { cls: 'pill-admin', text: 'ADMINISTRATOR' }
-                : status === 'Available' ? { cls: 'pill-available', text: 'AVAILABLE' }
-                    : { cls: 'pill-offline', text: 'OFFLINE' };
+    let pillText = status === 'Paused' ? 'PAUSED'
+        : status === 'Administrator' ? 'ADMINISTRATOR'
+            : status === 'Available' ? 'AVAILABLE' : 'OFFLINE';
 
-    const user = getUserType(client);
+    let pillCls = status === 'Paused' ? 'pill-paused'
+        : status === 'Administrator' ? 'pill-admin'
+            : status === 'Available' ? 'pill-available' : 'pill-offline';
+
+    let colorThemeClass = '';
+
+    if (status === 'Occupied' || status === 'Paused') {
+        const user = getUserType(client);
+        const statusLabel = status === 'Paused' ? ' · PAUSED' : '';
+        pillText = `${user.text}${statusLabel}`;
+        pillCls = status === 'Paused' ? 'pill-paused' : user.userClass;
+
+        if (user.cls === 'vip') {
+            theme = status === 'Paused' ? 'theme-orange vip-gold' : 'theme-red vip-gold';
+            colorThemeClass = 'vip-gold';
+        } else {
+            theme = status === 'Paused' ? 'theme-orange member-sky' : 'theme-red member-sky';
+            colorThemeClass = 'member-sky';
+        }
+    }
+
     const name = client.ClientName || `PC-${String(index + 1).padStart(2, '0')}`;
     const endAttr = (running && client.TimeEnd) ? escapeHtml(client.TimeEnd) : '';
 
+    // Determine the label text for the time box depending on the status
+    let timeLabelText = '<i class="far fa-clock"></i> TIME';
+    if (status === 'Paused') {
+        timeLabelText = '<i class="fas fa-pause-circle"></i> SESSION PAUSED';
+    } else if (status === 'Administrator') {
+        timeLabelText = '<i class="fas fa-user-shield"></i> IN USE BY ADMIN';
+    }
+
     return `
-        <div class="atc-wrap ${theme}">
+        <div class="atc-wrap ${theme} ${colorThemeClass}">
           <div class="atc"><div class="atc-in">
             <div class="atc-top">
-              <div class="atc-pill ${pill.cls}">${pill.text}</div>
+              <div class="atc-pill ${pillCls}">${pillText}</div>
               <div class="atc-identity">
                 <i class="fas fa-desktop"></i>
                 <div class="atc-name">${escapeHtml(name)}</div>
               </div>
             </div>
             <div class="atc-time">
-              <div class="atc-label"><i class="far fa-clock"></i> TIME</div>
+              <div class="atc-label">${timeLabelText}</div>
               <div class="atc-digits" data-end="${endAttr}" data-running="${running ? 1 : 0}"></div>
               <div class="atc-units"><span>Hour</span><span>|</span><span>Minutes</span><span>|</span><span>Seconds</span></div>
             </div>
           </div></div>
         </div>`;
 }
-
 function renderAttractGrid() {
     const grid = document.getElementById('attractGrid');
     if (!grid) return;
