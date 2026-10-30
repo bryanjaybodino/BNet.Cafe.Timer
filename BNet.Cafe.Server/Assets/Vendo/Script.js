@@ -102,12 +102,58 @@ function hidePressAnyKey() {
 ['mousedown', 'keydown', 'touchstart', 'wheel', 'click'].forEach(event => {
     window.addEventListener(event, resetIdleTimer, { passive: true });
 });
+
+// --- CENTRALIZED KIOSK EVENT LOGGER ---
+function logKioskEvent(details, amount, isSuccess, type = "ACCEPTOR") {
+    var endpoint = /\.aspx$/i.test(window.location.pathname)
+        ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/LogKioskEventHandler.ashx')
+        : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/LogKioskEventHandler.ashx');
+
+    var url = endpoint + '?details=' + encodeURIComponent(details) +
+        '&amount=' + encodeURIComponent(amount || '0') +
+        '&isSuccess=' + encodeURIComponent(isSuccess ? 'TRUE' : 'FALSE') +
+        '&type=' + encodeURIComponent(type); // Pass type to handler
+
+    fetch(url, { method: 'GET', cache: 'no-store' })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                console.warn("Kiosk log response warning:", data.message);
+            }
+        })
+        .catch(err => {
+            console.error("Failed to post kiosk log via ASHX:", err);
+        });
+}
+
 // --- NUMBER TYPING & MODAL LOGIC ---
 let totalAmount = 0;          // bills already committed (each bill ends with Enter)
 let pendingDigits = "";       // digits of the bill currently being typed by the Arduino
 let modalCloseTimer = null;
 let modalCountdownInterval = null;
 let remainingSeconds = 5;
+
+// --- BILL CHANGER (coin hopper) COUNTDOWN ---
+// While the hopper drops coins the modal shows the TOTAL and counts it DOWN to 0.
+const CHANGER_COIN_VALUE = 5;          // peso value of ONE hopper coin. Must match COIN_VALUE in the .ino
+const CHANGER_ACK_TIMEOUT_MS = 6000;   // no word from the board for this long -> stop waiting
+let changerDispensing = false;
+let changerTotal = 0;
+let changerAckTimer = null;
+let changerCloseTimer = null;
+let changerHadError = false;
+const CHANGER_MIN_DISPENSE = 10;   // below this the changer does not dispense at all
+let changerKept = 0;      // pesos the machine keeps (amount that is not a multiple of one hopper coin)
+const CHANGER_ERROR_CLOSE_MS = 6000;         // other errors (locked / invalid amount / no response)
+const CHANGER_HOPPER_ERROR_CLOSE_MS = 10000; // hopper empty / jammed: stay longer so the customer can read it
+const CHANGER_ERROR_COLOR = '#ff3b30';       // red used for error messages and the remaining amount
+const PESO = '\u20B1';
+
+function setModalErrorStyle(isError) {
+    const color = isError ? CHANGER_ERROR_COLOR : '';
+    modalTimerText.style.color = color;
+    modalNumberDisplay.style.color = color;
+}
 
 const numberModal = document.getElementById('numberModal');
 const modalNumberDisplay = document.getElementById('modalNumberDisplay');
@@ -125,8 +171,20 @@ function showNumberModal(pcName) {
 }
 
 function hideNumberModal() {
+    if (changerDispensing) return;   // the change countdown closes the modal itself when it is done
+
     const insertedAmount = parseInt(modalNumberDisplay.innerText, 10) || 0;
     const activeCard = document.querySelector('.psp-card.active');
+
+    // Bill Changer: do NOT close. Keep the modal open, send D<amount> and count the total down.
+    if (activeCard && insertedAmount > 0) {
+        const t = activeCard.querySelector('.pc-title');
+        const name = t ? t.innerText : "";
+        if (activeCard.classList.contains('status-coin-changer') || name === "Bill Changer") {
+            startChangerDispense(insertedAmount);
+            return;
+        }
+    }
 
     numberModal.classList.remove('visible');
 
@@ -141,9 +199,10 @@ function hideNumberModal() {
         const isBillChangerCard = activeCard.classList.contains('status-coin-changer') || computerName === "Bill Changer";
 
         if (isBillChangerCard) {
-            // Send 'D<amount>' to the board ONLY when the Bill Changer modal closes (e.g. D100\n = give 100 pesos change)
-            if (insertedAmount > 0) sendSerialCommand('D' + insertedAmount + '\n');
-            console.log(`Bill Changer processed amount: ${insertedAmount}`);
+            // Nothing inserted -> nothing to dispense
+            if (insertedAmount <= 0) {
+                logKioskEvent("Bill Changer closed with no amount inserted.", "0", false, "CHANGER");
+            }
         } else {
             // If coins/bills were inserted for a normal PC, pass data to hidden fields and click the LinkButton
             if (insertedAmount > 0) {
@@ -165,17 +224,45 @@ function hideNumberModal() {
     pendingDigits = "";
     resetIdleTimer();
 }
+
+// Bill Changer (dispenser) closes after 5s; coins/bills for normal PCs keep the default 15s
+const MODAL_CLOSE_DEFAULT_SECONDS = 15;
+const MODAL_CLOSE_DISPENSER_SECONDS = 5;
+
+function isBillChangerActive() {
+    const activeCard = document.querySelector('.psp-card.active');
+    if (!activeCard) return false;
+    const t = activeCard.querySelector('.pc-title');
+    const name = t ? t.innerText : "";
+    return activeCard.classList.contains('status-coin-changer') || name === "Bill Changer";
+}
+
 function resetModalCloseTimer() {
     if (modalCloseTimer) clearTimeout(modalCloseTimer);
     if (modalCountdownInterval) clearInterval(modalCountdownInterval);
 
-    remainingSeconds = 15;
-    modalTimerText.innerText = `Closing in ${remainingSeconds}s`;
+    var isBillChanger = isBillChangerActive();
+    const closeSeconds = isBillChanger ? MODAL_CLOSE_DISPENSER_SECONDS : MODAL_CLOSE_DEFAULT_SECONDS;
+    remainingSeconds = closeSeconds;
+    setModalErrorStyle(false);
+
+    if (isBillChanger) {
+        modalTimerText.innerText = `Dispensing in ${remainingSeconds}s`;
+    }
+    else {
+        modalTimerText.innerText = `Closing in ${remainingSeconds}s`;
+    }
+
 
     modalCountdownInterval = setInterval(() => {
         remainingSeconds--;
         if (remainingSeconds > 0) {
-            modalTimerText.innerText = `Closing in ${remainingSeconds}s`;
+            if (isBillChanger) {
+                modalTimerText.innerText = `Dispensing in ${remainingSeconds}s`;
+            }
+            else {
+                modalTimerText.innerText = `Closing in ${remainingSeconds}s`;
+            }
         } else {
             modalTimerText.innerText = `Closing...`;
         }
@@ -183,10 +270,11 @@ function resetModalCloseTimer() {
 
     modalCloseTimer = setTimeout(() => {
         hideNumberModal();
-    }, 15000);
+    }, closeSeconds * 1000);
 }
 
 function handleNumberInput(digit) {
+    if (changerDispensing) return;   // change is being dispensed: ignore inserted-money keys
     const activeCard = document.querySelector('.psp-card.active');
     let currentPcName = "PC-01";
     if (activeCard) {
@@ -208,12 +296,121 @@ function handleNumberInput(digit) {
 
 // Enter = the Arduino finished typing one bill -> add it to the total
 function handleEnterInput() {
+    if (changerDispensing) return;
     if (pendingDigits) {
         totalAmount += parseInt(pendingDigits, 10) || 0;
         pendingDigits = "";
     }
     modalNumberDisplay.innerText = totalAmount;
     resetModalCloseTimer();
+}
+
+// --- BILL CHANGER: send D<amount>, then count the total down as coins drop ---
+function startChangerDispense(amount) {
+    const belowMin = amount < CHANGER_MIN_DISPENSE;
+    const coins = belowMin ? 0 : Math.floor(amount / CHANGER_COIN_VALUE);
+    const payout = coins * CHANGER_COIN_VALUE;
+    changerKept = amount - payout;
+
+    changerDispensing = true;
+    changerHadError = false;
+    changerTotal = payout;
+
+    if (modalCloseTimer) clearTimeout(modalCloseTimer);
+    if (modalCountdownInterval) clearInterval(modalCountdownInterval);
+    if (changerCloseTimer) { clearTimeout(changerCloseTimer); changerCloseTimer = null; }
+
+    totalAmount = 0;
+    pendingDigits = "";
+    if (coins === 0) {
+        // Below the minimum: nothing is dispensed, the customer must ask the admin for it
+        modalNumberDisplay.innerText = amount;
+
+        // Log Insufficient Amount Below Minimum
+        logKioskEvent(`Bill Changer Error: Insufficient amount (below ₱${CHANGER_MIN_DISPENSE}). Amount ₱${amount} not dispensed - customer needs refund.`, amount.toString(), false, "CHANGER");
+
+        finishChangerDispense(`Insufficient amount (below ${PESO}${CHANGER_MIN_DISPENSE}). Not dispensed - inform the admin to get your ${PESO}${amount} back`, true, CHANGER_HOPPER_ERROR_CLOSE_MS);
+        return;
+    }
+
+    modalNumberDisplay.innerText = payout;          // start from what will actually be paid out
+    modalTimerText.innerText = 'Dispensing change...';
+    setModalErrorStyle(false);
+
+    armChangerAckTimer();
+    console.log('Bill Changer: sending D' + payout + (changerKept ? ' (kept ' + changerKept + ')' : ''));
+    sendSerialCommand('D' + payout + '\n');
+}
+
+function armChangerAckTimer() {
+    if (changerAckTimer) clearTimeout(changerAckTimer);
+    changerAckTimer = setTimeout(() => {
+        logKioskEvent("Bill Changer Error: No response from change dispenser", changerTotal.toString(), false, "CHANGER");
+        finishChangerDispense('No response from change dispenser', true);
+    }, CHANGER_ACK_TIMEOUT_MS);
+}
+
+function setChangerRemaining(value) {
+    modalNumberDisplay.innerText = Math.max(0, value);
+}
+
+function finishChangerDispense(message, isError, closeMs) {
+    if (changerCloseTimer) return;                  // already finishing
+    if (changerAckTimer) { clearTimeout(changerAckTimer); changerAckTimer = null; }
+
+    const totalInserted = (parseInt(modalNumberDisplay.innerText, 10) || 0) + (changerKept || 0);
+
+    if (!isError) setChangerRemaining(0);
+    modalTimerText.innerText = message || 'Change complete';
+    setModalErrorStyle(!!isError);                  // red message + red remaining amount on error
+
+    const delay = closeMs || (isError ? CHANGER_ERROR_CLOSE_MS : 1500);
+    changerCloseTimer = setTimeout(() => {
+        changerCloseTimer = null;
+        changerDispensing = false;
+        modalNumberDisplay.innerText = '0';         // 0 -> hideNumberModal will not send another D
+        setModalErrorStyle(false);
+        hideNumberModal();                          // (wrapper below re-syncs lock/unlock)
+    }, delay);
+}
+
+// Every line the board prints arrives here (see readSerialLoop)
+function handleArduinoLine(line) {
+    console.log('[Arduino]', line);
+    if (!changerDispensing) return;
+    armChangerAckTimer();                           // board is alive -> keep waiting
+
+    let m;
+    if ((m = line.match(/^Hopper Coin (\d+)/))) {
+        setChangerRemaining(changerTotal - parseInt(m[1], 10) * CHANGER_COIN_VALUE);   // 100 -> 95 -> 90 ...
+    } else if (/dispense rejected: LOCKED/i.test(line)) {
+        logKioskEvent("Bill Changer Error: Dispenser is locked", changerTotal.toString(), false, "CHANGER");
+        finishChangerDispense('Dispenser is locked', true);
+    } else if (/^Invalid amount/i.test(line)) {
+        logKioskEvent("Bill Changer Error: Invalid amount sent to board", changerTotal.toString(), false, "CHANGER");
+        finishChangerDispense('Invalid amount', true);
+    } else if (/^STOP: DONE/i.test(line)) {
+        if (changerKept > 0) {
+            setChangerRemaining(0);
+            logKioskEvent(`Bill Changer Partial Dispense: Inserted amount had ₱${changerKept} kept/short due to whole-coin rules.`, (changerTotal + changerKept).toString(), false, "CHANGER");
+            finishChangerDispense(`Insufficient amount. ${PESO}${changerKept} kept by the machine`, true, CHANGER_ERROR_CLOSE_MS);
+        } else {
+            logKioskEvent("Bill Changer Success: Change complete successfully.", changerTotal.toString(), true, "CHANGER");
+            finishChangerDispense('Change complete', false);
+        }
+    } else if (/^STOP: /i.test(line)) {
+        changerHadError = true;                     // jam / empty hopper: wait for the "Coins out" line
+        logKioskEvent(`Bill Changer Hardware Warning: ${line}`, changerTotal.toString(), false, "CHANGER");
+    } else if (changerHadError && (m = line.match(/Coins out\s*:\s*(\d+)/))) {
+        const remaining = Math.max(0, changerTotal - parseInt(m[1], 10) * CHANGER_COIN_VALUE);
+        setChangerRemaining(remaining);
+        const msg = remaining > 0
+            ? `Not enough coins. ${PESO}${remaining} not dispensed. Hopper empty or jammed - see attendant`
+            : 'Hopper empty or jammed - see attendant';
+
+        logKioskEvent(`Bill Changer Jam/Empty Error: ${msg}. Remaining due back: ₱${remaining}`, changerTotal.toString(), false, "CHANGER");
+        finishChangerDispense(msg, true, CHANGER_HOPPER_ERROR_CLOSE_MS);
+    }
 }
 
 // --- 2. DYNAMIC WALLPAPER DISCOVERY & SLIDER ---
@@ -329,7 +526,6 @@ function renderPSPMenu() {
     });
 
     if (document.getElementById('Label_Layers').innerHTML === '3') {
-        // Added Bill Changer item at the end of the menu
         filteredData.push({
             clientName: "Bill Changer",
             status: "Available",
@@ -509,7 +705,8 @@ pspContainer.addEventListener('wheel', (e) => {
 
 document.addEventListener('keydown', (e) => {
     if (isPressAnyKeyVisible()) {
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || (e.key >= '0' && e.key <= '9') || (e.ctrlKey && (e.key.toLowerCase() === 'a' || e.key.toLowerCase() === 'c'))) {
+        // Removed number keys (e.key >= '0' && e.key <= '9') from waking up/unlocking the screen
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || (e.ctrlKey && (e.key.toLowerCase() === 'a' || e.key.toLowerCase() === 'c'))) {
             e.preventDefault();
 
             serialTask(async () => {
@@ -681,6 +878,37 @@ document.addEventListener('fullscreenchange', () => {
 let serialPort = null;
 let serialWriter = null;
 let serialQueue = Promise.resolve();
+let serialReader = null;
+
+// Reads what the board prints and hands each line to handleArduinoLine
+async function readSerialLoop(port) {
+    if (serialReader || !port.readable) return;
+    const decoder = new TextDecoder();
+    let buffer = '';
+    const reader = port.readable.getReader();
+    serialReader = reader;
+    try {
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            let idx;
+            while ((idx = buffer.indexOf('\n')) >= 0) {
+                const line = buffer.slice(0, idx).replace(/\r$/, '').trim();
+                buffer = buffer.slice(idx + 1);
+                if (line) {
+                    try { handleArduinoLine(line); } catch (e) { console.error(e); }
+                }
+            }
+            if (buffer.length > 4000) buffer = '';
+        }
+    } catch (e) {
+        console.warn('Serial read stopped:', e);
+    } finally {
+        try { reader.releaseLock(); } catch (e) { }
+        serialReader = null;
+    }
+}
 
 async function openSerial(allowPrompt) {
     if (!('serial' in navigator)) {
@@ -697,6 +925,7 @@ async function openSerial(allowPrompt) {
     }
     if (!serialPort.writable) await serialPort.open({ baudRate: 9600 });
     serialWriter = serialPort.writable.getWriter();
+    readSerialLoop(serialPort);
     return true;
 }
 
@@ -707,6 +936,8 @@ function serialTask(task) {
         } catch (err) {
             console.error('Serial error:', err);
             try { if (serialWriter) serialWriter.releaseLock(); } catch (e) { }
+            try { if (serialReader) await serialReader.cancel(); } catch (e) { }
+            await new Promise(r => setTimeout(r, 50));
             try { if (serialPort) await serialPort.close(); } catch (e) { }
             serialWriter = null;
             serialPort = null;
@@ -723,13 +954,16 @@ function sendSerialCommand(command) {
 }
 
 const LOCK_WHILE_MODAL_OPEN = false;
+const CHANGER_IGNORES_PC_LOCK = true;
 
 function shouldLock() {
     if (isPressAnyKeyVisible()) return true;
+    if (changerDispensing) return true;
     if (LOCK_WHILE_MODAL_OPEN && isModalOpen()) return true;
 
     if (filteredClientData && filteredClientData.length > 0 && selectedIndex >= 0 && selectedIndex < filteredClientData.length) {
         const selectedClient = filteredClientData[selectedIndex];
+        if (selectedClient.isCoinChanger && CHANGER_IGNORES_PC_LOCK) return false;
         const status = getClientStatus(selectedClient);
         if (status === "Offline" || status === "Administrator" || status === "Paused") {
             return true;

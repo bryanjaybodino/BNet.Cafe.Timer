@@ -1,0 +1,20 @@
+﻿INSERT INTO `kiosk_logs`
+(
+	DBDetails,
+	DBAmount,
+	DBIsSuccess,
+	DBType, 
+	DBDateCreated,
+	DBTimeCreated,
+	DBIsDeleted
+) 
+VALUES 
+(
+	'{DBDetails}',
+	'{DBAmount}',
+	'{DBIsSuccess}',
+	'{DBType}',
+	'{DBDateCreated}',
+	'{DBTimeCreated}',
+	'{DBIsDeleted}'
+)

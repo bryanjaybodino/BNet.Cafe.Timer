@@ -158,6 +158,9 @@
                     <i class="fas fa-expand"></i><span>Kiosk Mode</span>
                     </asp:HyperLink>
                 </div>
+                <asp:HyperLink ID="HyperLink_KioskLogs" runat="server" ToolTip="KioskLogs" onclick="navigateTo('?Form=KioskLogs'); return false;">
+                            <i class="fas fa-note-sticky"></i><span>Kiosk Logs</span>
+                </asp:HyperLink>
             </div>
         </div>
 
