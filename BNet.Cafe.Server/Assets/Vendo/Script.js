@@ -97,8 +97,10 @@ function showPressAnyKey() {
 }
 
 function hidePressAnyKey() {
+    cancelIdleLock(); // Ensure countdown banner is hidden
+
     const screen = document.getElementById('pressAnyKeyScreen');
-    if (screen) screen.style.display = 'none'; // Completely hide lock overlay so mouse/swipe works
+    if (screen) screen.style.display = 'none'; // Completely hide lock overlay
 
     const psp = document.getElementById('pspContainer');
     if (psp) psp.style.removeProperty('display');
@@ -107,7 +109,6 @@ function hidePressAnyKey() {
     syncArduinoState();
     resetIdleTimer();
 
-    // --- ADD SOUND WHEN UNLOCKED ---
     speakText("Choose PC");
 }
 
@@ -174,9 +175,8 @@ const modalTimerText = document.getElementById('modalTimerText');
 const modalPcTarget = document.getElementById('modalPcTarget');
 
 function isModalOpen() {
-    return numberModal.classList.contains('visible');
+    return (numberModal && numberModal.classList.contains('visible')) || isWarningModalOpen();
 }
-
 function showNumberModal(pcName) {
     cancelIdleLock(); // stops idle timer + running lock countdown + hides banner
     modalPcTarget.innerText = pcName || "PC-01";
@@ -610,16 +610,21 @@ function renderPSPMenu() {
         } else {
 
             //${ipAddress && ipAddress !== '-' ? `${ipAddress}<br>` : ''} Backup pag gusto pa mag lagay ng IP Address
+            const isAvailable = badgeText === "Available";
+            const isOffline = badgeText === "Offline" || status === "Offline";
+
             card.innerHTML = `
                 <div class="pc-icon-wrapper">💻</div>
                 <div class="pc-title">${clientName || `PC-${String(index + 1).padStart(2, '0')}`}</div>
                 <div class="pc-details">
-                    ${ipAddress && ipAddress !== '-' || formattedStart || formattedEnd
-                    ? `
-                        ${formattedStart ? `${formattedStart}<br>` : ''}
-                        ${formattedEnd ? `${formattedEnd}` : ''}
-                      `
-                    : 'Not Available'
+                    ${isAvailable
+                    ? 'Insert your Coin or Bill'
+                    : isOffline
+                        ? 'Not Available'
+                        : `
+                                ${formattedStart ? `${formattedStart}<br>` : ''}
+                                ${formattedEnd ? `${formattedEnd}` : ''}
+                              `
                 }
                 </div>
                 <div class="psp-badge ${statusClass}">
@@ -768,12 +773,22 @@ document.addEventListener('keydown', (e) => {
                 return;
             }
         }
+        // If unlocked and user types '0', trigger Anti Static Ignition Detection warning modal & log ACCEPTOR
+        if (e.key === '0' && !isPressAnyKeyVisible()) {
+            e.preventDefault();
+            e.stopPropagation();
+            showWarningModal();
+            return;
+        }
 
         e.preventDefault();
         e.stopPropagation();
         handleNumberInput(e.key);
         return;
     }
+
+
+
 
     if (e.key === 'Enter' && (pendingDigits || isModalOpen())) {
         if (filteredClientData && filteredClientData.length > 0 && selectedIndex >= 0 && selectedIndex < filteredClientData.length) {
@@ -1297,4 +1312,135 @@ function playCoinSound() {
     } catch (e) {
         console.warn("Web Audio API not supported or blocked:", e);
     }
+}
+
+
+// --- Warning Modal Logic (Anti Static Ignition Detection) ---
+const warningModal = document.getElementById('warningModal');
+const warningModalTimerText = document.getElementById('warningModalTimerText');
+let warningCloseTimer = null;
+let warningCountdownInterval = null;
+let warningRemainingSeconds = 5;
+
+function isWarningModalOpen() {
+    return warningModal && warningModal.classList.contains('visible');
+}
+function showWarningModal() {
+    if (isWarningModalOpen()) return;
+
+    cancelIdleLock();
+
+    // Get the currently selected PC name
+    let currentPcName = "PC-01";
+    const activeCard = document.querySelector('.psp-card.active');
+    if (activeCard) {
+        const titleEl = activeCard.querySelector('.pc-title');
+        if (titleEl) {
+            currentPcName = titleEl.innerText;
+        }
+    } else if (filteredClientData && filteredClientData.length > 0 && selectedIndex >= 0 && selectedIndex < filteredClientData.length) {
+        const currentClient = filteredClientData[selectedIndex];
+        currentClientName = currentClient.clientName || currentClient.ClientName || "PC-01";
+    }
+
+    // Optional: If you want to show the PC name on the warning modal target element
+    const warningPcTarget = document.getElementById('warningPcTarget');
+    if (warningPcTarget) {
+        warningPcTarget.innerText = currentPcName;
+    }
+
+    if (warningModal) {
+        warningModal.classList.add('visible');
+    }
+
+    // Send log to logKioskEvent with type ACCEPTOR including the PC name
+    logKioskEvent(`Anti Static Ignition Detection triggered on ${currentPcName}`, "0", false, "ACCEPTOR");
+
+    speakText("Anti static ignition");
+
+    resetWarningModalCloseTimer();
+}
+function hideWarningModal() {
+    if (warningModal) {
+        warningModal.classList.remove('visible');
+    }
+    if (warningCloseTimer) clearTimeout(warningCloseTimer);
+    if (warningCountdownInterval) clearInterval(warningCountdownInterval);
+    resetIdleTimer();
+}
+
+function resetWarningModalCloseTimer() {
+    if (warningCloseTimer) clearTimeout(warningCloseTimer);
+    if (warningCountdownInterval) clearInterval(warningCountdownInterval);
+
+    warningRemainingSeconds = 5;
+    if (warningModalTimerText) {
+        warningModalTimerText.innerText = `Closing in ${warningRemainingSeconds}s`;
+    }
+
+    warningCountdownInterval = setInterval(() => {
+        warningRemainingSeconds--;
+        if (warningRemainingSeconds > 0) {
+            if (warningModalTimerText) {
+                warningModalTimerText.innerText = `Closing in ${warningRemainingSeconds}s`;
+            }
+        } else {
+            if (warningModalTimerText) {
+                warningModalTimerText.innerText = `Closing...`;
+            }
+        }
+    }, 1000);
+
+    warningCloseTimer = setTimeout(() => {
+        hideWarningModal();
+    }, 5000);
+}
+
+
+// --- BROWSER FOCUS & LIFECYCLE LOCK HANDLERS ---
+
+window.addEventListener('blur', () => {
+    console.log('[Security] Browser lost focus (Alt+Tab). Locking serial...');
+    forceLockSystem();
+});
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        console.log('[Security] Tab hidden. Locking serial...');
+        forceLockSystem();
+    } else {
+        // When tab becomes visible again, make sure the idle countdown isn't hanging around improperly
+        cancelIdleLock();
+        syncArduinoState();
+    }
+});
+
+window.addEventListener('focus', () => {
+    // Clean up any lingering countdown timers when returning to the window
+    cancelIdleLock();
+    syncArduinoState();
+});
+
+window.addEventListener('beforeunload', (e) => {
+    try {
+        if (serialWriter && serialPort && serialPort.writable) {
+            const encoder = new TextEncoder();
+            serialWriter.write(encoder.encode('L'));
+        }
+    } catch (err) {
+        console.warn('Could not lock serial on unload:', err);
+    }
+});
+
+function forceLockSystem() {
+    cancelIdleLock(); // Kill any ongoing countdown immediately
+
+    if (!isPressAnyKeyVisible()) {
+        const screen = document.getElementById('pressAnyKeyScreen');
+        if (screen) screen.style.display = 'block';
+        const psp = document.getElementById('pspContainer');
+        if (psp) psp.style.display = 'none';
+    }
+
+    sendSerialCommand('L');
 }

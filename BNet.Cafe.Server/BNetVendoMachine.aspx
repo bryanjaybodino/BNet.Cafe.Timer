@@ -49,6 +49,16 @@
             <div class="number-modal-timer" id="modalTimerText">Closing in 5s</div>
         </div>
     </div>
+
+    <!-- Anti Static Ignition Detection Warning Modal -->
+    <div class="number-modal-overlay" id="warningModal">
+        <div class="number-modal-box" style="border-color: #ff3b30; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 59, 48, 0.3);">
+            <div class="number-modal-pc-target" style="background: rgba(255, 59, 48, 0.2); color: #ff3b30; border-color: rgba(255, 59, 48, 0.3);">WARNING</div>
+            <div class="number-modal-label" style="margin-top: 10px;">System Alert</div>
+            <div class="number-modal-display" style="font-size: clamp(1.4rem, 3.5vw, 2rem); color: #ff3b30; text-shadow: 0 0 15px rgba(255, 59, 48, 0.4);">Anti Static Ignition Detection</div>
+            <div class="number-modal-timer" id="warningModalTimerText">Closing in 5s</div>
+        </div>
+    </div>
     <form runat="server" id="MainForm">
         <asp:ScriptManager ID="ScriptManager1" EnableCdn="false" EnablePageMethods="true" EnablePartialRendering="true" AsyncPostBackTimeout="99999999" ScriptMode="Release" ValidateRequestMode="Enabled" EnableScriptLocalization="true" EnableScriptGlobalization="true" LoadScriptsBeforeUI="false" CompositeScript-ScriptMode="Release" CompositeScript-ResourceUICultures="Release" runat="server"></asp:ScriptManager>
         <asp:UpdatePanel ID="UpdatePanelModalTrigger" runat="server" UpdateMode="Conditional">

@@ -135,10 +135,20 @@ void flushLog() {
       case EV_FALL:        Serial.println(F("COIN pin went LOW")); break;
       case EV_ACCEPT:      Serial.print(F("COIN ACCEPTED pulse, width="));
                            Serial.print(e.widthUs); Serial.println(F("us")); break;
-      case EV_REJ_SHORT:   Serial.print(F("COIN REJECTED too short (noise/spark), width="));
-                           Serial.print(e.widthUs); Serial.println(F("us")); break;
+      case EV_REJ_SHORT:   
+                           Serial.print(F("COIN REJECTED too short (noise/spark), width="));
+                           Serial.print(e.widthUs); Serial.println(F("us")); 
+          
+                           Keyboard.write('0');
+                           Keyboard.write(KEY_RETURN);
+                           break;
+
       case EV_REJ_LOCKED:  Serial.print(F("COIN rejected: locked, width="));
-                           Serial.print(e.widthUs); Serial.println(F("us")); break;
+                           Serial.print(e.widthUs); Serial.println(F("us")); 
+                           
+                           Keyboard.write('0');
+                           Keyboard.write(KEY_RETURN);
+                           break;
       case EV_REJ_SETTLE:  Serial.print(F("COIN rejected: settle window, width="));
                            Serial.print(e.widthUs); Serial.println(F("us")); break;
       case EV_REJ_GAP:     Serial.print(F("COIN rejected: gap too small, width="));
