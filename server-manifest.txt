@@ -79,7 +79,7 @@ c0f885efc78bf186568b84516dbcfe5332e9dc54	Assets/Portal/Script.js
 05040ff052bbca19b0988c4a9dc88bec34a2d91e	Assets/ResetPassword/Style.css
 bb93fd4488e4131a656920f77786e97b1be961ae	Assets/Shop/Script.js
 045a101b461089bee44ec2d24ac74ec3cea18ef9	Assets/Shop/Style.css
-ebaedd4802608cac5326ab9da4f9ccb0b43b2985	Assets/Vendo/Script.js
+2e0a5ffa0bedd6990982b603ab6d1b51b983f41d	Assets/Vendo/Script.js
 4e6e07b76b39bcce08bb54db01e72c0bd3f2ec43	Assets/Vendo/Style.css
 dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Assets/fontawesome/font-awesome.min.css
 71e31852689289b8d7b94ce0541953df40f76500	Assets/fontawesome/webfonts/fa-brands-400.woff2
@@ -87,7 +87,7 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Assets/fontawesome/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Assets/fontawesome/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Assets/fontawesome/webfonts/fa-v4compatibility.woff2
 a56162a961884ca144a4ab1f7926c54705f7b440	BNetPage.aspx
-1a38814dcef0b5e7c35ac2a6af988a2a43cf2b27	BNetVendoMachine.aspx
+2c854f1986b5d9eab82484562b8b3b753ef9a42a	BNetVendoMachine.aspx
 4dd7bebdd3a75227a6910fab67ff4434c0bae790	Callback.aspx
 d9de729153602b5099d1e72ebc169f17b35c5aa2	ClientChat.aspx
 4d801e74b2cb314020e0f2e638cb5e05da90f782	Databases/Queries/AutoCreditRates/Create.sql
@@ -259,8 +259,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-be510e593d0fd2f263bb6515b6f6f87aec73a4f3	bin/BNet.Cafe.Server.dll
-18ed0de140e5f87f58b4a12365997d23195a6c56	bin/BNet.Cafe.Server.pdb
+16425913076b981f50c81e04ce6924394dbc43f7	bin/BNet.Cafe.Server.dll
+802c4f2dd7ff9eeb91094ebbfc44cab3326fbd47	bin/BNet.Cafe.Server.pdb
 434c0cf7f0f2a5afa3931a36bb700c8c8a8ff5de	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 305e3276fd3eab1985b3960dc036c775222bbfac	bin/BNet.Cafe.Websocket.pdb
