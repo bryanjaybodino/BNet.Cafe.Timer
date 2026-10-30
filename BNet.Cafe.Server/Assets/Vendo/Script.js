@@ -29,9 +29,19 @@ function resetIdleTimer() {
 
     if (isMainMenuViewable && !isModalOpen()) {
         idleTimer = setTimeout(() => {
+            // Never start the lock countdown while money is being inserted / change is dispensing
+            if (isModalOpen() || changerDispensing) { cancelIdleLock(); return; }
             startLockCountdown();
         }, IDLE_TIMEOUT_MS);
     }
+}
+
+// Stops the idle timer AND a running "LOCKING IN Xs" countdown, and hides the banner.
+function cancelIdleLock() {
+    if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
+    if (lockCountdownInterval) { clearInterval(lockCountdownInterval); lockCountdownInterval = null; }
+    const idleFooter = document.getElementById('idleCountdownFooter');
+    if (idleFooter) idleFooter.style.display = 'none';
 }
 
 function startLockCountdown() {
@@ -39,7 +49,7 @@ function startLockCountdown() {
     const bannerIcon = document.getElementById('bannerIcon');
     const bannerText = document.getElementById('bannerText');
 
-    lockRemainingSeconds = 60; // Countdown duration before locking
+    lockRemainingSeconds = 15; // Countdown duration before locking
     if (bannerIcon) bannerIcon.className = 'fas fa-lock';
     if (bannerText) bannerText.innerText = `LOCKING IN ${lockRemainingSeconds}s`;
 
@@ -51,6 +61,9 @@ function startLockCountdown() {
     if (lockCountdownInterval) clearInterval(lockCountdownInterval);
 
     lockCountdownInterval = setInterval(() => {
+        // Coin/bill activity during the countdown -> abort the lock
+        if (isModalOpen() || changerDispensing) { cancelIdleLock(); return; }
+
         lockRemainingSeconds--;
         if (bannerText) bannerText.innerText = `LOCKING IN ${lockRemainingSeconds}s`;
 
@@ -165,7 +178,7 @@ function isModalOpen() {
 }
 
 function showNumberModal(pcName) {
-    if (idleTimer) clearTimeout(idleTimer); // Prevent idle trigger while modal is open
+    cancelIdleLock(); // stops idle timer + running lock countdown + hides banner
     modalPcTarget.innerText = pcName || "PC-01";
     numberModal.classList.add('visible');
 }
@@ -285,11 +298,11 @@ function handleNumberInput(digit) {
     // Play bill insertion sound on every input
     playCoinSound();
 
-    const currentPending = parseInt(pendingDigits, 10) || 0;
-    const incomingDigit = parseInt(digit, 10) || 0;
-    pendingDigits = currentPending + incomingDigit;
+    // Append each digit as TEXT so "1","0","0" becomes "100" (not 1+0+0).
+    pendingDigits = String(pendingDigits) + String(digit);
 
-    modalNumberDisplay.innerText = totalAmount + pendingDigits;
+    // totalAmount is a number, pendingDigits is text -> convert before adding.
+    modalNumberDisplay.innerText = totalAmount + (parseInt(pendingDigits, 10) || 0);
     showNumberModal(currentPcName);
     resetModalCloseTimer();
 }
@@ -302,6 +315,7 @@ function handleEnterInput() {
         pendingDigits = "";
     }
     modalNumberDisplay.innerText = totalAmount;
+    cancelIdleLock();   // keep lock off after each bill
     resetModalCloseTimer();
 }
 
