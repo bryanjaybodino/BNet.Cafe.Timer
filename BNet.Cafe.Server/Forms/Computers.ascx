@@ -5,8 +5,7 @@
 <%@ Register Src="~/Forms/Modals/RemoteTimePause.ascx" TagPrefix="uc1" TagName="RemoteTimePause" %>
 <%@ Register Src="~/Forms/Modals/RemoteShutdown.ascx" TagPrefix="uc1" TagName="RemoteShutdown" %>
 <%@ Register Src="~/Forms/Modals/RemoteRestart.ascx" TagPrefix="uc1" TagName="RemoteRestart" %>
-
-
+<%@ Register Src="~/Forms/Modals/RemoteWakeUp.ascx" TagPrefix="uc1" TagName="RemoteWakeUp" %>
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
     <ContentTemplate>
@@ -79,7 +78,6 @@
         </div>
         <div class="bnet-table-wrapper">
             <div class="bnet-table-toolbar">
-                <!-- Group filters together inline -->
                 <div class="toolbar-filters">
                     <div class="search-box">
                         <asp:TextBox ID="TextBox_Search" AutoPostBack="true" runat="server" CssClass="search-input" placeholder="Search computers..." />
@@ -99,14 +97,13 @@
                 <div style="display: flex; gap: 8px;">
                     <a class="btn btn-secondary" onclick="openPauseModal('')">
                         <i class="fa-solid fa-circle-pause"></i>Pause / Resume Time
-            </a>
+                    </a>
                     <asp:HyperLink ID="HyperLink_Add" NavigateUrl="~/BNetPage.aspx?Form=ComputerCreate" CssClass="btn btn-primary" runat="server">
-                + Add Computer 
-            </asp:HyperLink>
+                        + Add Computer 
+                    </asp:HyperLink>
                 </div>
             </div>
 
-            <!-- Scrollable container wrapper -->
             <div class="bnet-table-container">
                 <asp:GridView ID="GridViewTable" runat="server" ShowHeaderWhenEmpty="true"
                     AutoGenerateColumns="False" CssClass="bnet-table" GridLines="None"
@@ -123,6 +120,13 @@
                                         Command <i class="fa-solid fa-chevron-down"></i>
                                     </button>
                                     <div class="bnet-dropdown-menu">
+                                        <!-- Wake on LAN (Visible only when offline & MAC exists) -->
+                                        <asp:Panel ID="Panel_WakeOnLan" Visible='<%# Eval("IsWakeOnLanVisible") %>' runat="server">
+                                            <a class="bnet-dropdown-item"
+                                                onclick="openWakeUpModal('<%# Eval("DBComputerName") %>', '<%# Eval("DBMACAddress") %>')">
+                                                <i class="fa-solid fa-power-off" style="color: var(--primary);"></i>Wake up PC (WoL)
+                                            </a>
+                                        </asp:Panel>
                                         <asp:Panel ID="Panel_ManageRental" Visible='<%# Eval("IsManageRentalVisible") %>' runat="server">
                                             <a onclick="navigateTo('BNetPage.aspx?Form=RentalManage&id=<%# Eval("DBId") %>')" class="bnet-dropdown-item">
                                                 <i class="fa-regular fa-clock"></i>Manage Rental Session
@@ -233,5 +237,6 @@
         <uc1:RemoteTimePause runat="server" ID="RemoteTimePause" />
         <uc1:RemoteShutdown runat="server" ID="RemoteShutdown" />
         <uc1:RemoteRestart runat="server" ID="RemoteRestart" />
+        <uc1:RemoteWakeUp runat="server" ID="RemoteWakeUp" />
     </ContentTemplate>
 </asp:UpdatePanel>

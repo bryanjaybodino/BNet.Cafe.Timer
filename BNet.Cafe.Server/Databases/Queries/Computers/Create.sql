@@ -14,6 +14,7 @@ SELECT
 -- Insert new record if no conflict exists
 INSERT INTO computers (
     DBComputerName,
+    DBMACAddress,
     DBPosX,
     DBPosY,
     DBDateCreated,
@@ -22,6 +23,7 @@ INSERT INTO computers (
 )
 SELECT 
     '{DBComputerName}',
+    '{DBMACAddress}',
     '{DBPosX}',
     '{DBPosY}',
     '{DBDateCreated}',

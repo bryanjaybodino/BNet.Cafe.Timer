@@ -1,15 +1,19 @@
 ﻿/**
- * Validates the Computer Creation form fields, disables submit button, and shows loading indicator
+ * Validates the Computer Create/Edit form fields, disables submit button, and shows loading indicator
  * @returns {boolean} True if valid, false to cancel ASP.NET postback
  */
 function Validate() {
     var computerInput = document.querySelector('[id$="TextBox_ComputerName"]');
+    var macInput = document.querySelector('[id$="TextBox_MACAddress"]');
+
     var inputId = computerInput ? computerInput.id : 'TextBox_ComputerName';
+    var macId = macInput ? macInput.id : 'TextBox_MACAddress';
 
     var isValidComputer = requiredValidation(inputId);
+    var isValidMac = requiredValidation(macId);
 
-    if (!isValidComputer) {
-        ShowAlert('Please enter a computer name.');
+    if (!isValidComputer || !isValidMac) {
+        ShowAlert('Please fill in both the computer name and MAC address.');
         return false;
     }
 
@@ -17,6 +21,7 @@ function Validate() {
     disableSubmitButton();
     return true;
 }
+
 function disableSubmitButton() {
     var btn = document.querySelector('[id$="LinkButton_Submit"]');
     if (btn) {
@@ -29,22 +34,19 @@ function disableSubmitButton() {
 if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager) {
     var prm = Sys.WebForms.PageRequestManager.getInstance();
 
-    // Triggered after UpdatePanel content updates
     prm.add_pageLoaded(function (sender, args) {
         var panelsUpdated = args.get_panelsUpdated();
         if (panelsUpdated.length > 0) {
-            // Re-disable button during redirect window if needed
             disableSubmitButton();
         }
     });
 
-    // Triggered when an async postback finishes (success or error)
     prm.add_endRequest(function (sender, args) {
         var btn = document.querySelector('[id$="LinkButton_Submit"]');
         if (btn) {
             btn.classList.remove('disabled');
             btn.style.pointerEvents = 'auto';
-            btn.innerHTML = 'Submit'; // Restore original text/HTML
+            btn.innerHTML = 'Submit';
         }
     });
 }
