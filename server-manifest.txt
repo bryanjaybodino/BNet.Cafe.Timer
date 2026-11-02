@@ -142,7 +142,7 @@ fab506d54a1192ddec89165a8ca6a24b3046269c	Databases/Queries/InventoryTransactions
 4f6194ae9470d2634506561bc26d1f7fc7251f60	Databases/Queries/InventoryTransactions/UpdateCount.sql
 e086fc71296e314996298ac0a0b0103fd9c90662	Databases/Queries/KioskLogs/Create.sql
 bd3bac4ade496c6a6d3c62179084ffcf8d54eb42	Databases/Queries/KioskLogs/GetAll.sql
-758c2a132ade58c764db1bf38b7432d98ab27bfb	Databases/Queries/KioskLogs/GetCount.sql
+fcaee45be4fc2970a6cfc751bdefc07dface640e	Databases/Queries/KioskLogs/GetCount.sql
 54c6bb52acc148386a66756ceb238ab5f4a7e83a	Databases/Queries/Points/Create.sql
 8def296ff6089d3be1757af843783d8d22caf587	Databases/Queries/Points/GetAll.sql
 67a57e44936ba141bd16c84c9e47ddc0ced60087	Databases/Queries/Points/GetCount.sql
@@ -219,7 +219,7 @@ f3604602d18cbee656b1325fed99e55c22901e51	Forms/Points.ascx
 c69f3e245c2f51a99e0c128f4ac2467dc39144e4	Forms/PointsSettings.ascx
 f1b2d024ad4a509c4c6c82b5a04e7b26b21ae4a7	Forms/PricingSettings.ascx
 0bc8c4d0e9afab809f737e9809cd465d83e081d4	Forms/Remote.ascx
-80bfc79462fd44a3b342615e7b12ac7f51c3f660	Forms/RentalManage.ascx
+65ac71e7588182210ca0cffd4eb61e09e8bdf9bd	Forms/RentalManage.ascx
 88b8e3dd0575e313ca18fb0b26486ff9076436e9	Forms/Sales.ascx
 fe418856b8f96591adfbdae1244a106d13e61cee	Forms/SeatMap.ascx
 8886bfdd0b89f0de254e3881384b812c32a8dfa3	Forms/SportTimer.ascx
@@ -260,8 +260,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-5e81a8d065da3fab6e8ac5961ffa300b02063e99	bin/BNet.Cafe.Server.dll
-79f3adfd85e78a5d06986e8cf1a3a9bf480eaf98	bin/BNet.Cafe.Server.pdb
+1a30099ab987638ce4eae2988d55afa4620b3415	bin/BNet.Cafe.Server.dll
+28816c73a4b722b1644069b48a188252ac152540	bin/BNet.Cafe.Server.pdb
 32ec196b27f99ed50e7f8cfde6724278fc67b9a6	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 45822039c68adf3bfce141b6ab575089b3065531	bin/BNet.Cafe.Websocket.pdb
@@ -278,7 +278,7 @@ f2d83c51416e90dbc31154545b16df3b3f7a7909	bin/System.Buffers.dll
 c5ba4e4047a15b3adc61340c781307d9c6e89413	bin/System.Runtime.CompilerServices.Unsafe.dll
 eeec92852705946904d0e2fa0443d454075781f5	bin/System.Threading.Tasks.Extensions.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	bin/zxing.dll
-cc06aab4ca07af3d773e45816d910e1f84f9c5dd	kiosk-mode.bat
+61c4e6769f9d4c5d4c7c72006d7514c1e8f807a2	kiosk-mode.bat
 c9869f8686fb6fea3be99d09f67568a5bd3eae4c	patcher.bat
 e91827174c587f4cb5b3c3fadc097e4de9880b56	patcher.ps1
 5f282702bb03ef11d7184d19c80927b47f919764	temp_files/Barcodes/placeholder.txt
