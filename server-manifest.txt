@@ -249,7 +249,7 @@ a108f527c1d6f09d67c76bc23adb81d812d3ebf1	Forms/Users.ascx
 c4de12e93ee321ab4507003ee471d85f5c84e1eb	ServerChat.html
 692dbd38d27d156f5981140a7552fc0ce4baaf70	Shop.aspx
 db15667f9a6089b6f72ae576e5b07703ec8df2bb	Uploads/default.png
-854336f4d3ae88b3c8423a9ed370658789402230	Web.config
+73cb0b9a769cd3ffd12b8d36013f1055f96ea081	Web.config
 dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 677cd572634a8c4e6e3fd348468c188ecbba6bcc	Website/assets/fonts.googleapis.css
 895f6f37549b5e8b24822263533658d22d87df91	Website/assets/gcash.jpg
@@ -260,11 +260,11 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-ff6b2a9bce321418b7ff0b7cab172a1794badfb2	bin/BNet.Cafe.Server.dll
-fbde730c7d1a8cefdd4aa8faf196b12c8dfafadf	bin/BNet.Cafe.Server.pdb
-434c0cf7f0f2a5afa3931a36bb700c8c8a8ff5de	bin/BNet.Cafe.Websocket.exe
+72463360ed728978c0b7790767aa500ec459e902	bin/BNet.Cafe.Server.dll
+befed0eb90e84e350d3e038a4366ff676534d687	bin/BNet.Cafe.Server.pdb
+dba00d8a1d5eeec5ff0dc0abe04ac8b7056db066	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
-305e3276fd3eab1985b3960dc036c775222bbfac	bin/BNet.Cafe.Websocket.pdb
+bec4cf541cefefb3999332577c5798adfa312fb2	bin/BNet.Cafe.Websocket.pdb
 f4453a5a2ab054ba4df04ed431dcebc366a613a4	bin/BNet.FTPServer.dll
 1b1f204165327bd0fbd04378350e87e793645b59	bin/Microsoft.Extensions.Logging.Abstractions.dll
 1acaf092a11563a6ad8608e898a6761e9a14afa4	bin/MySqlConnector.dll
