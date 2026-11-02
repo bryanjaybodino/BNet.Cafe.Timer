@@ -2,5 +2,5 @@
 WHERE 1 
 AND DBIsDeleted ='{DBIsDeleted}' 
 AND DBComputerName LIKE '%{DBComputerName}%'
-ORDER BY DBId DESC 
+ORDER BY DBComputerName ASC 
 {LIMIT}

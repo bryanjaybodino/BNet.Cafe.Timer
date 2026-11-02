@@ -15,8 +15,12 @@
             document.documentElement.classList.add('no-transitions');
         })();
     </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="google" content="notranslate" />
+    <meta name="robots" content="noarchive, noindex, nosnippet" />
+    <link rel="icon" type="image/png" href="App/icon.png">
     <title>BNet Cafe</title>
     <link href="Assets/fontawesome/font-awesome.min.css" rel="stylesheet" />
     <% Response.Write(BNet.Cafe.Server.Services.FileCssHelper.StyleSheetVersion("Assets/bundle.min.css")); %>
@@ -141,9 +145,6 @@
                         <asp:HyperLink ID="HyperLink_Config" runat="server" ToolTip="Config" onclick="navigateTo('?Form=Config'); return false;">
                             <i class="fas fa-code"></i><span>Config</span>
                         </asp:HyperLink>
-                        <asp:HyperLink ID="HyperLink_Commits" runat="server" ToolTip="GitHubCommitsFeed" onclick="navigateTo('?Form=GitHubCommitsFeed'); return false;">
-                            <i class="fab fa-github"></i><span>Commits</span>
-                        </asp:HyperLink>
                     </div>
                 </details>
                 <!-- DOWNLOAD APP -->
@@ -160,6 +161,9 @@
                 </div>
                 <asp:HyperLink ID="HyperLink_KioskLogs" runat="server" ToolTip="KioskLogs" onclick="navigateTo('?Form=KioskLogs'); return false;">
                             <i class="fas fa-note-sticky"></i><span>Kiosk Logs</span>
+                </asp:HyperLink>
+                <asp:HyperLink ID="HyperLink_Commits" runat="server" ToolTip="GitHubCommitsFeed" onclick="navigateTo('?Form=GitHubCommitsFeed'); return false;">
+                            <i class="fab fa-github"></i><span>Latest Updates</span>
                 </asp:HyperLink>
             </div>
         </div>

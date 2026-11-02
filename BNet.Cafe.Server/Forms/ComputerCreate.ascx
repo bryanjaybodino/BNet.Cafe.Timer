@@ -17,7 +17,7 @@
                 </div>
                 <!-- MAC Address -->
                 <div class="form-group">
-                    <label for="<%= TextBox_MACAddress.ClientID %>">MAC Address <span style="color: #ef4444;">*</span></label>
+                    <label for="<%= TextBox_MACAddress.ClientID %>">MAC Address <span style="color: #ef4444;"></span></label>
                     <asp:TextBox ID="TextBox_MACAddress" runat="server" CssClass="form-control" placeholder="e.g., A4-C3-F0-A4-75-40" MaxLength="50"></asp:TextBox>
                 </div>
             </div>

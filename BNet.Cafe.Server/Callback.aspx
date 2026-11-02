@@ -4,6 +4,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="google" content="notranslate" />
+    <meta name="robots" content="noarchive, noindex, nosnippet" />
+    <link rel="icon" type="image/png" href="App/icon.png">
     <title>Processing...</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
     <style>
