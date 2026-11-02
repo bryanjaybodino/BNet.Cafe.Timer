@@ -87,6 +87,25 @@
                 </asp:Panel>
             </div>
         </asp:Panel>
+        <asp:Panel ID="Panel_PriceSettingAlert" Visible="false" runat="server" Style="background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-light-tertiary) 100%); border: 1px solid var(--border-light); border-radius: 12px; padding: 24px; margin-top: 20px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px;">
+                <div style="width: 48px; height: 48px; background-color: var(--bg-light-secondary); color: var(--accent-pingpong); border: 1px solid var(--border-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin: 0 0 4px 0;">Configuration Required</h3>
+                    <p style="font-size: 14px; color: var(--text-light-secondary); margin: 0;">No active pricing rates found. Please configure your rates to enable rental duration calculations and checkout options.</p>
+                </div>
+            </div>
+            <div style="max-width: 320px; margin: 0 auto;">
+                <asp:HyperLink ID="HyperLink_PriceSettings" runat="server"
+                    CssClass="btn btn-primary"
+                    Style="width: 100%; text-align: center; justify-content: center; display: inline-flex; align-items: center; gap: 8px;"
+                    onclick="navigateTo('?Form=PricingSettings'); return false;">
+                    <i class="fa-solid fa-gear"></i> Create Your Price Setting First
+                </asp:HyperLink>
+            </div>
+        </asp:Panel>
         <uc1:RemoteOpenTime runat="server" ID="RemoteOpenTime" />
     </ContentTemplate>
 </asp:UpdatePanel>

@@ -11,23 +11,23 @@ echo Launching True Full Screen Mode...
 
 :: Try Chrome first
 if exist "C:\Program Files\Google\Chrome\Application\chrome.exe" (
-    start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --app="%URL%" --start-fullscreen --user-data-dir="%TEMP%\BNetKiosk"
+    start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --app="%URL%" --kiosk --user-data-dir="%TEMP%\BNetKiosk"
     exit /b
 )
 
 if exist "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" (
-    start "" "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --app="%URL%" --start-fullscreen --user-data-dir="%TEMP%\BNetKiosk"
+    start "" "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --app="%URL%" --kiosk --user-data-dir="%TEMP%\BNetKiosk"
     exit /b
 )
 
 :: Fallback to Edge
 if exist "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" (
-    start "" "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --app="%URL%" --start-fullscreen --user-data-dir="%TEMP%\BNetEdgeKiosk"
+    start "" "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --app="%URL%" --kiosk --user-data-dir="%TEMP%\BNetEdgeKiosk"
     exit /b
 )
 
 if exist "C:\Program Files\Microsoft\Edge\Application\msedge.exe" (
-    start "" "C:\Program Files\Microsoft\Edge\Application\msedge.exe" --start-fullscreen --app="%URL%" --user-data-dir="%TEMP%\BNetEdgeKiosk"
+    start "" "C:\Program Files\Microsoft\Edge\Application\msedge.exe" --kiosk --app="%URL%" --user-data-dir="%TEMP%\BNetEdgeKiosk"
     exit /b
 )
 
