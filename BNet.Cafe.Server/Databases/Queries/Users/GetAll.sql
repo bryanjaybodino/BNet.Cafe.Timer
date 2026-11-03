@@ -39,5 +39,5 @@ LEFT JOIN (
 WHERE 1 = 1
   AND u.DBIsDeleted = '{DBIsDeleted}'
   AND (u.DBName LIKE '%{DBSearch}%' OR u.DBEmail LIKE '%{DBSearch}%')
-ORDER BY u.DBId DESC
+ORDER BY u.DBName ASC
 {LIMIT}

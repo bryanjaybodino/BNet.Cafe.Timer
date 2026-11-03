@@ -31,4 +31,10 @@ if exist "C:\Program Files\Microsoft\Edge\Application\msedge.exe" (
     exit /b
 )
 
+if exist "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" (
+    start "" "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" -kiosk "%URL%" -no-remote -profile "%TEMP%\BNetFirefoxKiosk"
+    exit /b
+)
+
+
 pause
