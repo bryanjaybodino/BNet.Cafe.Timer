@@ -171,7 +171,7 @@ c6a4949e6813d8709d863e8662478f975c625906	Databases/Queries/Suppliers/Update.sql
 4f6194ae9470d2634506561bc26d1f7fc7251f60	Databases/Queries/Suppliers/UpdateCount.sql
 34791e72334118409351c5edb9dc70b04395c00e	Databases/Queries/Users/Create.sql
 6a862dcc1fb99fa87c0f6bd98dedb5e28fb170e0	Databases/Queries/Users/DeleteById.sql
-4fb1aadfc0e3ab1a5d7c27db5d52ed1ce49137a6	Databases/Queries/Users/GetAll.sql
+868773b333609817aa2a1004f4f206ad46fd4715	Databases/Queries/Users/GetAll.sql
 449afc96a68dd1f740ecbe90faa9bac4126f5159	Databases/Queries/Users/GetByEmail.sql
 98aa518e28d6c7e3a4da722d4f90d028d3ff5d32	Databases/Queries/Users/GetById.sql
 6831fab1deea0070cb6a7362413035c7fa5abf95	Databases/Queries/Users/GetCount.sql
@@ -260,8 +260,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-b799600cb1de9746a2fdbd2c93cd19d95500b93d	bin/BNet.Cafe.Server.dll
-fc9a0ded6aeae7c1d2786fbf42d8374c3599e724	bin/BNet.Cafe.Server.pdb
+9b4cdef1521ceb5b9a76da2ca1ef4e670ab739a4	bin/BNet.Cafe.Server.dll
+8e7cdff7cebf7aa8a48fa4c0c34e8b099bff2cee	bin/BNet.Cafe.Server.pdb
 c891d32222aa82c323f2b589d7ba41f506ceab8c	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 e26fb59252ee656db4071cfd2a0f4297eda033f0	bin/BNet.Cafe.Websocket.pdb
@@ -278,7 +278,7 @@ f2d83c51416e90dbc31154545b16df3b3f7a7909	bin/System.Buffers.dll
 c5ba4e4047a15b3adc61340c781307d9c6e89413	bin/System.Runtime.CompilerServices.Unsafe.dll
 eeec92852705946904d0e2fa0443d454075781f5	bin/System.Threading.Tasks.Extensions.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	bin/zxing.dll
-61c4e6769f9d4c5d4c7c72006d7514c1e8f807a2	kiosk-mode.bat
+5fba397e0e80dd5c3f7861607a739c87135c894e	kiosk-mode.bat
 c9869f8686fb6fea3be99d09f67568a5bd3eae4c	patcher.bat
 e91827174c587f4cb5b3c3fadc097e4de9880b56	patcher.ps1
 5f282702bb03ef11d7184d19c80927b47f919764	temp_files/Barcodes/placeholder.txt
