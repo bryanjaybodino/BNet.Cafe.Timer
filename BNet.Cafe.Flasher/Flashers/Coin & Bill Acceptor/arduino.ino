@@ -1,12 +1,28 @@
 #include <Keyboard.h>
+#if defined(ARDUINO_ARCH_RP2040)
+  #include "hardware/watchdog.h"   // scratch registers survive a reset (cleared only on full power-on)
+#endif
 
-// COIN ACCEPTOR + BILL ACCEPTOR  (aligned with the Coin + Bill + Changer sketch)
+// Portable fast pin read: Pico SDK on RP2040, standard Arduino elsewhere (Leonardo/AVR)
+#if defined(ARDUINO_ARCH_RP2040)
+  #define readPin(p) gpio_get(p)
+#else
+  #define readPin(p) digitalRead(p)
+#endif
+
+// =====================================================================
+//  COIN ACCEPTOR + BILL ACCEPTOR
+//  Split from the Coin + Bill + Changer sketch (hopper removed).
+// =====================================================================
 // Works on any board with native USB keyboard support (Leonardo, Micro, Pro Micro, Pico, ...).
 // Check your board's logic level: Pico = 3.3V ONLY, Leonardo = 5V.
 //
 // Leonardo only has external interrupts on pins 0,1,2,3,7. If billPin has none,
 // it is read by a 1 kHz timer poll instead (automatic, see below).
 // With billPin = 3 (as below) a real hardware interrupt is used.
+//
+// Serial commands (single chars, instant):
+//   L = lock    U = unlock    x = test anti-static alert    i = print diagnostics
 
 // ---- Coin acceptor: pin 1 (coinPin), pin 2 (inhibitPin) ----
 const int coinPin    = 1;
@@ -47,6 +63,12 @@ const unsigned long billDebounceUs   = 2000UL;   // ignore edges < 2ms after the
 const int           BILL_CHUNK       = 10;       // bill credit is sent in steps of 10
 const unsigned long BILL_SEND_GAP_MS = 100;      // pause between each "10" so the PC can keep up
 
+// ---- Anti-static alert (sends "0" + Enter to the PC when a spark/ESD is detected) ----
+const unsigned long STATIC_SEND_GAP_MS  = 100;   // pause between each anti-static "0"+Enter
+const uint8_t       STATIC_PENDING_MAX  = 10;    // cap so a long static burst can't flood the PC
+const unsigned long STATIC_COALESCE_MS  = 30;    // one spark = a burst of spikes -> count it once (0 = off)
+const unsigned long BOOT_ALERT_DELAY_MS = 3000;  // wait for the USB keyboard to re-enumerate on the PC
+
 // ---- Coin shared with ISR ----
 volatile int pulseCount = 0;
 volatile unsigned long lastPulseTime = 0;
@@ -55,12 +77,25 @@ volatile unsigned long fallUs = 0;
 volatile bool pulseActive = false;
 volatile bool lockedISR = true;
 
+// Alert counter set by the ISR, consumed by loop(). Independent of DEBUG and Serial.
+volatile uint8_t staticPending = 0;
+volatile unsigned long lastStaticQueueMs = 0;
+bool abnormalBoot = false;                 // Pico: restarted without losing power (static/ESD reset)
+// Diagnostics: type 'i' in the serial monitor to print, 'x' to force a test alert
+volatile unsigned long isrCalls = 0;       // total coin interrupts seen
+volatile unsigned long glitchCount = 0;    // spikes too fast to see the falling edge
+volatile unsigned long staticSent = 0;     // alerts actually sent to the PC
+
 // ---- Bill shared with ISR ----
 volatile int billPulseCount = 0;
 volatile unsigned long billLastPulseTime = 0;
 volatile unsigned long billLastEdgeUs = 0;
 volatile unsigned long billFallUs = 0;
 volatile bool billPulseActive = false;
+
+// Used only if billPin has no hardware interrupt (polled instead)
+bool billPolled = false;
+volatile bool billLastLevel = true;
 
 bool locked = true;
 
@@ -83,15 +118,27 @@ void logEvent(uint8_t type, unsigned long widthUs) {
   logHead = next;
 }
 
+// Called from the ISR when an anti-static condition is detected.
+// Does NOT depend on DEBUG, the log buffer, or the serial port.
+inline void queueStaticAlert() {
+  unsigned long now = millis();
+  if (now - lastStaticQueueMs < STATIC_COALESCE_MS) return;   // same spark, already queued
+  lastStaticQueueMs = now;
+  if (staticPending < STATIC_PENDING_MAX) staticPending++;
+}
+
 void flushLog() {
-  // On Leonardo/AVR, Serial.print BLOCKS when the PC isn't reading the port (the web page
-  // only writes, never reads). Only print when there is room, so the loop never stalls.
-  while (logTail != logHead && Serial.availableForWrite() >= 48) {
+  // Always pop events so the ring buffer can never get stuck full. On Leonardo/AVR,
+  // Serial.print BLOCKS when the PC isn't reading the port, so only print when there
+  // is room (otherwise the log line is dropped). Keyboard output is NOT done here.
+  while (logTail != logHead) {
     Event e;
     e.type = logBuf[logTail].type;
     e.ms = logBuf[logTail].ms;
     e.widthUs = logBuf[logTail].widthUs;
     logTail = (logTail + 1) % LOG_SIZE;
+
+    if (Serial.availableForWrite() < 48) continue;   // drop log line, keep draining
 
     Serial.print(F("LOG "));
     Serial.print(e.ms);
@@ -100,20 +147,10 @@ void flushLog() {
       case EV_FALL:        Serial.println(F("COIN pin went LOW")); break;
       case EV_ACCEPT:      Serial.print(F("COIN ACCEPTED pulse, width="));
                            Serial.print(e.widthUs); Serial.println(F("us")); break;
-      case EV_REJ_SHORT:   
-                           Serial.print(F("COIN REJECTED too short (noise/spark), width="));
-                           Serial.print(e.widthUs); Serial.println(F("us")); 
-          
-                           Keyboard.write('0');
-                           Keyboard.write(KEY_RETURN);
-                           break;
-
+      case EV_REJ_SHORT:   Serial.print(F("COIN REJECTED too short (noise/spark), width="));
+                           Serial.print(e.widthUs); Serial.println(F("us")); break;
       case EV_REJ_LOCKED:  Serial.print(F("COIN rejected: locked, width="));
-                           Serial.print(e.widthUs); Serial.println(F("us")); 
-                           
-                           Keyboard.write('0');
-                           Keyboard.write(KEY_RETURN);
-                           break;
+                           Serial.print(e.widthUs); Serial.println(F("us")); break;
       case EV_REJ_SETTLE:  Serial.print(F("COIN rejected: settle window, width="));
                            Serial.print(e.widthUs); Serial.println(F("us")); break;
       case EV_REJ_GAP:     Serial.print(F("COIN rejected: gap too small, width="));
@@ -135,6 +172,7 @@ void applyLockState() {
   // In relay mode the pin is ALWAYS an OUTPUT and is driven HIGH or LOW.
   if (COIN_USE_RELAY) {
     bool relayOn = COIN_RELAY_ON_WHEN_UNLOCKED ? !locked : locked;
+    // active-LOW board: ON = LOW, OFF = HIGH.  active-HIGH board: ON = HIGH, OFF = LOW.
     bool level = (relayOn == COIN_RELAY_ACTIVE_LOW) ? LOW : HIGH;
     digitalWrite(inhibitPin, level);   // set level first so the relay does not glitch...
     pinMode(inhibitPin, OUTPUT);       // ...then make it an output
@@ -198,7 +236,8 @@ void applyLockState() {
 // ---- Coin ISR: fires on both edges. Pulse = LOW period; width checked on RISING. ----
 void coinISR() {
   unsigned long nowUs = micros();
-  bool level = digitalRead(coinPin);
+  bool level = readPin(coinPin);
+  isrCalls++;
 
   if (!level) {                               // FALLING
     fallUs = nowUs;
@@ -208,14 +247,24 @@ void coinISR() {
   }
 
   // RISING
-  if (!pulseActive) return;
+  unsigned long nowMs = millis();
+  if (!pulseActive) {
+    // The pin already went LOW->HIGH before this ISR could read it, so the falling edge
+    // was never seen. A real coin pulse is ms long and is never missed, so this is a
+    // static spike.
+    if (nowMs >= ignoreUntil) {          // skip the relay-click window after lock/unlock
+      glitchCount++;
+      queueStaticAlert();
+      if (DEBUG) logEvent(EV_REJ_SHORT, 0);
+    }
+    return;
+  }
   pulseActive = false;
   unsigned long width = nowUs - fallUs;
-  unsigned long nowMs = millis();
 
-  if (lockedISR)                  { if (DEBUG) logEvent(EV_REJ_LOCKED, width); return; }
+  if (lockedISR)                  { queueStaticAlert(); if (DEBUG) logEvent(EV_REJ_LOCKED, width); return; }
   if (nowMs < ignoreUntil)        { if (DEBUG) logEvent(EV_REJ_SETTLE, width); return; }
-  if (width < minPulseUs)         { if (DEBUG) logEvent(EV_REJ_SHORT, width);  return; }
+  if (width < minPulseUs)         { queueStaticAlert(); if (DEBUG) logEvent(EV_REJ_SHORT, width);  return; }
   if (pulseCount > 0 && nowMs - lastPulseTime < minGapMs)
                                   { if (DEBUG) logEvent(EV_REJ_GAP, width);    return; }
 
@@ -228,7 +277,7 @@ void coinISR() {
 void billISR() {
   unsigned long nowUs = micros();
   if (nowUs - billLastEdgeUs < billDebounceUs) return;   // bounce / glitch
-  bool level = digitalRead(billPin);
+  bool level = readPin(billPin);
 
   if (!level) {                               // FALLING
     if (billPulseActive) return;              // already low -> ignore duplicate
@@ -275,12 +324,9 @@ int evaluateBill(int pulses) {
   }
 }
 
-// ---- Pin polling for pins without a hardware interrupt ----
+// ---- Pin polling for billPin if it has no hardware interrupt ----
 // Edge-detects the pin and calls the same ISR logic. Runs from a 1 kHz timer on AVR,
-// or from loop() on other boards. Only active if billPin has no hardware interrupt.
-bool billPolled = false;
-volatile bool billLastLevel = true;
-
+// or from loop() on other boards. Only active if billPolled = true.
 void pollInputs() {
   if (billPolled) {
     bool lv = digitalRead(billPin);
@@ -292,12 +338,25 @@ void pollInputs() {
 SIGNAL(TIMER0_COMPA_vect) { pollInputs(); }   // piggy-back on Arduino's Timer0 (~1 kHz)
 #endif
 
-// ---- Serial commands (instant single chars): L = lock, U = unlock ----
+void printDiagnostics() {
+  Serial.print(F("coin ISR calls: ")); Serial.println(isrCalls);
+  Serial.print(F("fast glitches : ")); Serial.println(glitchCount);
+  Serial.print(F("alerts sent   : ")); Serial.println(staticSent);
+  Serial.print(F("coin pin now  : ")); Serial.println(digitalRead(coinPin) ? F("HIGH") : F("LOW"));
+  Serial.print(F("bill pin now  : ")); Serial.println(digitalRead(billPin) ? F("HIGH") : F("LOW"));
+}
+
+// ---- Serial commands (instant single chars) ----
 void handleSerial() {
   while (Serial.available() > 0) {
     char c = Serial.read();
     if ((c == 'L' || c == 'l') && !locked)      { locked = true;  applyLockState(); }
     else if ((c == 'U' || c == 'u') && locked)  { locked = false; applyLockState(); }
+    else if (c == 'x' || c == 'X') {
+      queueStaticAlert();                       // test: keyboard path only, no pin needed
+      Serial.println(F("TEST: static alert queued"));
+    }
+    else if (c == 'i' || c == 'I') printDiagnostics();
   }
 }
 
@@ -310,6 +369,13 @@ void attachInput(int pin, void (*isr)(), bool &polled) {
 }
 
 void setup() {
+  #if defined(ARDUINO_ARCH_RP2040)
+    // Reset detection: the magic is written on every boot. If it is still there at the
+    // next boot, the chip was reset (ESD/spark) without a full power cycle.
+    const uint32_t BOOT_MAGIC = 0xA5C0FFEE;
+    if (watchdog_hw->scratch[0] == BOOT_MAGIC) abnormalBoot = true;
+    watchdog_hw->scratch[0] = BOOT_MAGIC;
+  #endif
   Serial.begin(115200);
   Keyboard.begin();
   pinMode(LED_BUILTIN, OUTPUT);
@@ -327,10 +393,15 @@ void setup() {
   if (coinPolled) Serial.println(F("WARNING: coinPin has no hardware interrupt on this board!"));
   attachInput(billPin, billISR, billPolled);
   #if defined(ARDUINO_ARCH_AVR)
-    OCR0A = 0x80;
-    TIMSK0 |= _BV(OCIE0A);       // enable Timer0 compare-A interrupt for polling
+    if (billPolled) {
+      OCR0A = 0x80;
+      TIMSK0 |= _BV(OCIE0A);       // enable Timer0 compare-A interrupt for polling
+    }
   #endif
-  if (DEBUG) Serial.println(F("LOG ready"));
+  if (DEBUG) {
+    Serial.println(F("LOG ready"));
+    if (abnormalBoot) Serial.println(F("LOG abnormal restart detected (static/ESD?)"));
+  }
 }
 
 void loop() {
@@ -341,6 +412,26 @@ void loop() {
   #endif
 
   if (DEBUG) flushLog();
+
+  // ---- After an abnormal restart (Pico), send the anti-static message once ----
+  static bool bootAlertDone = false;
+  if (abnormalBoot && !bootAlertDone && millis() > BOOT_ALERT_DELAY_MS) {
+    bootAlertDone = true;
+    queueStaticAlert();
+  }
+
+  // ---- Anti-static alert -> "0" + Enter to the PC ----
+  // Runs every loop, no dependency on DEBUG / Serial / log buffer.
+  static unsigned long lastStaticSendMs = 0;
+  if (staticPending > 0 && millis() - lastStaticSendMs >= STATIC_SEND_GAP_MS) {
+    noInterrupts();
+    if (staticPending > 0) staticPending--;
+    interrupts();
+    Keyboard.write('0');
+    Keyboard.write(KEY_RETURN);
+    staticSent++;
+    lastStaticSendMs = millis();
+  }
 
   // ---- Coin ----
   int count = 0;
