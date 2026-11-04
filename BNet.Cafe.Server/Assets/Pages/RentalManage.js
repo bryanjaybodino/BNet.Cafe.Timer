@@ -1,13 +1,20 @@
 ﻿// Asynchronously fetch exact duration calculation from the backend ASHX Handler based on amount
-function CalculateDurationFromAmountHandlerBackend(amount) {
+function CalculateDurationFromAmountHandlerBackend(amount, baseMinutes) {
     var durationInput = document.querySelector('[id$="TextBox_Duration"]');
     var displayTime = document.getElementById('display_FormattedTime');
     var displayAmount = document.getElementById('display_TotalAmount');
+    var timeBreakdown = document.getElementById('display_TimeBreakdown');
 
     if (!amount || amount <= 0) {
-        if (displayTime) displayTime.innerText = "0 hrs 0 mins";
-        if (displayAmount) displayAmount.innerText = "₱ 0.00";
-        if (durationInput) durationInput.value = "0";
+        if (baseMinutes > 0) {
+            if (durationInput) durationInput.value = baseMinutes;
+            if (displayTime) displayTime.innerText = formatTime(baseMinutes);
+            if (timeBreakdown) timeBreakdown.style.display = 'none';
+        } else {
+            if (displayTime) displayTime.innerText = "0 hrs 0 mins";
+            if (displayAmount) displayAmount.innerText = "₱ 0.00";
+            if (durationInput) durationInput.value = "0";
+        }
         return;
     }
 
@@ -26,16 +33,28 @@ function CalculateDurationFromAmountHandlerBackend(amount) {
         })
         .then(function (data) {
             if (data) {
+                var extraMinutes = data.totalMinutes || 0;
+                var totalMinutes = baseMinutes + extraMinutes;
+
                 if (durationInput) {
-                    durationInput.value = data.totalMinutes;
+                    durationInput.value = totalMinutes;
                 }
 
                 if (displayTime) {
-                    displayTime.innerText = data.formattedTime;
+                    displayTime.innerText = formatTime(totalMinutes);
                 }
 
                 if (displayAmount) {
                     displayAmount.innerText = data.formattedAmount;
+                }
+
+                if (timeBreakdown && baseMinutes > 0) {
+                    if (extraMinutes > 0) {
+                        timeBreakdown.innerText = 'Base: ' + formatTime(baseMinutes) + ' | Extra: +' + formatTime(extraMinutes);
+                        timeBreakdown.style.display = 'block';
+                    } else {
+                        timeBreakdown.style.display = 'none';
+                    }
                 }
             }
         })
@@ -44,28 +63,93 @@ function CalculateDurationFromAmountHandlerBackend(amount) {
         });
 }
 
-// Automatically compute duration when Admin manually inputs/changes the Amount
+function formatTime(mins) {
+    var h = Math.floor(mins / 60);
+    var m = mins % 60;
+    if (h > 0 && m > 0) return h + ' hrs ' + m + ' mins';
+    if (h > 0) return h + ' hrs';
+    return m + ' mins';
+}
 // Automatically compute duration when Admin manually inputs/changes the Amount
 function calculateTimeFromAmount() {
     var amountInput = document.querySelector('[id$="TextBox_Amount"]');
+    var durationInput = document.querySelector('[id$="TextBox_Duration"]');
+    var initialDurationInput = document.querySelector('[id$="HiddenField_InitialDuration"]');
     var initialAmountInput = document.querySelector('[id$="HiddenField_InitialAmount"]');
     var customerSelect = document.querySelector('[id$="DropDownList_Customer"]');
+
+    var displayTime = document.getElementById('display_FormattedTime');
+    var displayAmount = document.getElementById('display_TotalAmount');
+    var timeBreakdown = document.getElementById('display_TimeBreakdown');
+    var amountBreakdown = document.getElementById('display_AmountBreakdown');
+
     if (!amountInput) return;
 
     var isWalkIn = !customerSelect || !customerSelect.value || customerSelect.value === "";
+    var initialMinutes = (!isWalkIn && initialDurationInput) ? (parseInt(initialDurationInput.value, 10) || 0) : 0;
     var initialAmount = (!isWalkIn && initialAmountInput) ? (parseFloat(initialAmountInput.value) || 0) : 0;
 
     var currentAmount = parseFloat(amountInput.value) || 0;
 
     // PREVENT DEDUCTING BELOW INITIAL AMOUNT FOR EXISTING RENTALS
-    if (currentAmount < initialAmount) {
+    if (initialAmount > 0 && currentAmount < initialAmount) {
         currentAmount = initialAmount;
-        amountInput.value = data.totalAmount;
+        amountInput.value = initialAmount.toFixed(2);
     }
 
-    CalculateDurationFromAmountHandlerBackend(currentAmount);
-}
+    if (currentAmount < 0) {
+        currentAmount = 0;
+        amountInput.value = "0.00";
+    }
 
+    // If there is an initial amount, calculate the extra amount. 
+    // Otherwise, treat the whole currentAmount as extra/new amount added on top of the initialMinutes (e.g. 82 mins base).
+    var extraAmount = initialAmount > 0 ? (currentAmount - initialAmount) : currentAmount;
+
+    if (extraAmount > 0) {
+        var customerType = getCustomerType();
+
+        var endpoint = /\.aspx$/i.test(window.location.pathname)
+            ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx')
+            : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx');
+
+        fetch(endpoint + '?amount=' + extraAmount + '&customerType=' + encodeURIComponent(customerType))
+            .then(function (response) {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(function (data) {
+                if (data) {
+                    var extendedMinutes = data.totalMinutes || 0;
+                    var totalMinutes = initialMinutes + extendedMinutes;
+
+                    if (durationInput) durationInput.value = totalMinutes;
+                    if (displayTime) displayTime.innerText = formatTime(totalMinutes);
+                    if (displayAmount) displayAmount.innerText = '₱ ' + currentAmount.toFixed(2);
+
+                    if (timeBreakdown && initialMinutes > 0) {
+                        timeBreakdown.innerText = 'Base: ' + formatTime(initialMinutes) + ' | Extra: +' + formatTime(extendedMinutes);
+                        timeBreakdown.style.display = 'block';
+                    }
+                    if (amountBreakdown && initialAmount > 0) {
+                        amountBreakdown.innerText = '(Prepaid: ₱' + initialAmount.toFixed(2) + ' + Extra: ₱' + extraAmount.toFixed(2) + ')';
+                        amountBreakdown.style.display = 'block';
+                    }
+                }
+            })
+            .catch(function (error) {
+                console.error('Error fetching calculated duration from handler:', error);
+            });
+    } else {
+        // If amount is 0 or cleared, revert to base minutes
+        if (durationInput) durationInput.value = initialMinutes;
+        if (displayTime) displayTime.innerText = formatTime(initialMinutes);
+        if (displayAmount) displayAmount.innerText = '₱ ' + initialAmount.toFixed(2);
+
+        if (timeBreakdown) timeBreakdown.style.display = 'none';
+        if (amountBreakdown) amountBreakdown.style.display = 'none';
+    }
+}
 // Asynchronously fetch exact rate calculation from the backend ASHX Handler
 function calculateRentalPriceBackend(totalMinutes) {
     var amountInput = document.querySelector('[id$="TextBox_Amount"]');
