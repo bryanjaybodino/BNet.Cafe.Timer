@@ -7,13 +7,13 @@ function CalculateDurationFromAmountHandlerBackend(amount, baseMinutes) {
 
     if (!amount || amount <= 0) {
         if (baseMinutes > 0) {
-            if (durationInput) durationInput.value = baseMinutes;
+            if (durationInput) durationInput.value = '';
             if (displayTime) displayTime.innerText = formatTime(baseMinutes);
             if (timeBreakdown) timeBreakdown.style.display = 'none';
         } else {
             if (displayTime) displayTime.innerText = "0 hrs 0 mins";
             if (displayAmount) displayAmount.innerText = "₱ 0.00";
-            if (durationInput) durationInput.value = "0";
+            if (durationInput) durationInput.value = "";
         }
         return;
     }
@@ -37,7 +37,7 @@ function CalculateDurationFromAmountHandlerBackend(amount, baseMinutes) {
                 var totalMinutes = baseMinutes + extraMinutes;
 
                 if (durationInput) {
-                    durationInput.value = totalMinutes;
+                    durationInput.value = extraMinutes > 0 ? extraMinutes : '';
                 }
 
                 if (displayTime) {
@@ -70,10 +70,13 @@ function formatTime(mins) {
     if (h > 0) return h + ' hrs';
     return m + ' mins';
 }
+
 // Automatically compute duration when Admin manually inputs/changes the Amount
 function calculateTimeFromAmount() {
     var amountInput = document.querySelector('[id$="TextBox_Amount"]');
     var durationInput = document.querySelector('[id$="TextBox_Duration"]');
+    var totalAmountField = document.querySelector('[id$="TextBox_TotalAmount"]');
+    var totalDurationField = document.querySelector('[id$="TextBox_TotalDuration"]');
     var initialDurationInput = document.querySelector('[id$="HiddenField_InitialDuration"]');
     var initialAmountInput = document.querySelector('[id$="HiddenField_InitialAmount"]');
     var customerSelect = document.querySelector('[id$="DropDownList_Customer"]');
@@ -86,34 +89,27 @@ function calculateTimeFromAmount() {
     if (!amountInput) return;
 
     var isWalkIn = !customerSelect || !customerSelect.value || customerSelect.value === "";
-    var initialMinutes = (!isWalkIn && initialDurationInput) ? (parseInt(initialDurationInput.value, 10) || 0) : 0;
-    var initialAmount = (!isWalkIn && initialAmountInput) ? (parseFloat(initialAmountInput.value) || 0) : 0;
+    var initialMinutes = initialDurationInput ? (parseInt(initialDurationInput.value, 10) || 0) : 0;
+    var initialAmount = initialAmountInput ? (parseFloat(initialAmountInput.value) || 0) : 0;
 
-    var currentAmount = parseFloat(amountInput.value) || 0;
+    var currentAmountInput = parseFloat(amountInput.value);
+    var currentAmount = isNaN(currentAmountInput) ? 0 : currentAmountInput;
 
-    // PREVENT DEDUCTING BELOW INITIAL AMOUNT FOR EXISTING RENTALS
-    if (initialAmount > 0 && currentAmount < initialAmount) {
-        currentAmount = initialAmount;
-        amountInput.value = initialAmount.toFixed(2);
-    }
+    if (currentAmount < 0) currentAmount = 0;
 
-    if (currentAmount < 0) {
-        currentAmount = 0;
-        amountInput.value = "0.00";
-    }
+    // If there is an initial amount/duration, treat input as extra amount added on top
+    var extraAmount = initialAmount > 0 ? Math.max(0, currentAmount - initialAmount) : currentAmount;
+    var totalAmount = initialAmount > 0 ? (initialAmount + extraAmount) : currentAmount;
 
-    // If there is an initial amount, calculate the extra amount. 
-    // Otherwise, treat the whole currentAmount as extra/new amount added on top of the initialMinutes (e.g. 82 mins base).
-    var extraAmount = initialAmount > 0 ? (currentAmount - initialAmount) : currentAmount;
-
-    if (extraAmount > 0) {
+    if (extraAmount > 0 || (initialAmount === 0 && currentAmount > 0)) {
         var customerType = getCustomerType();
+        var targetAmount = initialAmount > 0 ? extraAmount : currentAmount;
 
         var endpoint = /\.aspx$/i.test(window.location.pathname)
             ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx')
             : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx');
 
-        fetch(endpoint + '?amount=' + extraAmount + '&customerType=' + encodeURIComponent(customerType))
+        fetch(endpoint + '?amount=' + targetAmount + '&customerType=' + encodeURIComponent(customerType))
             .then(function (response) {
                 if (!response.ok) throw new Error('Network response was not ok');
                 return response.json();
@@ -123,9 +119,11 @@ function calculateTimeFromAmount() {
                     var extendedMinutes = data.totalMinutes || 0;
                     var totalMinutes = initialMinutes + extendedMinutes;
 
-                    if (durationInput) durationInput.value = totalMinutes;
                     if (displayTime) displayTime.innerText = formatTime(totalMinutes);
-                    if (displayAmount) displayAmount.innerText = '₱ ' + currentAmount.toFixed(2);
+                    if (displayAmount) displayAmount.innerText = '₱ ' + totalAmount.toFixed(2);
+
+                    if (totalAmountField) totalAmountField.value = totalAmount.toFixed(2);
+                    if (totalDurationField) totalDurationField.value = totalMinutes;
 
                     if (timeBreakdown && initialMinutes > 0) {
                         timeBreakdown.innerText = 'Base: ' + formatTime(initialMinutes) + ' | Extra: +' + formatTime(extendedMinutes);
@@ -141,27 +139,46 @@ function calculateTimeFromAmount() {
                 console.error('Error fetching calculated duration from handler:', error);
             });
     } else {
-        // If amount is 0 or cleared, revert to base minutes
-        if (durationInput) durationInput.value = initialMinutes;
+        if (durationInput) durationInput.value = '';
         if (displayTime) displayTime.innerText = formatTime(initialMinutes);
         if (displayAmount) displayAmount.innerText = '₱ ' + initialAmount.toFixed(2);
+
+        if (totalAmountField) totalAmountField.value = initialAmount.toFixed(2);
+        if (totalDurationField) totalDurationField.value = initialMinutes;
 
         if (timeBreakdown) timeBreakdown.style.display = 'none';
         if (amountBreakdown) amountBreakdown.style.display = 'none';
     }
 }
+
 // Asynchronously fetch exact rate calculation from the backend ASHX Handler
 function calculateRentalPriceBackend(totalMinutes) {
     var amountInput = document.querySelector('[id$="TextBox_Amount"]');
+    var totalAmountField = document.querySelector('[id$="TextBox_TotalAmount"]');
+    var totalDurationField = document.querySelector('[id$="TextBox_TotalDuration"]');
+    var initialDurationInput = document.querySelector('[id$="HiddenField_InitialDuration"]');
+    var initialAmountInput = document.querySelector('[id$="HiddenField_InitialAmount"]');
+
     var displayTime = document.getElementById('display_FormattedTime');
     var displayAmount = document.getElementById('display_TotalAmount');
 
-    if (!totalMinutes || totalMinutes <= 0) {
-        if (displayTime) displayTime.innerText = "0 hrs 0 mins";
-        if (displayAmount) displayAmount.innerText = "₱ 0.00";
-        if (amountInput) amountInput.value = "0.00";
+    var initialMinutes = initialDurationInput ? (parseInt(initialDurationInput.value, 10) || 0) : 0;
+    var initialAmount = initialAmountInput ? (parseFloat(initialAmountInput.value) || 0) : 0;
+
+    var extraMinutes = totalMinutes;
+    var finalMinutes = initialMinutes + extraMinutes;
+
+    if (!extraMinutes || extraMinutes <= 0) {
+        var baseTotalMin = initialMinutes;
+        if (displayTime) displayTime.innerText = formatTime(baseTotalMin);
+        if (displayAmount) displayAmount.innerText = "₱ " + initialAmount.toFixed(2);
+        if (amountInput) amountInput.value = "";
+        if (totalAmountField) totalAmountField.value = initialAmount.toFixed(2);
+        if (totalDurationField) totalDurationField.value = baseTotalMin;
         return;
     }
+
+    if (totalDurationField) totalDurationField.value = finalMinutes;
 
     var customerType = getCustomerType();
 
@@ -169,7 +186,7 @@ function calculateRentalPriceBackend(totalMinutes) {
         ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx')
         : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx');
 
-    fetch(endpoint + '?minutes=' + totalMinutes + '&customerType=' + encodeURIComponent(customerType))
+    fetch(endpoint + '?minutes=' + extraMinutes + '&customerType=' + encodeURIComponent(customerType))
         .then(function (response) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -178,16 +195,23 @@ function calculateRentalPriceBackend(totalMinutes) {
         })
         .then(function (data) {
             if (data) {
+                var extensionCharge = data.totalAmount || 0;
+                var totalCharge = initialAmount + extensionCharge;
+
                 if (displayTime) {
-                    displayTime.innerText = data.formattedTime;
+                    displayTime.innerText = formatTime(finalMinutes);
                 }
 
                 if (displayAmount) {
-                    displayAmount.innerText = data.formattedAmount;
+                    displayAmount.innerText = '₱ ' + totalCharge.toFixed(2);
                 }
 
                 if (amountInput) {
-                    amountInput.value = data.totalAmount.toFixed(2);
+                    amountInput.value = extensionCharge.toFixed(2);
+                }
+
+                if (totalAmountField) {
+                    totalAmountField.value = totalCharge.toFixed(2);
                 }
             }
         })
@@ -196,13 +220,13 @@ function calculateRentalPriceBackend(totalMinutes) {
         });
 }
 
-
 // Calculate amount and handle breakdown display
 function calculateAmount() {
     var durationInput = document.querySelector('[id$="TextBox_Duration"]');
+    var totalAmountField = document.querySelector('[id$="TextBox_TotalAmount"]');
+    var totalDurationField = document.querySelector('[id$="TextBox_TotalDuration"]');
     var initialDurationInput = document.querySelector('[id$="HiddenField_InitialDuration"]');
     var initialAmountInput = document.querySelector('[id$="HiddenField_InitialAmount"]');
-    var customerSelect = document.querySelector('[id$="DropDownList_Customer"]');
     var amountInput = document.querySelector('[id$="TextBox_Amount"]');
 
     var displayTime = document.getElementById('display_FormattedTime');
@@ -212,27 +236,15 @@ function calculateAmount() {
 
     if (!durationInput) return;
 
-    var currentMinutes = parseInt(durationInput.value, 10) || 0;
+    var initialMinutes = initialDurationInput ? (parseInt(initialDurationInput.value, 10) || 0) : 0;
+    var initialAmount = initialAmountInput ? (parseFloat(initialAmountInput.value) || 0) : 0;
 
-    // Check if dropdown is empty / unselected / walk-in
-    var isWalkIn = !customerSelect || !customerSelect.value || customerSelect.value === "";
+    var extraMinutesInput = parseInt(durationInput.value, 10);
+    var extraMinutes = isNaN(extraMinutesInput) ? 0 : extraMinutesInput;
 
-    var initialMinutes = (!isWalkIn && initialDurationInput) ? (parseInt(initialDurationInput.value, 10) || 0) : 0;
-    var initialAmount = (!isWalkIn && initialAmountInput) ? (parseFloat(initialAmountInput.value) || 0) : 0;
+    if (extraMinutes < 0) extraMinutes = 0;
 
-    // PREVENT DEDUCTING BELOW BASE DURATION ONLY FOR EXISTING ACTIVE RENTALS
-    if (currentMinutes < initialMinutes) {
-        currentMinutes = initialMinutes;
-        durationInput.value = initialMinutes;
-    }
-
-    // Do not allow total minutes to fall below 0
-    if (currentMinutes < 0) {
-        currentMinutes = 0;
-        durationInput.value = 0;
-    }
-
-    var extendedMinutes = currentMinutes - initialMinutes;
+    var totalMinutes = initialMinutes + extraMinutes;
 
     function formatTime(mins) {
         var h = Math.floor(mins / 60);
@@ -242,104 +254,115 @@ function calculateAmount() {
         return m + ' mins';
     }
 
-    if (displayTime) displayTime.innerText = formatTime(currentMinutes);
+    if (displayTime) displayTime.innerText = formatTime(totalMinutes);
+    if (totalDurationField) totalDurationField.value = totalMinutes;
 
-    // If walk-in or new rental with no initial base, calculate rate directly
-    if (initialMinutes === 0) {
-        calculateRentalPriceBackend(currentMinutes);
+    if (extraMinutes === 0) {
+        if (amountInput) amountInput.value = '';
+        if (displayAmount) displayAmount.innerText = '₱ ' + initialAmount.toFixed(2);
+
+        if (totalAmountField) totalAmountField.value = initialAmount.toFixed(2);
+        if (totalDurationField) totalDurationField.value = initialMinutes;
+
         if (timeBreakdown) timeBreakdown.style.display = 'none';
         if (amountBreakdown) amountBreakdown.style.display = 'none';
         return;
     }
 
-    if (extendedMinutes > 0) {
-        var customerType = getCustomerType();
+    var customerType = getCustomerType();
 
-        var endpoint = /\.aspx$/i.test(window.location.pathname)
-            ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx')
-            : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx');
+    var endpoint = /\.aspx$/i.test(window.location.pathname)
+        ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx')
+        : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx');
 
-        fetch(endpoint + '?minutes=' + extendedMinutes + '&customerType=' + encodeURIComponent(customerType))
-            .then(function (response) { return response.json(); })
-            .then(function (data) {
-                if (data) {
-                    var extensionCharge = data.totalAmount;
-                    var totalCharge = initialAmount + extensionCharge;
+    fetch(endpoint + '?minutes=' + extraMinutes + '&customerType=' + encodeURIComponent(customerType))
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+            if (data) {
+                var extensionCharge = data.totalAmount;
+                var totalCharge = initialAmount + extensionCharge;
 
-                    if (amountInput) amountInput.value = totalCharge.toFixed(2);
-                    if (displayAmount) displayAmount.innerText = '₱ ' + totalCharge.toFixed(2);
+                if (amountInput) amountInput.value = extensionCharge.toFixed(2);
+                if (displayAmount) displayAmount.innerText = '₱ ' + totalCharge.toFixed(2);
 
+                if (totalAmountField) totalAmountField.value = totalCharge.toFixed(2);
+                if (totalDurationField) totalDurationField.value = totalMinutes;
+
+                if (initialMinutes > 0) {
                     if (timeBreakdown) {
-                        timeBreakdown.innerText = 'Base: ' + formatTime(initialMinutes) + ' | Extra: +' + formatTime(extendedMinutes);
+                        timeBreakdown.innerText = 'Base: ' + formatTime(initialMinutes) + ' | Extra: +' + formatTime(extraMinutes);
                         timeBreakdown.style.display = 'block';
                     }
                     if (amountBreakdown) {
                         amountBreakdown.innerText = '(Prepaid: ₱' + initialAmount.toFixed(2) + ' + Extra: ₱' + extensionCharge.toFixed(2) + ')';
                         amountBreakdown.style.display = 'block';
                     }
+                } else {
+                    if (timeBreakdown) timeBreakdown.style.display = 'none';
+                    if (amountBreakdown) amountBreakdown.style.display = 'none';
                 }
-            })
-            .catch(function (err) { console.error(err); });
-    } else {
-        if (amountInput) amountInput.value = initialAmount.toFixed(2);
-        if (displayAmount) displayAmount.innerText = '₱ ' + initialAmount.toFixed(2);
-
-        if (timeBreakdown) timeBreakdown.style.display = 'none';
-        if (amountBreakdown) amountBreakdown.style.display = 'none';
-    }
+            }
+        })
+        .catch(function (err) { console.error(err); });
 }
 
 function adjustDuration(amount) {
     var durationInput = document.querySelector('[id$="TextBox_Duration"]');
-    var initialDurationInput = document.querySelector('[id$="HiddenField_InitialDuration"]');
-    var customerSelect = document.querySelector('[id$="DropDownList_Customer"]');
     if (!durationInput) return;
 
-    var current = parseInt(durationInput.value, 10) || 0;
-    var isWalkIn = !customerSelect || !customerSelect.value || customerSelect.value === "";
-
-    var initialMinutes = (!isWalkIn && initialDurationInput) ? (parseInt(initialDurationInput.value, 10) || 0) : 0;
-
-    var updated = current + amount;
-
-    if (updated < initialMinutes) {
-        updated = initialMinutes;
-    }
+    var currentExtra = parseInt(durationInput.value, 10) || 0;
+    var updated = currentExtra + amount;
 
     if (updated < 0) {
         updated = 0;
     }
 
-    durationInput.value = updated;
+    durationInput.value = updated > 0 ? updated : '';
     calculateAmount();
 }
 
-// Reset button returns back to the base duration instead of 0
+// Reset button clears extra inputs and reverts back to initial base values
 function resetDuration() {
     var durationInput = document.querySelector('[id$="TextBox_Duration"]');
+    var amountInput = document.querySelector('[id$="TextBox_Amount"]');
     var initialDurationInput = document.querySelector('[id$="HiddenField_InitialDuration"]');
+    var initialAmountInput = document.querySelector('[id$="HiddenField_InitialAmount"]');
+    var totalAmountField = document.querySelector('[id$="TextBox_TotalAmount"]');
+    var totalDurationField = document.querySelector('[id$="TextBox_TotalDuration"]');
 
     var initialMinutes = initialDurationInput ? (parseInt(initialDurationInput.value, 10) || 0) : 0;
+    var initialAmount = initialAmountInput ? (parseFloat(initialAmountInput.value, 10) || 0) : 0;
 
-    if (durationInput) durationInput.value = initialMinutes;
+    if (durationInput) durationInput.value = '';
+    if (amountInput) amountInput.value = '';
 
-    calculateAmount();
+    if (totalDurationField) totalDurationField.value = initialMinutes;
+    if (totalAmountField) totalAmountField.value = initialAmount.toFixed(2);
+
+    var displayTime = document.getElementById('display_FormattedTime');
+    var displayAmount = document.getElementById('display_TotalAmount');
+    var timeBreakdown = document.getElementById('display_TimeBreakdown');
+    var amountBreakdown = document.getElementById('display_AmountBreakdown');
+
+    if (displayTime) displayTime.innerText = formatTime(initialMinutes);
+    if (displayAmount) displayAmount.innerText = '₱ ' + initialAmount.toFixed(2);
+
+    if (timeBreakdown) timeBreakdown.style.display = 'none';
+    if (amountBreakdown) amountBreakdown.style.display = 'none';
 }
-
-
 
 // Client validation before submission
 function Validate() {
-    var durationInput = document.querySelector('[id$="TextBox_Duration"]');
-    var amountInput = document.querySelector('[id$="TextBox_Amount"]');
+    var totalDurationField = document.querySelector('[id$="TextBox_TotalDuration"]');
+    var totalAmountField = document.querySelector('[id$="TextBox_TotalAmount"]');
 
     var errors = [];
 
-    if (!durationInput || parseInt(durationInput.value, 10) <= 0) {
+    if (!totalDurationField || parseInt(totalDurationField.value, 10) <= 0) {
         errors.push('Please select or input a valid duration.');
     }
 
-    if (!amountInput || parseFloat(amountInput.value) <= 0) {
+    if (!totalAmountField || parseFloat(totalAmountField.value) <= 0) {
         errors.push('Calculated amount must be greater than 0.');
     }
 
@@ -357,8 +380,8 @@ function Validate() {
 
 function getCustomerType() {
     var customerType = document.querySelector('[id$="HiddenField_Role"]');
-    return customerType.value.toUpperCase();
-}  
+    return customerType ? customerType.value.toUpperCase() : 'GUEST';
+}
 
 function disableSubmitButton() {
     var btn = document.querySelector('[id$="LinkButton_Submit"]');
@@ -369,30 +392,54 @@ function disableSubmitButton() {
     }
 }
 
+function initRentalForm() {
+    var initialDurationInput = document.querySelector('[id$="HiddenField_InitialDuration"]');
+    var initialAmountInput = document.querySelector('[id$="HiddenField_InitialAmount"]');
+    var totalAmountField = document.querySelector('[id$="TextBox_TotalAmount"]');
+    var totalDurationField = document.querySelector('[id$="TextBox_TotalDuration"]');
+    var durationInput = document.querySelector('[id$="TextBox_Duration"]');
+    var amountInput = document.querySelector('[id$="TextBox_Amount"]');
+
+    var displayTime = document.getElementById('display_FormattedTime');
+    var displayAmount = document.getElementById('display_TotalAmount');
+
+    var initialMinutes = initialDurationInput ? (parseInt(initialDurationInput.value, 10) || 0) : 0;
+    var initialAmount = initialAmountInput ? (parseFloat(initialAmountInput.value, 10) || 0) : 0;
+
+    // Clear extra inputs on initial load so they are ready for extra entry
+    if (durationInput) durationInput.value = '';
+    if (amountInput) amountInput.value = '';
+
+    // Set backend binding total fields safely to initial database values
+    if (totalDurationField) totalDurationField.value = initialMinutes;
+    if (totalAmountField) totalAmountField.value = initialAmount.toFixed(2);
+
+    // Display correct initial summary values visually
+    if (displayTime) displayTime.innerText = formatTime(initialMinutes);
+    if (displayAmount) displayAmount.innerText = '₱ ' + initialAmount.toFixed(2);
+}
+
 if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager) {
     var prm = Sys.WebForms.PageRequestManager.getInstance();
 
-    // Triggered after UpdatePanel content updates
     prm.add_pageLoaded(function (sender, args) {
         var panelsUpdated = args.get_panelsUpdated();
         if (panelsUpdated.length > 0) {
-            // Re-disable button during redirect window if needed
             disableSubmitButton();
-            calculateAmount();
+            initRentalForm();
         }
     });
 
-    // Triggered when an async postback finishes (success or error)
     prm.add_endRequest(function (sender, args) {
         var btn = document.querySelector('[id$="LinkButton_Submit"]');
         if (btn) {
             btn.classList.remove('disabled');
             btn.style.pointerEvents = 'auto';
-            btn.innerHTML = 'Submit'; // Restore original text/HTML
+            btn.innerHTML = 'Submit';
         }
     });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    calculateAmount();;
+    initRentalForm();
 });

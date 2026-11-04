@@ -49,13 +49,19 @@
                     <div class="form-grid" style="margin-top: 15px;">
                         <div class="form-group">
                             <label for="<%= TextBox_Duration.ClientID %>">Total Input (Minutes)</label>
-                            <asp:TextBox ID="TextBox_Duration" runat="server" CssClass="form-control" Text="0" TextMode="Number" min="0" oninput="NumberOnly(this); calculateAmount();"></asp:TextBox>
+                            <!-- Changed Text to empty and added placeholder -->
+                            <asp:TextBox ID="TextBox_Duration" runat="server" CssClass="form-control" placeholder="Enter extra mins (e.g. 30)" TextMode="Number" min="0" oninput="NumberOnly(this); calculateAmount();"></asp:TextBox>
                         </div>
                         <div class="form-group">
                             <label for="<%= TextBox_Amount.ClientID %>">Total Input Amount (₱)</label>
-                            <asp:TextBox ID="TextBox_Amount" runat="server" CssClass="form-control" Text="0.00" TextMode="Number" oninput="NumberOnly(this); calculateTimeFromAmount();"></asp:TextBox>
+                            <!-- Changed Text to empty and added placeholder -->
+                            <asp:TextBox ID="TextBox_Amount" runat="server" CssClass="form-control" placeholder="Enter extra amount (e.g. 20)" TextMode="Number" oninput="NumberOnly(this); calculateTimeFromAmount();"></asp:TextBox>
                         </div>
                     </div>
+                </div>
+                <div style="display: none;">
+                    <asp:TextBox ID="TextBox_TotalAmount" runat="server"></asp:TextBox>
+                    <asp:TextBox ID="TextBox_TotalDuration" runat="server"></asp:TextBox>
                 </div>
 
                 <!-- Highlighted Summary Display Box -->
