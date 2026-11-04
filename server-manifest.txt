@@ -260,8 +260,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-9b4cdef1521ceb5b9a76da2ca1ef4e670ab739a4	bin/BNet.Cafe.Server.dll
-8e7cdff7cebf7aa8a48fa4c0c34e8b099bff2cee	bin/BNet.Cafe.Server.pdb
+dda4c1b03a0518d879c8b1ed10bb6c5dc3fa73c9	bin/BNet.Cafe.Server.dll
+bb77fbd34e76da69ba82a3b413765407b1e9e312	bin/BNet.Cafe.Server.pdb
 c891d32222aa82c323f2b589d7ba41f506ceab8c	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 e26fb59252ee656db4071cfd2a0f4297eda033f0	bin/BNet.Cafe.Websocket.pdb
