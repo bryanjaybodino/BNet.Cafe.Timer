@@ -61,7 +61,7 @@ ab91d00cccfeec4d9a0600fa57ab1474885a3ce3	Assets/Pages/PointsSettings.js
 b6d9b3abaa80b15053fa2005b5a4e343278ea8ac	Assets/Pages/Remote.js
 e04cf0e72019f7a8024d2bb4a5767029a76cf0f2	Assets/Pages/RemoteMessaging.js
 f0baa5004913c12133d42e342890e5bddcb4139d	Assets/Pages/RentalManage.css
-afb798061f8fb0daadb00de645cbfbf0024defda	Assets/Pages/RentalManage.js
+03adbe0a6527d4751d7da846e2e225d358cd0a04	Assets/Pages/RentalManage.js
 1fdb99ec6213750e5d46c36e9b58496e72632619	Assets/Pages/Script.js
 4e91e8f4f946e673879d8abdb00300f5f3785270	Assets/Pages/SeatMap.css
 585689934d20f589689adc62a9f67fb2f6540b62	Assets/Pages/SeatMap.js
@@ -219,7 +219,7 @@ f3604602d18cbee656b1325fed99e55c22901e51	Forms/Points.ascx
 c69f3e245c2f51a99e0c128f4ac2467dc39144e4	Forms/PointsSettings.ascx
 f1b2d024ad4a509c4c6c82b5a04e7b26b21ae4a7	Forms/PricingSettings.ascx
 0bc8c4d0e9afab809f737e9809cd465d83e081d4	Forms/Remote.ascx
-65ac71e7588182210ca0cffd4eb61e09e8bdf9bd	Forms/RentalManage.ascx
+0142fc6a14c6769bed3b26437c0d71bc53239cac	Forms/RentalManage.ascx
 88b8e3dd0575e313ca18fb0b26486ff9076436e9	Forms/Sales.ascx
 fe418856b8f96591adfbdae1244a106d13e61cee	Forms/SeatMap.ascx
 8886bfdd0b89f0de254e3881384b812c32a8dfa3	Forms/SportTimer.ascx
@@ -260,11 +260,11 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-459cd908b24fb9f6546e4c571e98d8c38b9d2582	bin/BNet.Cafe.Server.dll
-432c130040594e8d4c39e45c6ae68595a25670f8	bin/BNet.Cafe.Server.pdb
-2eb09d52484cbbb87cfb1106c5bf49f804e46ff4	bin/BNet.Cafe.Websocket.exe
+92ecaa140a03ba133eafe320c059b617219bf887	bin/BNet.Cafe.Server.dll
+de41ae392b91fa0c103df6f0f4868a4b33a37e14	bin/BNet.Cafe.Server.pdb
+747ce8dc9f8d3a35a93c8d8ce2726a563df1878c	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
-c4401408835d078381fbdc8663f23fc9b8a500e0	bin/BNet.Cafe.Websocket.pdb
+a9a3de6ef50873e3ec3fd2ed6afb6795d5d4b120	bin/BNet.Cafe.Websocket.pdb
 0fd4bf6141810a8c3dd2fc76e2be94fdd572e82e	bin/BNet.FTPServer.dll
 1b1f204165327bd0fbd04378350e87e793645b59	bin/Microsoft.Extensions.Logging.Abstractions.dll
 1acaf092a11563a6ad8608e898a6761e9a14afa4	bin/MySqlConnector.dll
