@@ -61,7 +61,7 @@ ab91d00cccfeec4d9a0600fa57ab1474885a3ce3	Assets/Pages/PointsSettings.js
 b6d9b3abaa80b15053fa2005b5a4e343278ea8ac	Assets/Pages/Remote.js
 e04cf0e72019f7a8024d2bb4a5767029a76cf0f2	Assets/Pages/RemoteMessaging.js
 f0baa5004913c12133d42e342890e5bddcb4139d	Assets/Pages/RentalManage.css
-2563767c537643e0f57ac090449f4a65c68fb28c	Assets/Pages/RentalManage.js
+afb798061f8fb0daadb00de645cbfbf0024defda	Assets/Pages/RentalManage.js
 1fdb99ec6213750e5d46c36e9b58496e72632619	Assets/Pages/Script.js
 4e91e8f4f946e673879d8abdb00300f5f3785270	Assets/Pages/SeatMap.css
 585689934d20f589689adc62a9f67fb2f6540b62	Assets/Pages/SeatMap.js
@@ -260,8 +260,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-bdcf20951c2f3bc1a9380cf73e9111c1585acfde	bin/BNet.Cafe.Server.dll
-628b45509be6a65ca36dbfa9f4824b619db94e73	bin/BNet.Cafe.Server.pdb
+459cd908b24fb9f6546e4c571e98d8c38b9d2582	bin/BNet.Cafe.Server.dll
+432c130040594e8d4c39e45c6ae68595a25670f8	bin/BNet.Cafe.Server.pdb
 2eb09d52484cbbb87cfb1106c5bf49f804e46ff4	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 c4401408835d078381fbdc8663f23fc9b8a500e0	bin/BNet.Cafe.Websocket.pdb
