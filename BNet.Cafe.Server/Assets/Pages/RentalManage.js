@@ -71,7 +71,7 @@ function formatTime(mins) {
     return m + ' mins';
 }
 
-// Automatically compute duration when Admin manually inputs/changes the Amount
+// Automatically compute duration when Admin manually inputs/changes the Amount (Treating input as Extra Amount)
 function calculateTimeFromAmount() {
     var amountInput = document.querySelector('[id$="TextBox_Amount"]');
     var durationInput = document.querySelector('[id$="TextBox_Duration"]');
@@ -79,7 +79,6 @@ function calculateTimeFromAmount() {
     var totalDurationField = document.querySelector('[id$="TextBox_TotalDuration"]');
     var initialDurationInput = document.querySelector('[id$="HiddenField_InitialDuration"]');
     var initialAmountInput = document.querySelector('[id$="HiddenField_InitialAmount"]');
-    var customerSelect = document.querySelector('[id$="DropDownList_Customer"]');
 
     var displayTime = document.getElementById('display_FormattedTime');
     var displayAmount = document.getElementById('display_TotalAmount');
@@ -88,28 +87,24 @@ function calculateTimeFromAmount() {
 
     if (!amountInput) return;
 
-    var isWalkIn = !customerSelect || !customerSelect.value || customerSelect.value === "";
     var initialMinutes = initialDurationInput ? (parseInt(initialDurationInput.value, 10) || 0) : 0;
     var initialAmount = initialAmountInput ? (parseFloat(initialAmountInput.value) || 0) : 0;
 
-    var currentAmountInput = parseFloat(amountInput.value);
-    var currentAmount = isNaN(currentAmountInput) ? 0 : currentAmountInput;
+    var extraAmountInput = parseFloat(amountInput.value);
+    var extraAmount = isNaN(extraAmountInput) ? 0 : extraAmountInput;
 
-    if (currentAmount < 0) currentAmount = 0;
+    if (extraAmount < 0) extraAmount = 0;
 
-    // If there is an initial amount/duration, treat input as extra amount added on top
-    var extraAmount = initialAmount > 0 ? Math.max(0, currentAmount - initialAmount) : currentAmount;
-    var totalAmount = initialAmount > 0 ? (initialAmount + extraAmount) : currentAmount;
+    var totalAmount = initialAmount + extraAmount;
 
-    if (extraAmount > 0 || (initialAmount === 0 && currentAmount > 0)) {
+    if (extraAmount > 0) {
         var customerType = getCustomerType();
-        var targetAmount = initialAmount > 0 ? extraAmount : currentAmount;
 
         var endpoint = /\.aspx$/i.test(window.location.pathname)
             ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx')
             : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx');
 
-        fetch(endpoint + '?amount=' + targetAmount + '&customerType=' + encodeURIComponent(customerType))
+        fetch(endpoint + '?amount=' + extraAmount + '&customerType=' + encodeURIComponent(customerType))
             .then(function (response) {
                 if (!response.ok) throw new Error('Network response was not ok');
                 return response.json();
@@ -119,19 +114,29 @@ function calculateTimeFromAmount() {
                     var extendedMinutes = data.totalMinutes || 0;
                     var totalMinutes = initialMinutes + extendedMinutes;
 
+                    // Populate TextBox_Duration with the calculated extra minutes
+                    if (durationInput) {
+                        durationInput.value = extendedMinutes > 0 ? extendedMinutes : '';
+                    }
+
                     if (displayTime) displayTime.innerText = formatTime(totalMinutes);
                     if (displayAmount) displayAmount.innerText = '₱ ' + totalAmount.toFixed(2);
 
                     if (totalAmountField) totalAmountField.value = totalAmount.toFixed(2);
                     if (totalDurationField) totalDurationField.value = totalMinutes;
 
-                    if (timeBreakdown && initialMinutes > 0) {
-                        timeBreakdown.innerText = 'Base: ' + formatTime(initialMinutes) + ' | Extra: +' + formatTime(extendedMinutes);
-                        timeBreakdown.style.display = 'block';
-                    }
-                    if (amountBreakdown && initialAmount > 0) {
-                        amountBreakdown.innerText = '(Prepaid: ₱' + initialAmount.toFixed(2) + ' + Extra: ₱' + extraAmount.toFixed(2) + ')';
-                        amountBreakdown.style.display = 'block';
+                    if (initialMinutes > 0) {
+                        if (timeBreakdown) {
+                            timeBreakdown.innerText = 'Base: ' + formatTime(initialMinutes) + ' | Extra: +' + formatTime(extendedMinutes);
+                            timeBreakdown.style.display = 'block';
+                        }
+                        if (amountBreakdown) {
+                            amountBreakdown.innerText = '(Prepaid: ₱' + initialAmount.toFixed(2) + ' + Extra: ₱' + extraAmount.toFixed(2) + ')';
+                            amountBreakdown.style.display = 'block';
+                        }
+                    } else {
+                        if (timeBreakdown) timeBreakdown.style.display = 'none';
+                        if (amountBreakdown) amountBreakdown.style.display = 'none';
                     }
                 }
             })
@@ -406,15 +411,12 @@ function initRentalForm() {
     var initialMinutes = initialDurationInput ? (parseInt(initialDurationInput.value, 10) || 0) : 0;
     var initialAmount = initialAmountInput ? (parseFloat(initialAmountInput.value, 10) || 0) : 0;
 
-    // Clear extra inputs on initial load so they are ready for extra entry
     if (durationInput) durationInput.value = '';
     if (amountInput) amountInput.value = '';
 
-    // Set backend binding total fields safely to initial database values
     if (totalDurationField) totalDurationField.value = initialMinutes;
     if (totalAmountField) totalAmountField.value = initialAmount.toFixed(2);
 
-    // Display correct initial summary values visually
     if (displayTime) displayTime.innerText = formatTime(initialMinutes);
     if (displayAmount) displayAmount.innerText = '₱ ' + initialAmount.toFixed(2);
 }
