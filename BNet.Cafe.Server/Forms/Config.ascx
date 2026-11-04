@@ -126,6 +126,14 @@
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= DropDownList_TimerSizeMode.ClientID %>">Timer Size Mode</label>
+                    <asp:DropDownList ID="DropDownList_TimerSizeMode" runat="server" CssClass="form-control bnet-select">
+                        <asp:ListItem Value="STANDARD" Text="Standard"></asp:ListItem>
+                        <asp:ListItem Value="MINI" Text="Mini"></asp:ListItem>
+                    </asp:DropDownList>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
                     <label for="<%= TextBox_AutoShutDownInterval.ClientID %>">Auto Shutdown Interval (Seconds) <span class="required">*</span></label>
                     <asp:TextBox ID="TextBox_AutoShutDownInterval" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="300" MaxLength="10"></asp:TextBox>
                 </div>
@@ -232,8 +240,13 @@
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="<%= TextBox_BirthdayCredits.ClientID %>">Birthday Credits (Auto Credit Points for Member/VIP)</label>
-                    <asp:TextBox ID="TextBox_BirthdayCredits" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="0" MaxLength="10"></asp:TextBox>
+                    <label for="<%= TextBox_VIPBirthdayCredits.ClientID %>">VIP Birthday Credits (Auto Credit Points for VIPs)</label>
+                    <asp:TextBox ID="TextBox_VIPBirthdayCredits" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="0" MaxLength="10"></asp:TextBox>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= TextBox_MemberBirthdayCredits.ClientID %>">Member Birthday Credits (Auto Credit Points for Members)</label>
+                    <asp:TextBox ID="TextBox_MemberBirthdayCredits" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="0" MaxLength="10"></asp:TextBox>
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
