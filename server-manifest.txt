@@ -80,7 +80,7 @@ c0f885efc78bf186568b84516dbcfe5332e9dc54	Assets/Portal/Script.js
 05040ff052bbca19b0988c4a9dc88bec34a2d91e	Assets/ResetPassword/Style.css
 bb93fd4488e4131a656920f77786e97b1be961ae	Assets/Shop/Script.js
 045a101b461089bee44ec2d24ac74ec3cea18ef9	Assets/Shop/Style.css
-c02bbe1dd0b49cc711a6e075f87d349985563dd5	Assets/Vendo/Script.js
+eb7f8e0f0eb168ad658de0d2c20d7b4b6a44ea19	Assets/Vendo/Script.js
 4e6e07b76b39bcce08bb54db01e72c0bd3f2ec43	Assets/Vendo/Style.css
 dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Assets/fontawesome/font-awesome.min.css
 71e31852689289b8d7b94ce0541953df40f76500	Assets/fontawesome/webfonts/fa-brands-400.woff2
@@ -261,8 +261,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-2d3e1071b9622700aa69b3eebfe9c12f29766ebf	bin/BNet.Cafe.Server.dll
-1889a15069ed5ffd70d3c89c790dd49a0f483736	bin/BNet.Cafe.Server.pdb
+7a0d341c2ccd12f4d5a6894e9e4372c3b88a778d	bin/BNet.Cafe.Server.dll
+25ab0042d94fda79d6c7837dbbf6d0945f37427c	bin/BNet.Cafe.Server.pdb
 747ce8dc9f8d3a35a93c8d8ce2726a563df1878c	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 a9a3de6ef50873e3ec3fd2ed6afb6795d5d4b120	bin/BNet.Cafe.Websocket.pdb
