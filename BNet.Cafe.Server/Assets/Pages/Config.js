@@ -81,3 +81,34 @@ if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManage
         }
     });
 }
+
+
+
+// Function to switch active configuration tabs
+function switchConfigTab(evt, tabId) {
+    var panes = document.querySelectorAll('.config-tab-pane');
+    panes.forEach(function (pane) {
+        pane.classList.remove('active');
+    });
+
+    var buttons = document.querySelectorAll('.config-tab-btn');
+    buttons.forEach(function (btn) {
+        btn.classList.remove('active');
+    });
+
+    var targetPane = document.getElementById(tabId);
+    if (targetPane) {
+        targetPane.classList.add('active');
+    }
+
+    if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('active');
+    }
+}
+
+// Re-bind tab functionality properly after ASP.NET AJAX UpdatePanel postbacks
+if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager) {
+    Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(function () {
+        // Keep active tab state persistent or default safely if needed
+    });
+}

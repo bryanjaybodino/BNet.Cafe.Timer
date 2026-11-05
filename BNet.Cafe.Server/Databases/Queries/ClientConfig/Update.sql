@@ -18,5 +18,7 @@ SET
     DBEnableGameMenu = '{DBEnableGameMenu}',
     DBLayoutMode = '{DBLayoutMode}',
     DBEnableMinimize = '{DBEnableMinimize}',
-    DBEnableWindowsKey = '{DBEnableWindowsKey}'
+    DBEnableWindowsKey = '{DBEnableWindowsKey}',
+    DBSharedDataPath = '{DBSharedDataPath}',
+    DBId = '{DBId}'
 WHERE DBId = '{DBId}';

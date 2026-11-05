@@ -18,6 +18,7 @@
     DBLayoutMode,
     DBEnableMinimize,
     DBEnableWindowsKey,
+    DBSharedDataPath,
     DBDateCreated,
     DBTimeCreated,
     DBIsDeleted
@@ -42,6 +43,7 @@ VALUES (
     '{DBLayoutMode}',
     '{DBEnableMinimize}',
     '{DBEnableWindowsKey}',
+    '{DBSharedDataPath}',
     '{DBDateCreated}',
     '{DBTimeCreated}',
     '{DBIsDeleted}'
