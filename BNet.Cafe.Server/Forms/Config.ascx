@@ -100,12 +100,12 @@
                         <div style="margin-top: 6px; padding: 10px 12px; border-left: 3px solid var(--primary); border-radius: 4px; font-size: 11px; color: var(--text-light-secondary);">
                             <strong style="color: var(--text-light);">Note: This field is required if you are using a diskless setup.</strong>
                             <ol style="margin: 4px 0 0 16px; padding: 0; line-height: 1.4;">
-                                <li>Create a folder on your server or shared storage drive (e.g., <code>C:\BNetShared</code>).</li>
+                                <li>Create a folder on your server or shared storage drive (e.g., <code>C:\BNet.Cafe</code>).</li>
                                 <li>Right-click the folder and select <strong>Properties</strong>.</li>
                                 <li>Go to the <strong>Sharing</strong> tab and click <strong>Advanced Sharing...</strong></li>
                                 <li>Check <strong>Share this folder</strong>, click <strong>Permissions</strong>, and ensure <strong>Full Control</strong> / Read & Write is allowed for <em>Everyone</em>.</li>
                                 <li>Make sure this folder is <strong>excluded from Deep Freeze</strong> or similar disk protection software so changes and data are saved permanently.</li>
-                                <li>Paste your local path or network path here (e.g., <code>C:\BNetShared</code> or <code>\\Server\BNetShared</code>).</li>
+                                <li>Paste your local path or network path here <code>\\Your-Server-Name\BNet.Cafe</code>.</li>
                             </ol>
                         </div>
                     </div>
