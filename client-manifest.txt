@@ -1,6 +1,6 @@
-75a1282085b289c7e42c458436ee96f6e147a2b5	BNet.Cafe.Client.exe
+ce7450e09f5d32bb62403a7190354600e46ff2dc	BNet.Cafe.Client.exe
 5b3cec0e6deb2434ad5c6007ebc3c4e806ddc37a	BNet.Cafe.Client.exe.config
-04a42a539ee21cd9a04f83a60101912a637f1121	BNet.Cafe.Client.pdb
+dd51d84df845164421240f8b5c476b78f4dc24ee	BNet.Cafe.Client.pdb
 77a5d89e605cf08d4826b1ba7580a582736acd7f	Newtonsoft.Json.dll
 c98719f04eaf0d70a7449dc8800d1c9a70b1a2a4	patcher.bat
 656e7f4640bf7e9b202bd010a369971c31b89c1d	patcher.ps1
