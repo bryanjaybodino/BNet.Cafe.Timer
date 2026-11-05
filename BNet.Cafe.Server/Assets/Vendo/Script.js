@@ -748,7 +748,7 @@ pspContainer.addEventListener('wheel', (e) => {
 
 document.addEventListener('keydown', (e) => {
     if (isPressAnyKeyVisible()) {
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || (e.ctrlKey && (e.key.toLowerCase() === 'a' || e.key.toLowerCase() === 'c'))) {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key.toLowerCase() === 'z' || e.key.toLowerCase() === 'x' || (e.ctrlKey && (e.key.toLowerCase() === 'a' || e.key.toLowerCase() === 'c'))) {
             e.preventDefault();
 
             serialTask(async () => {
@@ -773,7 +773,6 @@ document.addEventListener('keydown', (e) => {
                 return;
             }
         }
-        // If unlocked and user types '0', trigger Anti Static Ignition Detection warning modal & log ACCEPTOR
         if (e.key === '0' && !isPressAnyKeyVisible()) {
             e.preventDefault();
             e.stopPropagation();
@@ -786,9 +785,6 @@ document.addEventListener('keydown', (e) => {
         handleNumberInput(e.key);
         return;
     }
-
-
-
 
     if (e.key === 'Enter' && (pendingDigits || isModalOpen())) {
         if (filteredClientData && filteredClientData.length > 0 && selectedIndex >= 0 && selectedIndex < filteredClientData.length) {
@@ -809,13 +805,16 @@ document.addEventListener('keydown', (e) => {
 
     if (isModalOpen() || filteredClientData.length === 0) return;
 
-    if (e.key === 'ArrowRight' || (e.ctrlKey && e.key.toLowerCase() === 'c')) {
+    // --- UPDATED NAVIGATION CONTROLS ---
+    const key = e.key.toLowerCase();
+
+    if (key === 'arrowright' || key === 'x' || (e.ctrlKey && key === 'c')) {
         e.preventDefault();
         if (selectedIndex < filteredClientData.length - 1) {
             selectedIndex++;
             updateCarouselPosition();
         }
-    } else if (e.key === 'ArrowLeft' || (e.ctrlKey && e.key.toLowerCase() === 'a')) {
+    } else if (key === 'arrowleft' || key === 'z' || (e.ctrlKey && key === 'a')) {
         e.preventDefault();
         if (selectedIndex > 0) {
             selectedIndex--;
@@ -826,7 +825,6 @@ document.addEventListener('keydown', (e) => {
         e.stopPropagation();
     }
 });
-
 // --- 6. INITIALIZATION & SSE ---
 window.addEventListener('load', function () {
     const endpoint = window.location.protocol + '//' + window.location.hostname + ':2050/sse';
