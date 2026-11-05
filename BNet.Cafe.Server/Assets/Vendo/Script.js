@@ -1239,10 +1239,25 @@ function speakText(text) {
         window.speechSynthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.5;
-        utterance.pitch = 2.0;
+
+        // Lower the rate and pitch slightly to prevent audio engine clipping on other machines
+        utterance.rate = 1.2;
+        utterance.pitch = 1.3;
+
+        const voices = window.speechSynthesis.getVoices();
+        const preferredVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Microsoft')));
+        if (preferredVoice) {
+            utterance.voice = preferredVoice;
+        }
+
         window.speechSynthesis.speak(utterance);
     }
+}
+// Ensure voices are loaded (some browsers load them asynchronously)
+if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+    };
 }
 
 let sharedAudioCtx = null;
