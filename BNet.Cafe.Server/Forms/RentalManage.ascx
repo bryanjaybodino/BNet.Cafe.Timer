@@ -1,5 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RentalManage.ascx.cs" Inherits="BNet.Cafe.Server.Forms.RentalManage" %>
 <%@ Register Src="~/Forms/Modals/RemoteOpenTime.ascx" TagPrefix="uc1" TagName="RemoteOpenTime" %>
+<%-- Change 1: Update register directive prefix and tag name --%>
+<%@ Register Src="~/Forms/Modals/RemoteEditTime.ascx" TagPrefix="uc2" TagName="RemoteEditTime" %>
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
     <ContentTemplate>
@@ -49,12 +51,10 @@
                     <div class="form-grid" style="margin-top: 15px;">
                         <div class="form-group">
                             <label for="<%= TextBox_Duration.ClientID %>">Total Input (Minutes)</label>
-                            <!-- Changed Text to empty and added placeholder -->
                             <asp:TextBox ID="TextBox_Duration" runat="server" CssClass="form-control" placeholder="Enter extra mins (e.g. 30)" TextMode="Number" min="0" oninput="NumberOnly(this); calculateAmount();"></asp:TextBox>
                         </div>
                         <div class="form-group">
                             <label for="<%= TextBox_Amount.ClientID %>">Total Input Amount (₱)</label>
-                            <!-- Changed Text to empty and added placeholder -->
                             <asp:TextBox ID="TextBox_Amount" runat="server" CssClass="form-control" placeholder="Enter extra amount (e.g. 20)" TextMode="Number" oninput="NumberOnly(this); calculateTimeFromAmount();"></asp:TextBox>
                         </div>
                     </div>
@@ -83,6 +83,12 @@
                     <!-- Form Actions -->
                     <div class="form-grid-action">
                         <span onclick="navigateTo('BNetPage.aspx?Form=Computers')" class="btn btn-secondary">Back</span>
+                        
+                        <!-- Change 2: Update JS function call to openRemoteEditTimeModal -->
+                        <span type="button" class="btn btn-secondary" onclick="openRemoteEditTimeModal('<%= Label_RentalId.Text %>', document.getElementById('<%= HiddenField_InitialDuration.ClientID %>').value, document.getElementById('<%= HiddenField_InitialAmount.ClientID %>').value)" style="padding: 8px 12px;">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </span>
+
                         <span id="LinkButton_OpenTime" runat="server">
                             <a class="btn btn-danger" onclick="openOpenTimeModal('<%= Label_RentalId.Text %>','<%= TextBox_ComputerName.Text %>','<%= DropDownList_Customer.SelectedValue %>','<%= Label_Status.Text %>')"><i class="fa fa-hourglass"></i>Open Time</a>
                         </span>
@@ -112,6 +118,8 @@
                 </asp:HyperLink>
             </div>
         </asp:Panel>
+        <%-- Change 3: Update control ID/Tag --%>
+        <uc2:RemoteEditTime runat="server" ID="RemoteEditTime" />
         <uc1:RemoteOpenTime runat="server" ID="RemoteOpenTime" />
     </ContentTemplate>
 </asp:UpdatePanel>
