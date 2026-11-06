@@ -1,4 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Users.ascx.cs" Inherits="BNet.Cafe.Server.Forms.Users" %>
+<%@ Register Src="~/Forms/Modals/UserDelete.ascx" TagPrefix="uc1" TagName="UserDelete" %>
+
 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
     <ContentTemplate>
         <asp:LinkButton ID="LinkButton_Refresh" runat="server"></asp:LinkButton>
@@ -93,6 +95,9 @@
                                         <a onclick="navigateTo('BNetPage.aspx?Form=UserEdit&id=<%# Eval("DBId") %>')" class="bnet-dropdown-item">
                                             <i class="fa-solid fa-pen-to-square"></i>Edit User
                                         </a>
+                                        <a onclick="openDeleteUserModal('<%# Eval("DBId") %>', '<%# Eval("DBName") %>')" class="bnet-dropdown-item text-danger">
+                                            <i class="fa-solid fa-trash"></i>Delete User
+                                        </a>
                                     </div>
                                 </div>
                             </ItemTemplate>
@@ -148,5 +153,6 @@
             </div>
             <asp:Panel ID="Panel_Pagination" runat="server" />
         </div>
+        <uc1:UserDelete runat="server" id="UserDelete" />
     </ContentTemplate>
 </asp:UpdatePanel>

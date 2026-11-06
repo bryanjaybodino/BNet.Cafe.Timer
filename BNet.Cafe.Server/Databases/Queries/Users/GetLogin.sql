@@ -36,7 +36,7 @@ LEFT JOIN (
     WHERE DBIsDeleted = 'FALSE'
     GROUP BY DBUserId
 ) p ON u.DBId = p.DBUserId
-WHERE 1 = 1
+WHERE DBIsDeleted = 'FALSE'
  AND u.DBEmail = '{DBEmail}'
  AND u.DBPassword = '{DBPassword}'
 ORDER BY u.DBId DESC

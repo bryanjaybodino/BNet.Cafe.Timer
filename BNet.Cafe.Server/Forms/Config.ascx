@@ -59,6 +59,7 @@
                         <asp:DropDownList ID="DropDownList_TimerSizeMode" runat="server" CssClass="form-control bnet-select">
                             <asp:ListItem Value="STANDARD" Text="Standard"></asp:ListItem>
                             <asp:ListItem Value="MINI" Text="Mini"></asp:ListItem>
+                            <asp:ListItem Value="TOPMOST" Text="Topmost"></asp:ListItem>
                         </asp:DropDownList>
                     </div>
 
@@ -146,6 +147,7 @@
                             <asp:ListItem Value="GRID" Text="Grid"></asp:ListItem>
                             <asp:ListItem Value="CAROUSEL" Text="Carousel"></asp:ListItem>
                             <asp:ListItem Value="ICON" Text="Icon"></asp:ListItem>
+                            <asp:ListItem Value="CIRCLE" Text="Circle"></asp:ListItem>
                         </asp:DropDownList>
                     </div>
 
