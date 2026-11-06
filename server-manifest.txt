@@ -177,7 +177,7 @@ c6a4949e6813d8709d863e8662478f975c625906	Databases/Queries/Suppliers/Update.sql
 449afc96a68dd1f740ecbe90faa9bac4126f5159	Databases/Queries/Users/GetByEmail.sql
 98aa518e28d6c7e3a4da722d4f90d028d3ff5d32	Databases/Queries/Users/GetById.sql
 6831fab1deea0070cb6a7362413035c7fa5abf95	Databases/Queries/Users/GetCount.sql
-6a9f6c18f579036be49442a48211dd85b23a5cbb	Databases/Queries/Users/GetLogin.sql
+9c42a058989b93d7cbe5048bf0ee6caa27596d36	Databases/Queries/Users/GetLogin.sql
 e5ac43be343719ed4111661ba0f924f91c0c05ba	Databases/Queries/Users/Update.sql
 b6fb1d7ede8e452d5916a424e73840e21e8ba75c	Databases/Queries/Users/UpdateCount.sql
 5adbfad5f0190048ead7872cafd0d326b7cbfc0c	ExpiredOrInvalid.aspx
@@ -187,7 +187,7 @@ d62d813b8f6fe2e67d338be2612aa199ebf82777	Forms/ComputerCreate.ascx
 25bb223e0e0b58e8feff50dbaafcda46ba79e46b	Forms/ComputerEarnings.ascx
 2a2bcfc0562cebcdbdbe47068fdf064c6bcf9d1e	Forms/ComputerEdit.ascx
 1b5f580590bf22bc2f3a0af0ec6f1959650ad836	Forms/Computers.ascx
-feceec7f589eb060b4d01bb5989d439c6ce44149	Forms/Config.ascx
+7663e09e67b06a15371db1a7f296776f6b5d3310	Forms/Config.ascx
 755ee77a81c0e0cd65571e81ad93c49df2c85ce3	Forms/Dashboard.ascx
 e29d425be105ed5306fadf180ae43d1b6d093bbe	Forms/DownloadApp.ascx
 907682833a311ef46542074a5d9ea822c0b36344	Forms/GameMonitoring.ascx
@@ -215,6 +215,7 @@ ffd7055f9bcefb299085111ef168857b5d0507c6	Forms/Modals/RemoteWakeUp.ascx
 eb2348fcc530c900c9c03b3ad89ab108be2af2d2	Forms/Modals/SalesVoid.ascx
 a7682abfe1b386ccbda285c1ff92ebaa477cf7d2	Forms/Modals/StockInDelete.ascx
 2ba1cc01c475aa78cc221a48d706d7d2682105ab	Forms/Modals/SupplierDelete.ascx
+ae7e2793b0897258c96743bffa01b12309fe82f6	Forms/Modals/UserDelete.ascx
 74822fce32eab4b93e3263af51b5548234c9b321	Forms/Modals/WallpaperDelete.ascx
 6a1ce41133d0d5581d836736a4a47ee9324eebb8	Forms/POS.ascx
 f3604602d18cbee656b1325fed99e55c22901e51	Forms/Points.ascx
@@ -234,7 +235,7 @@ c3a28409239d39c6d0958ed810fa28c881d25b1c	Forms/UserBonus.ascx
 53dab3a9297a7cb2b8fe2254b3520090746fe67d	Forms/UserCreate.ascx
 d8c68af66f6f20d629086ecc002ea5a12a9aa856	Forms/UserEdit.ascx
 77602cad0acf0987933a13e283ae48b43816e638	Forms/UserTopUp.ascx
-a108f527c1d6f09d67c76bc23adb81d812d3ebf1	Forms/Users.ascx
+5e5e3d947afb549f2f01996c914a723bd9069f2e	Forms/Users.ascx
 0dba21775cc1079f5be61f640378576d61a47e08	Forms/Wallpaper.ascx
 876028b73c489292bbcb2db6c2366f10f7a65661	Global.asax
 f076ad8ed5abb8fdc7924b57a0bad1dd3b2a80af	Login.aspx
@@ -262,8 +263,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-1fd6d02a8b8c97d26a501c6a560185bbac83e99e	bin/BNet.Cafe.Server.dll
-0293ac34a2f2b19445783d9f8a8b5623149216ab	bin/BNet.Cafe.Server.pdb
+bac09ec3ff92e510aff7e1c4ec4c8d6cb18e08ec	bin/BNet.Cafe.Server.dll
+97f75a35ad9ef7dd0757bb737cfb3033afcbda49	bin/BNet.Cafe.Server.pdb
 747ce8dc9f8d3a35a93c8d8ce2726a563df1878c	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 a9a3de6ef50873e3ec3fd2ed6afb6795d5d4b120	bin/BNet.Cafe.Websocket.pdb
