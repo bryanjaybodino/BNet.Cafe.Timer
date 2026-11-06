@@ -187,7 +187,7 @@ d62d813b8f6fe2e67d338be2612aa199ebf82777	Forms/ComputerCreate.ascx
 25bb223e0e0b58e8feff50dbaafcda46ba79e46b	Forms/ComputerEarnings.ascx
 2a2bcfc0562cebcdbdbe47068fdf064c6bcf9d1e	Forms/ComputerEdit.ascx
 1b5f580590bf22bc2f3a0af0ec6f1959650ad836	Forms/Computers.ascx
-fffe8a8d15c23d4b26b6980fd9ec02c901521d38	Forms/Config.ascx
+feceec7f589eb060b4d01bb5989d439c6ce44149	Forms/Config.ascx
 755ee77a81c0e0cd65571e81ad93c49df2c85ce3	Forms/Dashboard.ascx
 e29d425be105ed5306fadf180ae43d1b6d093bbe	Forms/DownloadApp.ascx
 907682833a311ef46542074a5d9ea822c0b36344	Forms/GameMonitoring.ascx
@@ -262,8 +262,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-ed90ad96f59fe455f1e9c260f1ca49eff85852a0	bin/BNet.Cafe.Server.dll
-1ac82e91b05610d535e66b48395a3fd3554b594f	bin/BNet.Cafe.Server.pdb
+1fd6d02a8b8c97d26a501c6a560185bbac83e99e	bin/BNet.Cafe.Server.dll
+0293ac34a2f2b19445783d9f8a8b5623149216ab	bin/BNet.Cafe.Server.pdb
 747ce8dc9f8d3a35a93c8d8ce2726a563df1878c	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 a9a3de6ef50873e3ec3fd2ed6afb6795d5d4b120	bin/BNet.Cafe.Websocket.pdb
