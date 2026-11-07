@@ -82,13 +82,9 @@
                 <asp:Panel ID="Panel_Buttons" runat="server">
                     <!-- Form Actions -->
                     <div class="form-grid-action">
-                        <span onclick="navigateTo('BNetPage.aspx?Form=Computers')" class="btn btn-secondary">Back</span>
-                        
-                        <!-- Change 2: Update JS function call to openRemoteEditTimeModal -->
                         <span type="button" class="btn btn-secondary" onclick="openRemoteEditTimeModal('<%= Label_RentalId.Text %>', document.getElementById('<%= HiddenField_InitialDuration.ClientID %>').value, document.getElementById('<%= HiddenField_InitialAmount.ClientID %>').value)" style="padding: 8px 12px;">
                             <i class="fa-solid fa-pen-to-square"></i> Edit
                         </span>
-
                         <span id="LinkButton_OpenTime" runat="server">
                             <a class="btn btn-danger" onclick="openOpenTimeModal('<%= Label_RentalId.Text %>','<%= TextBox_ComputerName.Text %>','<%= DropDownList_Customer.SelectedValue %>','<%= Label_Status.Text %>')"><i class="fa fa-hourglass"></i>Open Time</a>
                         </span>

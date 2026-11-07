@@ -8,8 +8,12 @@
     u.DBTimeCreated,
     u.DBIsDeleted,
     u.DBDateOfBirth,
-    IFNULL(b.DBTotalDuration, 0) AS DBTotalDuration,
     CASE 
+        WHEN u.DBRole IN ('MEMBER', 'VIP') THEN IFNULL(b.DBTotalDuration, 0)
+        ELSE 0
+    END AS DBTotalDuration,
+    CASE 
+        WHEN u.DBRole NOT IN ('MEMBER', 'VIP') THEN '0 min'
         WHEN b.DBTotalDuration IS NULL OR b.DBTotalDuration <= 0 THEN '0 min'
         WHEN FLOOR(b.DBTotalDuration / 60) > 0 AND (b.DBTotalDuration % 60) > 0 THEN 
             CONCAT(FLOOR(b.DBTotalDuration / 60), IF(FLOOR(b.DBTotalDuration / 60) = 1, ' hr ', ' hrs '), (b.DBTotalDuration % 60), IF((b.DBTotalDuration % 60) = 1, ' min', ' mins'))

@@ -234,6 +234,18 @@
             </div>
         </div>
 
+        <!-- Charts Row 4: Peak Hours / Hourly Activity Bar Chart -->
+        <div class="charts-grid">
+            <div class="card-chart span-3">
+                <div class="chart-header">
+                    <span class="chart-title">Peak Player Hours & Activity (Transactions by Hour of Day)</span>
+                </div>
+                <div class="chart-container" id="ChartContainerHourlyBar">
+                    <svg id="DashboardHourlyBarChart" viewBox="0 0 800 240"></svg>
+                </div>
+            </div>
+        </div>
+
         <!-- Leaderboards Row: Top Member Spenders & Top Games -->
         <div class="charts-grid">
             <!-- Top 10 Member Spenders Leaderboard -->
@@ -500,6 +512,17 @@
                     valueKey: "count",
                     unitLabel: "rentals",
                     data: data.computerUsage || []
+                });
+
+                window.dashboardHourlyBarChart = new BNetBarChart({
+                    container: "#ChartContainerHourlyBar",
+                    viewBox: "0 0 800 240",
+                    width: 800,
+                    height: 240,
+                    labelKey: "hour",
+                    valueKey: "count",
+                    unitLabel: "rentals",
+                    data: data.hourlyUsage || []
                 });
             }
 

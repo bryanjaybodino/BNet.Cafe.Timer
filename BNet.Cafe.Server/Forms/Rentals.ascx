@@ -1,4 +1,6 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Billings.ascx.cs" Inherits="BNet.Cafe.Server.Forms.Billings" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Rentals.ascx.cs" Inherits="BNet.Cafe.Server.Forms.Rentals" %>
+<%@ Register Src="~/Forms/Modals/RentalDelete.ascx" TagPrefix="uc" TagName="RentalDelete" %>
+
 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
     <ContentTemplate>
         <asp:LinkButton ID="LinkButton_Refresh" runat="server"></asp:LinkButton>
@@ -75,7 +77,6 @@
                 <asp:TextBox ID="TextBox_DateRage" AutoPostBack="true" CssClass="bnet-datepicker" data-mode="range" runat="server"></asp:TextBox>
             </div>
 
-
             <!-- Scrollable container wrapper -->
             <div class="bnet-table-container">
                 <asp:GridView ID="GridViewTable" runat="server" ShowHeaderWhenEmpty="true"
@@ -86,6 +87,21 @@
                     <PagerStyle CssClass="bnet-pagination" HorizontalAlign="Center" />
 
                     <Columns>
+                        <asp:TemplateField HeaderText="Action" ItemStyle-Width="120px">
+                            <ItemTemplate>
+                                <div class="bnet-dropdown" tabindex="0">
+                                    <button type="button" class="bnet-dropdown-toggle">
+                                        Command <i class="fa-solid fa-chevron-down"></i>
+                                    </button>
+                                    <div class="bnet-dropdown-menu">
+                                        <a onclick="openDeleteModal('<%# Eval("DBId") %>', '<%# Eval("DBId") %>')" class="bnet-dropdown-item text-danger">
+                                            <i class="fa-solid fa-trash"></i>Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
                         <asp:TemplateField HeaderText="Id" ItemStyle-Width="180px">
                             <ItemTemplate>
                                 <asp:Label ID="Label_DBId" runat="server" Text='<%# Eval("DBId") %>'></asp:Label>
@@ -130,5 +146,7 @@
             </div>
             <asp:Panel ID="Panel_Pagination" runat="server" />
         </div>
+
+        <uc:RentalDelete runat="server" ID="RentalDeleteModal" />
     </ContentTemplate>
 </asp:UpdatePanel>
