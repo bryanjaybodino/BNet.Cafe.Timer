@@ -168,3 +168,13 @@
     border-top: 1px solid var(--border-light, #e5e7eb);
     margin-top: 12px;
 }
+
+/* Style ONLY the arrow buttons (<a> tags) with a clean 1px border */
+.bnet-table-pagination-container .page-item a.page-link.pointer {
+    border: 1px solid var(--primary, #3b82f6) !important;
+}
+
+/* Hover effect specifically for the arrow buttons border */
+.bnet-table-pagination-container .page-item:not(.disabled) a.page-link.pointer:hover {
+    border: 1px solid var(--primary-dark, #1e40af) !important;
+}
