@@ -204,6 +204,7 @@ dd56c20e34fb8ad0dc0517a88611fcbb3ca75493	Forms/Modals/InventoryDelete.ascx
 c08e8d7e15f0602a09adc725320caa57cb8e0dac	Forms/Modals/POSReceipt.ascx
 77f5691a9b6eda0a9c1c7589a586983c7ae265cd	Forms/Modals/PointsSettingDelete.ascx
 5df5ea01c86466836377a35f78e394483b4c9619	Forms/Modals/PricingSettingDelete.ascx
+126d41cb84e043035cd6bb929f051e6be93ed3f8	Forms/Modals/RemoteEditTime.ascx
 250837d525b0cb6b162393db01c82cddfc48bd15	Forms/Modals/RemoteLogout.ascx
 0e2b931706ba520904e664b8f536f42886c6f663	Forms/Modals/RemoteMessage.ascx
 67860b3c1b16a848b5b19feb6a025d5092587ea7	Forms/Modals/RemoteOpenTime.ascx
@@ -222,7 +223,7 @@ f3604602d18cbee656b1325fed99e55c22901e51	Forms/Points.ascx
 c69f3e245c2f51a99e0c128f4ac2467dc39144e4	Forms/PointsSettings.ascx
 f1b2d024ad4a509c4c6c82b5a04e7b26b21ae4a7	Forms/PricingSettings.ascx
 0bc8c4d0e9afab809f737e9809cd465d83e081d4	Forms/Remote.ascx
-0142fc6a14c6769bed3b26437c0d71bc53239cac	Forms/RentalManage.ascx
+4a6c49b589912a5259bdc873e69590cae75ec128	Forms/RentalManage.ascx
 88b8e3dd0575e313ca18fb0b26486ff9076436e9	Forms/Sales.ascx
 fe418856b8f96591adfbdae1244a106d13e61cee	Forms/SeatMap.ascx
 8886bfdd0b89f0de254e3881384b812c32a8dfa3	Forms/SportTimer.ascx
@@ -263,8 +264,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-bac09ec3ff92e510aff7e1c4ec4c8d6cb18e08ec	bin/BNet.Cafe.Server.dll
-97f75a35ad9ef7dd0757bb737cfb3033afcbda49	bin/BNet.Cafe.Server.pdb
+ec0c9983c85bb6991a2e16c30099fd83e1763b37	bin/BNet.Cafe.Server.dll
+e16936cb22a586db2ea652ddff93940bcccdadf1	bin/BNet.Cafe.Server.pdb
 747ce8dc9f8d3a35a93c8d8ce2726a563df1878c	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 a9a3de6ef50873e3ec3fd2ed6afb6795d5d4b120	bin/BNet.Cafe.Websocket.pdb
