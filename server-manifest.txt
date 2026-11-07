@@ -43,7 +43,7 @@ f867dbeeb9825899be076109187fc2fc6d2e79a1	Assets/BNetDropdown/Style.css
 48a13f7bb90aa49f76a5b7bab1191cdcf85a866d	Assets/BNetPageLoader/Style.css
 bce051ecd9b6b962dbc013fb6dff72f70c64a6ab	Assets/BNetSelect/Script.js
 ff1a13ca930970a569a3fbd22782688d86117872	Assets/BNetSelect/Style.css
-3619790ebebec3653e1ed3783000b7cc0e69a947	Assets/BNetTable/Style.css
+1e423c9da8aff65903039c3be784d38945c95180	Assets/BNetTable/Style.css
 a5233585384c65fd506323ac040aeb13d7262aae	Assets/ClientChat/Script.js
 39e57e309abbd7e24f5aff4cea10f5d49201a9f2	Assets/ClientChat/Style.css
 3ed5945743f70e703d9c1280d34d869ef148dc95	Assets/Login/Script.js
@@ -268,8 +268,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-c64d3eba6cb030a9c1228787fcacbf61145a467b	bin/BNet.Cafe.Server.dll
-a5ff781b20355b8610773ed02a6ae6878f62d786	bin/BNet.Cafe.Server.pdb
+2eed79d3016dbdec8367d413ba6caf59562098f1	bin/BNet.Cafe.Server.dll
+c1fde84c427cad25187be2c802004a6ea46cfd72	bin/BNet.Cafe.Server.pdb
 747ce8dc9f8d3a35a93c8d8ce2726a563df1878c	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 a9a3de6ef50873e3ec3fd2ed6afb6795d5d4b120	bin/BNet.Cafe.Websocket.pdb
