@@ -17,6 +17,7 @@
     --bg-light-secondary: #ffffff;
     --bg-light-tertiary: #f1f5f9;
     --text-light: #1e293b;
+    --text-light-primary: #63AAFF;
     --text-light-secondary: #64748b;
     --border-light: #e2e8f0;
     --sidebar-light: #ffffff;
@@ -38,6 +39,7 @@
     --bg-light-secondary: #151515;
     --bg-light-tertiary: #20201F;
     --text-light: #f1f5f9;
+    --text-light-primary: #7F98F1;
     --text-light-secondary: #cbd5e1;
     --border-light: #2a2a2a;
     --sidebar-light: #151515;
@@ -241,11 +243,12 @@ i{
     padding: 10px 14px;
     font-size: 13px;
     font-weight: 700;
-    color: var(--text-light-secondary);
+    color: var(--text-light-primary)!important;
     cursor: pointer;
     user-select: none;
     border-radius: 8px;
     list-style: none; /* Remove default details arrow */
+    
 }
 
     .menu-header::-webkit-details-marker {

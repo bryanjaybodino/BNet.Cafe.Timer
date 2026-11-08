@@ -40,3 +40,9 @@ document.addEventListener('keydown', function (e) {
         e.preventDefault();
     }
 });
+
+
+function NumberOnly(e) {
+    e.value = e.value.replace(/\D/g, '');
+    e.value = e.value.replace(/^0+/, '');
+}

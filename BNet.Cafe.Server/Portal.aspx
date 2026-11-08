@@ -18,6 +18,7 @@
     <link rel="icon" type="image/png" href="App/icon.png">
     <title>BNet Cafe - Portal</title>
     <% Response.Write(BNet.Cafe.Server.Services.FileCssHelper.StyleSheetVersion("Assets/Portal/Style.css")); %>
+    <% Response.Write(BNet.Cafe.Server.Services.FileCssHelper.StyleSheetVersion("Assets/BNetSelect/Style.css")); %>
     <% Response.Write(BNet.Cafe.Server.Services.FileCssHelper.StyleSheetVersion("Assets/Pages/Style.css")); %>
     <% Response.Write(BNet.Cafe.Server.Services.FileCssHelper.StyleSheetVersion("Assets/BNetTable/Style.css")); %>
     <% Response.Write(BNet.Cafe.Server.Services.FileCssHelper.StyleSheetVersion("Assets/fontawesome/font-awesome.min.css")); %>
@@ -108,9 +109,7 @@
                         <asp:HiddenField ID="HiddenField_CustomerType" runat="server" />
                         <asp:HiddenField ID="HF_RedeemMinutes" runat="server" />
                         <asp:HiddenField ID="HF_RedeemPoints" runat="server" />
-
-                        <!-- 3 Tabs Navigation using LinkButton -->
-
+                        <!-- Tabs Navigation using LinkButton -->
                         <div class="portal-tabs">
                             <asp:LinkButton ID="lnkTabTransactions" runat="server" CssClass="portal-tab active" OnClick="lnkTab_Click" CommandArgument="Transactions">
                                 <i class="fa fa-history"></i> Transactions
@@ -120,6 +119,9 @@
                             </asp:LinkButton>
                             <asp:LinkButton ID="lnkTabRedeem" runat="server" CssClass="portal-tab" OnClick="lnkTab_Click" CommandArgument="Redeem">
                                 <i class="fa fa-gift"></i> Redeem Rewards
+                            </asp:LinkButton>
+                            <asp:LinkButton ID="lnkTabTransfer" runat="server" CssClass="portal-tab" OnClick="lnkTab_Click" CommandArgument="Transfer">
+                                <i class="fa fa-exchange-alt"></i> Transfer Balance
                             </asp:LinkButton>
                         </div>
 
@@ -136,6 +138,11 @@
                                         AutoGenerateColumns="False" CssClass="bnet-table" GridLines="None"
                                         AllowPaging="True" OnPageIndexChanging="GridViewTable_PageIndexChanging">
                                         <Columns>
+                                            <asp:TemplateField HeaderText="#">
+                                                <ItemTemplate>
+                                                    <asp:Label ID="Label_DBId" runat="server" Text='<%# Eval("DBId") %>'></asp:Label>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Date">
                                                 <ItemTemplate>
                                                     <asp:Label ID="Label_DBDateCreated" runat="server" Text='<%# Eval("DBDateCreated") %>'></asp:Label>
@@ -244,6 +251,54 @@
                             </div>
                         </asp:Panel>
 
+                        <!-- Tab 4: Transfer Balance Panel -->
+                        <asp:Panel ID="PanelTransfer" runat="server" CssClass="tab-content-panel" Visible="false">
+                            <div class="user-hero-card" style="flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 20px;">
+                                <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--portal-text-main);">
+                                        <i class="fa fa-exchange-alt" style="color: var(--portal-accent);"></i>Transfer Time Balance to Another User
+                                    </div>
+                                    <!-- Hidden or subtle PC Number label safely contained without layout impact -->
+                                    <asp:Label ID="Label_PCNumber" runat="server" Text="" Style="display: none;"></asp:Label>
+                                </div>
+                                <div style="font-size: 13px; color: var(--portal-text-muted);">
+                                    Send available account balance minutes safely to another registered user.                              
+                                </div>
+                                <!-- Transfer Warning Note -->
+                                <div style="font-size: 12px; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.2); display: flex; align-items: center; gap: 8px; width: 100%;">
+                                    <i class="fa fa-exclamation-triangle"></i>
+                                    <span><strong>Note:</strong> Completing a successful balance transfer will automatically force-logout your account for session security.</span>
+                                </div>
+
+                                <div style="width: 100%; display: flex; flex-direction: column; gap: 14px; max-width: 480px;">
+                                    <!-- Customer Selection Dropdown -->
+                                    <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+                                        <label for="<%= DropDownList_Customer.ClientID %>" style="font-size: 13px; font-weight: 700; color: var(--portal-text-main);">
+                                            Recipient Customer <span style="color: #ef4444;">*</span>
+                                        </label>
+                                        <asp:DropDownList ID="DropDownList_Customer" runat="server" CssClass="form-control bnet-select" Style="padding: 10px; border-radius: 10px; background: var(--portal-card-bg); color: var(--portal-text-main); border: 1px solid var(--portal-card-border);"></asp:DropDownList>
+                                    </div>
+
+                                    <!-- Minutes to Transfer Input -->
+                                    <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+                                        <label for="<%= txtTransferMinutes.ClientID %>" style="font-size: 13px; font-weight: 700; color: var(--portal-text-main);">
+                                            Minutes to Transfer <span style="color: #ef4444;">*</span>
+                                        </label>
+                                        <asp:TextBox ID="txtTransferMinutes" runat="server" TextMode="Number" min="1" placeholder="Enter minutes"
+                                            oninput="NumberOnly(this);"
+                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                            CssClass="form-control" Style="padding: 10px; border-radius: 10px; background: var(--portal-card-bg); color: var(--portal-text-main); border: 1px solid var(--portal-card-border);">
+                                         </asp:TextBox>
+                                    </div>
+
+                                    <asp:Button ID="btnInitTransfer" runat="server" CssClass="btn-redeem-rate" Text="Proceed to Transfer" OnClick="btnInitTransfer_Click" Style="margin-top: 8px;" />
+
+                                    <!-- Error / Warning Message Label -->
+                                    <asp:Label ID="litTransferInitError" runat="server" CssClass="text-danger" Style="color: #ef4444; font-size: 13px; display: block; margin-top: 4px; font-weight: 600;"></asp:Label>
+                                </div>
+                            </div>
+                        </asp:Panel>
+
                         <!-- Redemption Confirmation Modal Popup -->
                         <asp:Panel ID="PanelRedeemModal" runat="server" CssClass="modal-backdrop-overlay" Visible="false">
                             <div class="modal-card">
@@ -263,22 +318,45 @@
                                 </div>
                             </div>
                         </asp:Panel>
+
                         <!-- Insufficient Points Warning Modal Popup -->
                         <asp:Panel ID="PanelInsufficientModal" runat="server" CssClass="modal-backdrop-overlay" Visible="false">
                             <div class="modal-card">
                                 <div class="modal-header">
                                     <i class="fa fa-exclamation-circle" style="color: #ef4444;"></i>Insufficient Points
-                               
                                 </div>
                                 <div class="modal-body">
                                     You don't have enough reward points to redeem this reward tier. Keep earning points to unlock more time!
-                               
                                 </div>
                                 <div class="modal-footer" style="justify-content: center;">
                                     <asp:Button ID="btnCloseInsufficientModal" runat="server" CssClass="btn-redeem-rate" Text="Okay" OnClick="btnCloseInsufficientModal_Click" Style="background: var(--portal-accent);" />
                                 </div>
                             </div>
                         </asp:Panel>
+
+                        <!-- Password Confirmation Modal for Transfer -->
+                        <asp:Panel ID="PanelTransferPasswordModal" runat="server" CssClass="modal-backdrop-overlay" Visible="false">
+                            <div class="modal-card">
+                                <div class="modal-header">
+                                    <i class="fa fa-lock" style="color: var(--portal-accent);"></i>Security Verification
+                                </div>
+                                <div class="modal-body">
+                                    Please enter your account password to confirm transferring <strong>
+                                        <asp:Literal ID="litTransferModalMins" runat="server"></asp:Literal>
+                                        minutes</strong> to <strong>
+                                            <asp:Literal ID="litTransferModalRecipient" runat="server"></asp:Literal></strong>.
+                                    <div style="margin-top: 14px;">
+                                        <asp:TextBox ID="txtTransferPassword" runat="server" TextMode="Password" placeholder="Enter your password" CssClass="form-control" Style="width: 100%; padding: 10px; border-radius: 10px; background: var(--portal-card-bg); color: var(--portal-text-main); border: 1px solid var(--portal-card-border);"></asp:TextBox>
+                                        <asp:Label ID="litTransferError" runat="server" CssClass="text-danger" Style="color: #ef4444; font-size: 12px; display: block; margin-top: 6px;"></asp:Label>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <asp:Button ID="btnConfirmTransfer" runat="server" CssClass="btn-redeem-rate" Text="Confirm & Transfer" OnClick="btnConfirmTransfer_Click" Style="background: #10b981;" />
+                                    <asp:Button ID="btnCancelTransfer" runat="server" CssClass="btn-theme-toggle" Text="Cancel" OnClick="btnCancelTransfer_Click" Style="width: auto; padding: 8px 16px; border-radius: 10px;" />
+                                </div>
+                            </div>
+                        </asp:Panel>
+
                     </ContentTemplate>
                 </asp:UpdatePanel>
             </main>
