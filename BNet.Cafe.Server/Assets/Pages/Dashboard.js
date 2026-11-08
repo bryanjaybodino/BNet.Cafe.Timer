@@ -1,0 +1,247 @@
+﻿(function () {
+    function renderTopUsersTable(topUsers) {
+        var tbody = document.getElementById("TableTopUsersBody");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        if (!topUsers || topUsers.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>No top-ups</td></tr>";
+            return;
+        }
+
+        topUsers.forEach(function (user, index) {
+            var tr = document.createElement("tr");
+            tr.innerHTML =
+                "<td><b>#" + (index + 1) + "</b></td>" +
+                "<td>" + user.name + "</td>" +
+                "<td>" + user.count + "x</td>" +
+                "<td><strong style='color: var(--accent-green, #10b981);'>₱" + user.amount.toFixed(2) + "</strong></td>";
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderTopGamesTable(topGames) {
+        var tbody = document.getElementById("TableTopGamesBody");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        if (!topGames || topGames.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>No games configured</td></tr>";
+            return;
+        }
+
+        topGames.forEach(function (game, index) {
+            var tr = document.createElement("tr");
+            tr.innerHTML =
+                "<td><b>#" + (index + 1) + "</b></td>" +
+                "<td><b>" + game.name + "</b></td>" +
+                "<td><span class='bnet-badge-status green'>" + game.category + "</span></td>" +
+                "<td><strong style='color: var(--primary, #3b82f6);'>" + game.playCount + "</strong></td>";
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderSalesVsCostChart(salesVsCost) {
+        var svg = document.getElementById("DashboardSalesVsCostChart");
+        if (!svg) return;
+        svg.innerHTML = "";
+
+        if (!salesVsCost || salesVsCost.length === 0) {
+            var emptyText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            emptyText.setAttribute("x", "450");
+            emptyText.setAttribute("y", "120");
+            emptyText.setAttribute("text-anchor", "middle");
+            emptyText.setAttribute("fill", "#888");
+            emptyText.textContent = "No Sales or Cost Data Available";
+            svg.appendChild(emptyText);
+            return;
+        }
+
+        var width = 900;
+        var height = 240;
+        var padding = { top: 25, right: 30, bottom: 40, left: 50 };
+        var chartW = width - padding.left - padding.right;
+        var chartH = height - padding.top - padding.bottom;
+
+        var maxVal = 10;
+        salesVsCost.forEach(function (d) {
+            if (d.sales > maxVal) maxVal = d.sales;
+            if (d.cost > maxVal) maxVal = d.cost;
+        });
+        maxVal *= 1.15;
+
+        for (var k = 0; k <= 4; k++) {
+            var yPos = (height - padding.bottom) - (k / 4) * chartH;
+            var gridValue = (maxVal * (k / 4)).toFixed(0);
+
+            var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", padding.left);
+            line.setAttribute("y1", yPos);
+            line.setAttribute("x2", width - padding.right);
+            line.setAttribute("y2", yPos);
+            line.setAttribute("stroke", "var(--border-light, #334155)");
+            line.setAttribute("stroke-dasharray", "4");
+            svg.appendChild(line);
+
+            var yLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            yLabel.setAttribute("x", padding.left - 10);
+            yLabel.setAttribute("y", yPos + 4);
+            yLabel.setAttribute("text-anchor", "end");
+            yLabel.setAttribute("fill", "var(--text-light-secondary, #94a3b8)");
+            yLabel.setAttribute("font-size", "10");
+            yLabel.textContent = "₱" + gridValue;
+            svg.appendChild(yLabel);
+        }
+
+        var tooltip = document.getElementById("BNetChartTooltip");
+        function showChartTooltip(evt, text) {
+            if (!tooltip) return;
+            tooltip.innerText = text;
+            tooltip.style.opacity = "1";
+            tooltip.style.left = (evt.clientX + 12) + "px";
+            tooltip.style.top = (evt.clientY - 28) + "px";
+        }
+        function hideChartTooltip() {
+            if (tooltip) tooltip.style.opacity = "0";
+        }
+
+        var groupWidth = chartW / salesVsCost.length;
+        var barWidth = Math.min(28, (groupWidth - 16) / 2);
+
+        salesVsCost.forEach(function (d, i) {
+            var groupX = padding.left + i * groupWidth + (groupWidth / 2);
+
+            var salesH = (d.sales / maxVal) * chartH;
+            var salesY = (height - padding.bottom) - salesH;
+            var salesX = groupX - barWidth - 3;
+
+            var costH = (d.cost / maxVal) * chartH;
+            var costY = (height - padding.bottom) - costH;
+            var costX = groupX + 3;
+
+            // Sales Bar
+            var salesBar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            salesBar.setAttribute("x", salesX);
+            salesBar.setAttribute("y", salesY);
+            salesBar.setAttribute("width", barWidth);
+            salesBar.setAttribute("height", salesH);
+            salesBar.setAttribute("fill", "#10b981");
+            salesBar.setAttribute("rx", "4");
+            salesBar.addEventListener("mousemove", function (e) {
+                showChartTooltip(e, d.date + " Sales: ₱" + d.sales.toFixed(2));
+            });
+            salesBar.addEventListener("mouseleave", hideChartTooltip);
+            svg.appendChild(salesBar);
+
+            // Cost Bar
+            var costBar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            costBar.setAttribute("x", costX);
+            costBar.setAttribute("y", costY);
+            costBar.setAttribute("width", barWidth);
+            costBar.setAttribute("height", costH);
+            costBar.setAttribute("fill", "#ef4444");
+            costBar.setAttribute("rx", "4");
+            costBar.addEventListener("mousemove", function (e) {
+                showChartTooltip(e, d.date + " Restock Cost: ₱" + d.cost.toFixed(2));
+            });
+            costBar.addEventListener("mouseleave", hideChartTooltip);
+            svg.appendChild(costBar);
+
+            // Date Label
+            var dateLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            dateLabel.setAttribute("x", groupX);
+            dateLabel.setAttribute("y", height - 12);
+            dateLabel.setAttribute("text-anchor", "middle");
+            dateLabel.setAttribute("fill", "var(--text-light-secondary, #94a3b8)");
+            dateLabel.setAttribute("font-size", "11");
+            dateLabel.textContent = d.date;
+            svg.appendChild(dateLabel);
+        });
+    }
+
+    function initBNetDashboardCharts() {
+        var hidden = document.querySelector("input[id*='HiddenField_ChartData']");
+        if (!hidden || !hidden.value) return;
+
+        var data;
+        try {
+            data = JSON.parse(hidden.value);
+        } catch (ex) {
+            console.error("Dashboard chart data JSON invalid:", ex, hidden.value);
+            return;
+        }
+
+        if (typeof BNetLineChart !== "undefined") {
+            window.dashboardLineChart = new BNetLineChart({
+                container: "#ChartContainerLine",
+                viewBox: "0 0 600 240",
+                width: 600,
+                height: 240,
+                xKey: "date",
+                yKey: "amount",
+                currencySymbol: "₱",
+                data: data.revenueTrend || []
+            });
+        }
+
+        if (typeof BNetDonutChart !== "undefined") {
+            window.dashboardDonutChart = new BNetDonutChart({
+                container: "#ChartContainerDonut",
+                viewBox: "0 0 200 200",
+                radius: 65,
+                cx: 100,
+                cy: 100,
+                labelKey: "label",
+                valueKey: "value",
+                colorKey: "color",
+                data: data.customerTypes || [],
+                onLegendUpdate: function (customerTypes) {
+                    var membersEl = document.getElementById("LegendMembersValue");
+                    var walkInEl = document.getElementById("LegendWalkInValue");
+                    var members = customerTypes.find(function (c) { return c.label === "Members"; });
+                    var walkIn = customerTypes.find(function (c) { return c.label === "Walk-In"; });
+                    if (membersEl) membersEl.textContent = members ? members.value : 0;
+                    if (walkInEl) walkInEl.textContent = walkIn ? walkIn.value : 0;
+                }
+            });
+        }
+
+        if (typeof BNetBarChart !== "undefined") {
+            window.dashboardBarChart = new BNetBarChart({
+                container: "#ChartContainerBar",
+                viewBox: "0 0 800 240",
+                width: 800,
+                height: 240,
+                labelKey: "pc",
+                valueKey: "count",
+                unitLabel: "rentals",
+                data: data.computerUsage || []
+            });
+
+            window.dashboardHourlyBarChart = new BNetBarChart({
+                container: "#ChartContainerHourlyBar",
+                viewBox: "0 0 800 240",
+                width: 800,
+                height: 240,
+                labelKey: "hour",
+                valueKey: "count",
+                unitLabel: "rentals",
+                data: data.hourlyUsage || []
+            });
+        }
+
+        renderSalesVsCostChart(data.salesVsCost || []);
+        renderTopUsersTable(data.topUsers || []);
+        renderTopGamesTable(data.topGames || []);
+    }
+
+    document.addEventListener("DOMContentLoaded", initBNetDashboardCharts);
+
+    if (typeof Sys !== "undefined" && Sys.WebForms && Sys.WebForms.PageRequestManager) {
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+            initBNetDashboardCharts();
+        });
+    }
+
+    window.initBNetDashboardCharts = initBNetDashboardCharts;
+})();

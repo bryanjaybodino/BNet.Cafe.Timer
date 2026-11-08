@@ -61,6 +61,13 @@
     display: block;
 }
 
+/* Drop-up Modifier (When there is no space below) */
+.bnet-select-container.drop-up .bnet-select-dropdown {
+    top: auto;
+    bottom: calc(100% + 6px);
+    box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.15);
+}
+
 /* Search Box Header */
 .bnet-select-search-wrapper {
     padding: 8px 10px;

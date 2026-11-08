@@ -2,6 +2,9 @@
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
     <ContentTemplate>
+        <!-- Hidden field to track and preserve the active tab across postbacks -->
+        <asp:HiddenField ID="hfActiveTab" runat="server" Value="tab-timer" />
+
         <div class="bnet-table-wrapper">
             <div class="content-header" style="margin-bottom: 24px;">
                 <h1 style="font-size: 20px; display: flex; align-items: center; gap: 8px;">

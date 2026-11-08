@@ -16,7 +16,7 @@ function ValidateConfig() {
     var warningTimeId = warningTimeInput ? warningTimeInput.id : 'TextBox_WarningTime';
 
     var birthdayCreditsInput = document.querySelector('[id$="TextBox_BirthdayCredits"]');
-    
+
     var isValidInterval = requiredValidation(inputId);
     if (!isValidInterval) {
         ShowAlert('Please enter an auto shutdown interval.');
@@ -82,8 +82,6 @@ if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManage
     });
 }
 
-
-
 // Function to switch active configuration tabs
 function switchConfigTab(evt, tabId) {
     var panes = document.querySelectorAll('.config-tab-pane');
@@ -104,11 +102,35 @@ function switchConfigTab(evt, tabId) {
     if (evt && evt.currentTarget) {
         evt.currentTarget.classList.add('active');
     }
+
+    // Save active tab ID to the hidden field for postback retention
+    var hf = document.querySelector('[id$="hfActiveTab"]');
+    if (hf) {
+        hf.value = tabId;
+    }
 }
 
-// Re-bind tab functionality properly after ASP.NET AJAX UpdatePanel postbacks
+// Re-bind tab functionality and restore active tab after ASP.NET AJAX UpdatePanel postbacks
 if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager) {
     Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(function () {
-        // Keep active tab state persistent or default safely if needed
+        var hf = document.querySelector('[id$="hfActiveTab"]');
+        if (hf && hf.value) {
+            var activeTabId = hf.value;
+            var targetPane = document.getElementById(activeTabId);
+
+            if (targetPane) {
+                document.querySelectorAll('.config-tab-pane').forEach(function (p) { p.classList.remove('active'); });
+                document.querySelectorAll('.config-tab-btn').forEach(function (b) { b.classList.remove('active'); });
+
+                targetPane.classList.add('active');
+
+                document.querySelectorAll('.config-tab-btn').forEach(function (btn) {
+                    var onClickAttr = btn.getAttribute('onclick');
+                    if (onClickAttr && onClickAttr.indexOf(activeTabId) !== -1) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+        }
     });
 }

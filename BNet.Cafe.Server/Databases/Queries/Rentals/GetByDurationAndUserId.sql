@@ -35,5 +35,6 @@ LEFT JOIN users ud ON r.DBDeletedById = ud.DBId
 WHERE 1 = 1 
   AND r.DBDuration = '{DBDuration}'
   AND r.DBUserId = '{DBUserId}'
+  AND r.DBDateCreated = '{DBDateCreated}'
 ORDER BY r.DBId DESC
 {LIMIT}

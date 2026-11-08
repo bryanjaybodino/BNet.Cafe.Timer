@@ -16,6 +16,7 @@ class BNetSelect {
         this.selectedValue = null;
         this.selectedText = '';
         this.searchQuery = '';
+        this.highlightedIndex = -1;
 
         this.initDOM();
         this.bindEvents();
@@ -64,6 +65,29 @@ class BNetSelect {
             }, 150);
         });
 
+        // Keyboard Navigation Support (Arrow Down, Arrow Up, Enter)
+        this.searchInput.addEventListener('keydown', (e) => {
+            const options = this.optionsList.querySelectorAll('.bnet-select-option');
+            if (options.length === 0) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                this.highlightedIndex = (this.highlightedIndex + 1) % options.length;
+                this.updateHighlight(options);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                this.highlightedIndex = (this.highlightedIndex - 1 + options.length) % options.length;
+                this.updateHighlight(options);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                const targetIndex = this.highlightedIndex === -1 ? 0 : this.highlightedIndex;
+                if (options[targetIndex]) {
+                    const selectedOption = options[targetIndex];
+                    this.selectItem(selectedOption.dataset.value, selectedOption.textContent);
+                }
+            }
+        });
+
         // Infinite Scroll Pagination Event
         this.optionsList.addEventListener('scroll', () => {
             const { scrollTop, scrollHeight, clientHeight } = this.optionsList;
@@ -84,20 +108,51 @@ class BNetSelect {
         document.addEventListener('click', () => this.close());
     }
 
+    updateHighlight(options) {
+        options.forEach((el, index) => {
+            if (index === this.highlightedIndex) {
+                el.classList.add('highlighted');
+                // Ensure the highlighted element scrolls into view automatically
+                el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            } else {
+                el.classList.remove('highlighted');
+            }
+        });
+    }
+
     toggle() {
         if (this.container.classList.contains('disabled')) return;
         const isOpen = this.container.classList.contains('open');
+
         // Close all other instances if multiple exist on the page
-        document.querySelectorAll('.bnet-select-container.open').forEach(el => el.classList.remove('open'));
+        document.querySelectorAll('.bnet-select-container.open').forEach(el => {
+            el.classList.remove('open', 'drop-up');
+        });
 
         if (!isOpen) {
             this.container.classList.add('open');
+
+            // Smart positioning logic: Check space above and below
+            const rect = this.container.getBoundingClientRect();
+            const dropdownHeight = 280; // Approximate max height of the dropdown
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+
+            if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
+                this.container.classList.add('drop-up');
+            } else {
+                this.container.classList.remove('drop-up');
+            }
+
             this.searchInput.focus();
+
+            // Re-run filter/reset check on open to sync highlight with current selection
+            this.filterAndReset(this.searchQuery);
         }
     }
 
     close() {
-        this.container.classList.remove('open');
+        this.container.classList.remove('open', 'drop-up');
     }
 
     filterAndReset(query) {
@@ -116,11 +171,23 @@ class BNetSelect {
         }
 
         if (this.filteredData.length === 0) {
+            this.highlightedIndex = -1;
             this.optionsList.innerHTML = `<div class="bnet-select-empty">No results found</div>`;
             return;
         }
 
         this.loadMore();
+
+        // Automatically sync highlightedIndex to the currently selected value if it exists
+        if (this.selectedValue !== null) {
+            const foundIndex = this.filteredData.findIndex(item => String(item.value) === String(this.selectedValue));
+            this.highlightedIndex = foundIndex !== -1 ? foundIndex : 0;
+        } else {
+            this.highlightedIndex = 0;
+        }
+
+        const options = this.optionsList.querySelectorAll('.bnet-select-option');
+        this.updateHighlight(options);
     }
 
     loadMore() {

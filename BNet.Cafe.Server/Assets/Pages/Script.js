@@ -316,3 +316,13 @@ function limitTo24(el) {
     if (value < 0) el.value = 0;
     if (value > 24) el.value = 24;
 }
+
+window.addEventListener('pageshow', (event) => {
+    // event.persisted is true if the page was restored from the bfcache (e.g., Alt + Left Arrow)
+    if (event.persisted) {
+        const loadingOverlay = document.getElementById('bnet-page-loading-overlay');
+        if (loadingOverlay) {
+            loadingOverlay.classList.remove('active');
+        }
+    }
+});
