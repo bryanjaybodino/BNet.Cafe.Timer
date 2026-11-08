@@ -4,6 +4,7 @@
 	DBDuration,
 	DBAmount,
 	DBDescription,
+	DBCreatedById,
 	DBDateCreated,
 	DBTimeCreated,
 	DBIsDeleted
@@ -14,6 +15,7 @@ VALUES
 	'{DBDuration}',
 	'{DBAmount}',
 	'{DBDescription}',
+	'{DBCreatedById}',
 	'{DBDateCreated}',
 	'{DBTimeCreated}',
 	'{DBIsDeleted}'

@@ -5,11 +5,14 @@
     IFNULL(u.DBName, 'Guest / Walk-in') AS DBName,
     IFNULL(p.DBDescription, 'Points Adjustment') AS DBDescription,
     FORMAT(p.DBPoints, 2) AS DBPoints,
+    p.DBCreatedById,
+    IFNULL(uc.DBName, 'System / Unknown') AS DBCreatedByName,
     p.DBDateCreated,
     p.DBTimeCreated,
     p.DBIsDeleted
 FROM points p
 LEFT JOIN users u ON p.DBUserId = u.DBId
+LEFT JOIN users uc ON p.DBCreatedById = uc.DBId
 WHERE 1 = 1 
   AND p.DBIsDeleted = '{DBIsDeleted}'
   AND p.DBUserId = '{DBUserId}'

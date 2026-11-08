@@ -4,8 +4,12 @@
 	DBUserId,
 	DBDuration,
 	DBAmount,
+	DBCreatedById,
 	DBDateCreated,
 	DBTimeCreated,
+	DBDeletedById,
+	DBDateDeleted,
+	DBTimeDeleted,
 	DBIsDeleted
 ) 
 VALUES 
@@ -14,7 +18,11 @@ VALUES
 	'{DBUserId}',
 	'{DBDuration}',
 	'{DBAmount}',
+	'{DBCreatedById}',
 	'{DBDateCreated}',
 	'{DBTimeCreated}',
+	'{DBDeletedById}',
+	'{DBDateDeleted}',
+	'{DBTimeDeleted}',
 	'{DBIsDeleted}'
 )

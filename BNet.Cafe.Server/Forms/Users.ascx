@@ -122,7 +122,10 @@
 
                         <asp:TemplateField HeaderText="Role" ItemStyle-Width="150px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_DBRole" runat="server" Text='<%# Eval("DBRole") %>'></asp:Label>
+                                <asp:Label ID="Label_DBRole" runat="server"
+                                    Text='<%# Eval("DBRole") %>'
+                                    CssClass='<%# Eval("DBRole").ToString().Equals("VIP", StringComparison.OrdinalIgnoreCase) ? "bnet-badge-status green" : (Eval("DBRole").ToString().Equals("MEMBER", StringComparison.OrdinalIgnoreCase) ? "bnet-badge-status blue" : "bnet-badge-status gray") %>'>
+                                </asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
 
@@ -132,17 +135,22 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
-
                         <asp:TemplateField HeaderText="Balance" ItemStyle-Width="150px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_DBFormattedTotalDuration" runat="server" Text='<%# Eval("DBFormattedTotalDuration") %>'></asp:Label>
+                                <span class="bnet-badge-status blue">
+                                    <asp:Label ID="Label_DBFormattedTotalDuration" runat="server" Text='<%# Eval("DBFormattedTotalDuration") %>'></asp:Label>
+                                </span>
                             </ItemTemplate>
                         </asp:TemplateField>
+
                         <asp:TemplateField HeaderText="Points" ItemStyle-Width="150px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_DBTotalPoints" runat="server" Text='<%# Eval("DBTotalPoints") %>'></asp:Label>
+                                <span class="bnet-badge-status yellow">
+                                    <asp:Label ID="Label_DBTotalPoints" runat="server" Text='<%# Eval("DBTotalPoints") %>'></asp:Label>
+                                </span>
                             </ItemTemplate>
                         </asp:TemplateField>
+
                         <asp:TemplateField HeaderText="Date & Time" ItemStyle-Width="220px">
                             <ItemTemplate>
                                 <asp:Label ID="Label_DBDateCreated_DBTimeCreated" runat="server" Text='<%# string.Format("{0} - {1}", Eval("DBDateCreated"), Eval("DBTimeCreated")) %>'></asp:Label>
@@ -153,6 +161,6 @@
             </div>
             <asp:Panel ID="Panel_Pagination" runat="server" />
         </div>
-        <uc1:UserDelete runat="server" id="UserDelete" />
+        <uc1:UserDelete runat="server" ID="UserDelete" />
     </ContentTemplate>
 </asp:UpdatePanel>

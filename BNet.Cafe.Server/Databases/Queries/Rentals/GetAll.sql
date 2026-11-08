@@ -18,10 +18,20 @@
     FORMAT(r.DBAmount, 2) AS DBAmount,
     r.DBDateCreated,
     r.DBTimeCreated,
+    -- Creator info
+    r.DBCreatedById,
+    IFNULL(uc.DBName, 'System / Unknown') AS DBCreatedByName,
+    -- Deleter info (if deleted)
+    r.DBDeletedById,
+    IFNULL(ud.DBName, '--') AS DBDeletedByName,
+    r.DBDateDeleted,
+    r.DBTimeDeleted,
     r.DBIsDeleted
 FROM rentals r
 LEFT JOIN computers c ON r.DBComputerId = c.DBId
 LEFT JOIN users u ON r.DBUserId = u.DBId
+LEFT JOIN users uc ON r.DBCreatedById = uc.DBId
+LEFT JOIN users ud ON r.DBDeletedById = ud.DBId
 WHERE 1 = 1 
   AND r.DBIsDeleted = '{DBIsDeleted}'
   AND r.DBComputerId = '{DBComputerId}'

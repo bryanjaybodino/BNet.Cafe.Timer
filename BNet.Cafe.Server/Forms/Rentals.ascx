@@ -71,9 +71,20 @@
         </div>
         <div class="bnet-table-wrapper">
             <div class="bnet-table-toolbar">
-                <div class="search-box">
-                    <asp:TextBox ID="TextBox_Search" runat="server" CssClass="search-input" AutoPostBack="True" OnTextChanged="TextBox_Search_TextChanged" placeholder="Search computer or customer..." />
+                <div class="toolbar-filters">
+                    <div class="search-box">
+                        <asp:TextBox ID="TextBox_Search" runat="server" CssClass="search-input" AutoPostBack="True" OnTextChanged="TextBox_Search_TextChanged" placeholder="Search computer or customer..." />
+                    </div>
+                    <div class="search-box" style="min-width: 200px!important">
+                        <asp:DropDownList ID="DropDownList_Status" AutoPostBack="true" runat="server" CssClass="form-control bnet-select">
+                            <asp:ListItem Text="ACTIVE" Value="FALSE"></asp:ListItem>
+                            <asp:ListItem Text="DELETED" Value="TRUE"></asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
                 </div>
+
+
+
                 <asp:TextBox ID="TextBox_DateRage" AutoPostBack="true" CssClass="bnet-datepicker" data-mode="range" runat="server"></asp:TextBox>
             </div>
 
@@ -110,14 +121,20 @@
 
                         <asp:TemplateField HeaderText="Computer" ItemStyle-Width="180px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_DBComputerName" runat="server" Text='<%# Eval("DBComputerName") %>'></asp:Label>
+                                <span class="bnet-badge-status blue">
+                                    <asp:Label ID="Label_DBComputerName" runat="server" Text='<%# Eval("DBComputerName") %>'></asp:Label>
+                                </span>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        
                         <asp:TemplateField HeaderText="Customer" ItemStyle-Width="200px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_DBName" runat="server" Text='<%# Eval("DBName") %>'></asp:Label>
+                                <span class='<%# Eval("DBName").ToString() == "Guest / Walk-in" ? "bnet-badge-status gray" : "bnet-badge-status blue" %>'>
+                                    <asp:Label ID="Label_DBName" runat="server" Text='<%# Eval("DBName") %>'></asp:Label>
+                                </span>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        
                         <asp:TemplateField HeaderText="Email" ItemStyle-Width="200px">
                             <ItemTemplate>
                                 <asp:Label ID="Label_DBEmail" runat="server" Text='<%# Eval("DBEmail") %>'></asp:Label>
@@ -132,13 +149,37 @@
 
                         <asp:TemplateField HeaderText="Amount Paid" ItemStyle-Width="150px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_DBAmount" runat="server" Text='<%# string.Format("₱{0}", Eval("DBAmount")) %>'></asp:Label>
+                                <span class="bnet-badge-status yellow">
+                                    <asp:Label ID="Label_DBAmount" runat="server" Text='<%# string.Format("₱{0}", Eval("DBAmount")) %>'></asp:Label>
+                                </span>
                             </ItemTemplate>
                         </asp:TemplateField>
 
-                        <asp:TemplateField HeaderText="Date & Time" ItemStyle-Width="220px">
+                        <asp:TemplateField HeaderText="Created By" ItemStyle-Width="160px">
+                            <ItemTemplate>
+                                <span class='<%# Eval("DBCreatedByName").ToString() == "System / Unknown" ? "bnet-badge-status gray" : "bnet-badge-status green" %>'>
+                                    <asp:Label ID="Label_DBCreatedByName" runat="server" Text='<%# Eval("DBCreatedByName") %>'></asp:Label>
+                                </span>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Date & Time Created" ItemStyle-Width="220px">
                             <ItemTemplate>
                                 <asp:Label ID="Label_DBDateCreated_DBTimeCreated" runat="server" Text='<%# string.Format("{0} - {1}", Eval("DBDateCreated"), Eval("DBTimeCreated")) %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Deleted By" ItemStyle-Width="160px">
+                            <ItemTemplate>
+                                <span class='<%# Eval("DBDeletedByName").ToString() == "--" ? "bnet-badge-status gray" : "bnet-badge-status red" %>'>
+                                    <asp:Label ID="Label_DBDeletedByName" runat="server" Text='<%# Eval("DBDeletedByName") %>'></asp:Label>
+                                </span>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Date & Time Deleted" ItemStyle-Width="220px">
+                            <ItemTemplate>
+                                <asp:Label ID="Label_DBDateDeleted_DBTimeDeleted" runat="server" Text='<%# string.IsNullOrEmpty(Eval("DBDateDeleted") as string) ? "--" : string.Format("{0} - {1}", Eval("DBDateDeleted"), Eval("DBTimeDeleted")) %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

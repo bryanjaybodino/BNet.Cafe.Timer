@@ -1,8 +1,12 @@
 ﻿SELECT 
     b.DBUserId,
     IFNULL(u.DBEmail, 'Guest / Walk-in') AS DBEmail,
-    SUM(b.DBDuration) AS DBTotalDuration,
     CASE 
+        WHEN u.DBRole = 'ADMIN' THEN 0 
+        ELSE SUM(b.DBDuration) 
+    END AS DBTotalDuration,
+    CASE 
+        WHEN u.DBRole = 'ADMIN' THEN '0 min'
         WHEN SUM(b.DBDuration) IS NULL OR SUM(b.DBDuration) = 0 THEN '0 min'
         ELSE CONCAT(
             IF(SUM(b.DBDuration) < 0, '-', ''),
@@ -24,6 +28,6 @@ LEFT JOIN users u ON b.DBUserId = u.DBId
 WHERE 1=1
   AND b.DBIsDeleted = 'FALSE'
   AND b.DBUserId = '{DBUserId}'
-GROUP BY b.DBUserId, u.DBEmail
+GROUP BY b.DBUserId, u.DBEmail, u.DBRole
 ORDER BY DBTotalDuration DESC
 {LIMIT}

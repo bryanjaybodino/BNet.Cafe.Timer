@@ -77,7 +77,9 @@
 
                         <asp:TemplateField HeaderText="Customer" ItemStyle-Width="200px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_DBName" runat="server" Text='<%# Eval("DBName") %>'></asp:Label>
+                                <span class='<%# Eval("DBName").ToString() == "Guest / Walk-in" ? "bnet-badge-status gray" : "bnet-badge-status blue" %>'>
+                                    <asp:Label ID="Label_DBName" runat="server" Text='<%# Eval("DBName") %>'></asp:Label>
+                                </span>
                             </ItemTemplate>
                         </asp:TemplateField>
 
@@ -96,6 +98,14 @@
                         <asp:TemplateField HeaderText="Points" ItemStyle-Width="150px">
                             <ItemTemplate>
                                 <asp:Label ID="Label_DBPoints" runat="server" Text='<%# Eval("DBPoints") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Created By" ItemStyle-Width="160px">
+                            <ItemTemplate>
+                                <span class='<%# Eval("DBCreatedByName").ToString() == "System / Unknown" ? "bnet-badge-status gray" : "bnet-badge-status green" %>'>
+                                    <asp:Label ID="Label_DBCreatedByName" runat="server" Text='<%# Eval("DBCreatedByName") %>'></asp:Label>
+                                </span>
                             </ItemTemplate>
                         </asp:TemplateField>
 

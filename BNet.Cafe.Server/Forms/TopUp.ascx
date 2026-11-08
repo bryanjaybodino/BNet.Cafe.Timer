@@ -94,7 +94,9 @@
 
                         <asp:TemplateField HeaderText="Customer" ItemStyle-Width="200px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_DBName" runat="server" Text='<%# Eval("DBName") %>'></asp:Label>
+                                <span class='<%# Eval("DBName").ToString() == "Guest / Walk-in" ? "bnet-badge-status gray" : "bnet-badge-status blue" %>'>
+                                    <asp:Label ID="Label_DBName" runat="server" Text='<%# Eval("DBName") %>'></asp:Label>
+                                </span>
                             </ItemTemplate>
                         </asp:TemplateField>
 
@@ -118,7 +120,17 @@
 
                         <asp:TemplateField HeaderText="Amount Paid" ItemStyle-Width="150px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_DBAmount" runat="server" Text='<%# string.Format("₱{0}", Eval("DBAmount")) %>'></asp:Label>
+                                <span class="bnet-badge-status yellow">
+                                    <asp:Label ID="Label_DBAmount" runat="server" Text='<%# string.Format("₱{0}", Eval("DBAmount")) %>'></asp:Label>
+                                </span>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Created By" ItemStyle-Width="160px">
+                            <ItemTemplate>
+                                <span class='<%# Eval("DBCreatedByName").ToString() == "System / Unknown" ? "bnet-badge-status gray" : "bnet-badge-status green" %>'>
+                                    <asp:Label ID="Label_DBCreatedByName" runat="server" Text='<%# Eval("DBCreatedByName") %>'></asp:Label>
+                                </span>
                             </ItemTemplate>
                         </asp:TemplateField>
 

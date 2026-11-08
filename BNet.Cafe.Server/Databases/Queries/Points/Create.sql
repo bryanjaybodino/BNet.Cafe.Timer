@@ -3,6 +3,7 @@
 	DBUserId,
 	DBPoints,
 	DBDescription,
+	DBCreatedById,
 	DBDateCreated,
 	DBTimeCreated,
 	DBIsDeleted
@@ -12,6 +13,7 @@ VALUES
 	'{DBUserId}',
 	'{DBPoints}',
 	'{DBDescription}',
+	'{DBCreatedById}',
 	'{DBDateCreated}',
 	'{DBTimeCreated}',
 	'{DBIsDeleted}'
