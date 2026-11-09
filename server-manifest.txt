@@ -271,11 +271,11 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 9863cc95e9180d6bf65346c364434108d5acf588	Website/index.html
-5dc16513c18b6f96c3fbe528c228b10492aacd82	bin/BNet.Cafe.Server.dll
-e59c3bb105ea3856d8db3f0f0143932549deb413	bin/BNet.Cafe.Server.pdb
-747ce8dc9f8d3a35a93c8d8ce2726a563df1878c	bin/BNet.Cafe.Websocket.exe
+12f6aa2c3a7dd17e7d9ee1c4fe5a9d22e9d26ac9	bin/BNet.Cafe.Server.dll
+12b01ee6d5a2852c6c7c7dfa42c90789392bea98	bin/BNet.Cafe.Server.pdb
+df9b09df624758053820bfa2e32be17e2f6e9b7c	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
-a9a3de6ef50873e3ec3fd2ed6afb6795d5d4b120	bin/BNet.Cafe.Websocket.pdb
+094f218852307275e11b372ad806a1835de9460d	bin/BNet.Cafe.Websocket.pdb
 0fd4bf6141810a8c3dd2fc76e2be94fdd572e82e	bin/BNet.FTPServer.dll
 1b1f204165327bd0fbd04378350e87e793645b59	bin/Microsoft.Extensions.Logging.Abstractions.dll
 1acaf092a11563a6ad8608e898a6761e9a14afa4	bin/MySqlConnector.dll
