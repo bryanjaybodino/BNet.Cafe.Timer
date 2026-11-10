@@ -784,3 +784,30 @@ textarea {
 .atc-pill.user-member {
     --pill: #00BFFF;
 }
+
+/* --- Board Status Indicator --- */
+.board-status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    background: rgba(18, 20, 26, 0.85);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 59, 48, 0.5);
+    padding: 8px 16px;
+    border-radius: 12px;
+    color: #ff3b30;
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 59, 48, 0.2);
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+    .board-status.connected {
+        border-color: rgba(46, 204, 113, 0.5);
+        color: #2ecc71;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(46, 204, 113, 0.2);
+    }

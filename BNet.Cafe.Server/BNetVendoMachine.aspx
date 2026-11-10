@@ -15,6 +15,9 @@
     <% Response.Write(BNet.Cafe.Server.Services.FileCssHelper.StyleSheetVersion("Assets/Vendo/Style.css")); %>
 </head>
 <body oncontextmenu="return false;">
+    <!-- Board Status Indicator (Upper Right) -->
+    <div id="boardStatusIndicator" class="board-status disconnected">BOARD DISCONNECTED</div>
+
     <div class="slider-container" id="slider">
         <div class="loading" id="loadingText">Scanning wallpapers...</div>
     </div>

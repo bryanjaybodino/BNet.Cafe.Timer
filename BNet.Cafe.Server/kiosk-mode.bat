@@ -7,6 +7,9 @@ taskkill /F /IM msedge.exe /T >nul 2>&1
 
 timeout /t 1 /nobreak >nul
 
+echo Starting always-on-top helper...
+start "" /min powershell -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "%~dp0kiosk-mode.ps1"
+
 echo Launching True Full Screen Mode...
 
 :: Try Chrome first
@@ -35,6 +38,5 @@ if exist "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" (
     start "" "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" -kiosk "%URL%" -no-remote -profile "%TEMP%\BNetFirefoxKiosk"
     exit /b
 )
-
 
 pause
