@@ -33,7 +33,9 @@ function startLockCountdown(isModalOpen, changerDispensing) {
     const bannerIcon = document.getElementById('bannerIcon');
     const bannerText = document.getElementById('bannerText');
 
-    lockRemainingSeconds = 15;
+    // Use the fetched config property directly
+    lockRemainingSeconds = (typeof kioskConfig !== 'undefined' && kioskConfig.screenLockTimer) ? kioskConfig.screenLockTimer : 15;
+
     if (bannerIcon) bannerIcon.className = 'fas fa-lock';
     if (bannerText) bannerText.innerText = `LOCKING IN ${lockRemainingSeconds}s`;
     if (idleFooter) idleFooter.style.display = 'flex';

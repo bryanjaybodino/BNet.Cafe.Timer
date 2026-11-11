@@ -24,6 +24,9 @@
                 <button type="button" class="config-tab-btn" onclick="switchConfigTab(event, 'tab-schedule')">
                     <i class="fa-solid fa-clock"></i>Schedule Settings
                 </button>
+                <button type="button" class="config-tab-btn" onclick="switchConfigTab(event, 'tab-kiosk')">
+                    <i class="fa-solid fa-cash-register"></i>Kiosk
+                </button>
             </div>
 
             <div class="card">
@@ -238,6 +241,36 @@
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label for="<%= TextBox_WarningTimeMessage.ClientID %>">Warning Time Message</label>
                         <asp:TextBox ID="TextBox_WarningTimeMessage" TextMode="MultiLine" Rows="2" runat="server" CssClass="form-control" placeholder="Warning message text"></asp:TextBox>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                   TAB 4: KIOSK SECTION
+                   ========================================== -->
+                <div id="tab-kiosk" class="config-tab-pane">
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-cash-register" style="color: var(--primary);"></i>Kiosk Configuration
+                        </h3>
+                        <p style="font-size: 12px; color: var(--text-light-secondary);">Configure kiosk timers and hardware display settings.</p>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="<%= TextBox_KioskScreenLockTimer.ClientID %>">Screen Lock Timer (Seconds) <span class="required">*</span></label>
+                        <asp:TextBox ID="TextBox_KioskScreenLockTimer" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="15" MaxLength="10"></asp:TextBox>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="<%= TextBox_KioskInsertBillTimer.ClientID %>">Insert Bill Timer (Seconds) <span class="required">*</span></label>
+                        <asp:TextBox ID="TextBox_KioskInsertBillTimer" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="5" MaxLength="10"></asp:TextBox>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="<%= DropDownList_KioskType.ClientID %>">Kiosk Type</label>
+                        <asp:DropDownList ID="DropDownList_KioskType" runat="server" CssClass="form-control bnet-select">
+                            <asp:ListItem Value="WITH MONITOR" Text="WITH MONITOR"></asp:ListItem>
+                            <asp:ListItem Value="WITHOUT MONITOR" Text="WITHOUT MONITOR"></asp:ListItem>
+                        </asp:DropDownList>
                     </div>
                 </div>
                 <!-- ========================================== -->

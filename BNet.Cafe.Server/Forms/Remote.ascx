@@ -12,7 +12,13 @@
 <div class="computers-app" id="app">
     <main class="main">
         <div class="device-list" id="deviceList">
-            <div class="no-devices" id="noDevices">Waiting for connected PCs…</div>
+            <div id="noDevices" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 20px; color: var(--text-light-secondary); text-align: center;">
+                <svg style="width: 36px; height: 36px; margin-bottom: 10px; opacity: 0.4; fill: currentColor;" viewBox="0 0 24 24">
+                    <path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z" />
+                </svg>
+                <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">Waiting for connected PCs…</div>
+                <div style="font-size: 12px; opacity: 0.7;">Client stations will appear here once they connect to the network.</div>
+            </div>
         </div>
     </main>
 
@@ -64,7 +70,7 @@
             </div>
             <!-- Action Buttons Layout -->
             <div class="sidebar-actions">
-                <a class="remote-launch-btn" id="remoteLaunchBtn" href="#">🖥 Launch Remote Control</a>
+                <a class="remote-launch-btn" id="remoteLaunchBtn" href="#">🖥 Launch Full Screen View</a>
                 <button type="button" class="btn-sidebar-action" id="remoteMsgBtn" onclick="openRemoteMessageModal(currentClient)">💬 Message Client</button>
             </div>
         </div>

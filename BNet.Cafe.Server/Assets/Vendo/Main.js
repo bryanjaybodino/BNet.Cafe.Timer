@@ -1,4 +1,29 @@
-﻿
+﻿let kioskConfig = {
+    screenLockTimer: 15,
+    insertBillTimer: 5,
+    kioskType: "WITH MONITOR"
+};
+
+async function fetchClientConfig() {
+    try {
+        var endpoint = /\.aspx$/i.test(window.location.pathname)
+            ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/GetClientConfigHandler.ashx')
+            : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/GetClientConfigHandler.ashx');
+
+        const response = await fetch(endpoint, { cache: 'no-store' });
+        const data = await response.json();
+
+        if (data) {
+            kioskConfig = {
+                screenLockTimer: data.kioskScreenLockTimer ?? 15,
+                insertBillTimer: data.kioskInsertBillTimer ?? 5,
+                kioskType: data.kioskType || "WITH MONITOR"
+            };
+        }
+    } catch (err) {
+        console.error('Failed to fetch client config:', err);
+    }
+}
 
 let clientData = [];
 
@@ -43,6 +68,7 @@ window.addEventListener('load', function () {
     }
     resetIdleTimer(isModalOpen, changerDispensing, updateCarouselPosition);
     showPressAnyKey();
+    fetchClientConfig();
 });
 
 syncServerTime();

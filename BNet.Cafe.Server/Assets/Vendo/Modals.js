@@ -103,7 +103,11 @@ function resetModalCloseTimer(syncArduinoStateCb) {
     if (modalCountdownInterval) clearInterval(modalCountdownInterval);
 
     var isBillChanger = isBillChangerActive();
-    const closeSeconds = isBillChanger ? 5 : 15;
+
+    const configInsertTimer = (typeof kioskConfig !== 'undefined' && kioskConfig.insertBillTimer) ? kioskConfig.insertBillTimer : 5;
+
+    // Use configInsertTimer for both or separate them if needed
+    const closeSeconds = configInsertTimer;
     remainingSeconds = closeSeconds;
     setModalErrorStyle(false);
 

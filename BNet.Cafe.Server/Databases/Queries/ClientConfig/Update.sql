@@ -19,6 +19,9 @@ SET
     DBLayoutMode = '{DBLayoutMode}',
     DBEnableMinimize = '{DBEnableMinimize}',
     DBEnableWindowsKey = '{DBEnableWindowsKey}',
+    DBKioskScreenLockTimer = '{DBKioskScreenLockTimer}',
+    DBKioskInsertBillTimer = '{DBKioskInsertBillTimer}',
+    DBKioskType = '{DBKioskType}',
     DBSharedDataPath = '{DBSharedDataPath}',
     DBId = '{DBId}'
 WHERE DBId = '{DBId}';

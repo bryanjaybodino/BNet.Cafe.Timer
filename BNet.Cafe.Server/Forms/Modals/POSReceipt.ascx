@@ -4,10 +4,10 @@
     <div class="bnet-modal-container" style="max-width: 420px;">
         <div class="bnet-modal-header">
             <h3 class="bnet-modal-title">
-                <i class="fa-solid fa-circle-check" style="color: #22c55e;"></i> Transaction Successful
+                <i class="fa-solid fa-circle-check" style="color: #22c55e;"></i>Transaction Successful
             </h3>
         </div>
-        
+
         <div class="bnet-modal-body" style="display: flex; flex-direction: column; gap: 14px;">
             <!-- Amount Display -->
             <div style="background-color: var(--bg-light-tertiary); padding: 12px; border-radius: 8px; text-align: center;">
@@ -114,6 +114,7 @@
 
     function closePOSReceiptModal() {
         getPOSReceiptModal().close();
+        ShowAlert('Transaction completed', 'success');
     }
 
     // Re-initialize modal reference on ASP.NET AJAX Partial PostBacks
