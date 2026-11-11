@@ -25,12 +25,6 @@
 <body>
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" EnableCdn="false" EnablePageMethods="true" EnablePartialRendering="true" AsyncPostBackTimeout="99999999" ScriptMode="Release" ValidateRequestMode="Enabled" EnableScriptLocalization="true" EnableScriptGlobalization="true" LoadScriptsBeforeUI="false" CompositeScript-ScriptMode="Release" CompositeScript-ResourceUICultures="Release" runat="server"></asp:ScriptManager>
-        
-        <!-- Hidden ASP.NET inputs & trigger for WebSockets / Server Sync -->
-        <asp:TextBox ID="TextBox_ChatMessage" runat="server" Style="display: none;"></asp:TextBox>
-        <asp:TextBox ID="TextBox_ComputerName" runat="server" Style="display: none;"></asp:TextBox>
-        <asp:TextBox ID="TextBox_UserId" runat="server" Style="display: none;"></asp:TextBox>
-        <asp:LinkButton ID="LinkButton_SaveMessage" runat="server" OnClick="LinkButton_SaveMessage_Click" Style="display: none;"></asp:LinkButton>
 
         <div class="ecom-store-container">
             <!-- Header Bar -->
@@ -40,6 +34,9 @@
                     <h2>Kiosk Store</h2>
                 </div>
                 <div class="header-actions">
+                    <button type="button" id="historyToggle" class="cart-toggle-btn" title="View Order History">
+                        <i class="fa fa-history"></i>
+                    </button>
                     <button type="button" id="cartToggle" class="cart-toggle-btn" title="View Cart">
                         <i class="fa fa-shopping-cart"></i>
                         <span id="cartBadgeCount" class="cart-badge">0</span>
@@ -50,9 +47,15 @@
                 </div>
             </header>
 
-            <!-- Filter & Search Controls -->
+            <!-- Filter & Search Controls / UpdatePanel -->
             <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                 <ContentTemplate>
+                    <!-- Hidden ASP.NET inputs & trigger moved inside UpdatePanel to prevent full page reloads -->
+                    <asp:TextBox ID="TextBox_ChatMessage" runat="server" Style="display: none;"></asp:TextBox>
+                    <asp:TextBox ID="TextBox_ComputerName" runat="server" Style="display: none;"></asp:TextBox>
+                    <asp:TextBox ID="TextBox_UserId" runat="server" Style="display: none;"></asp:TextBox>
+                    <asp:LinkButton ID="LinkButton_SaveMessage" runat="server" OnClick="LinkButton_SaveMessage_Click" Style="display: none;"></asp:LinkButton>
+
                     <div class="ecom-toolbar">
                         <div class="ecom-search-box">
                             <i class="fa fa-search"></i>
@@ -144,6 +147,38 @@
                 </button>
             </div>
         </aside>
+
+        <!-- Order History Drawer -->
+        <div id="historyOverlay" class="cart-overlay"></div>
+        <aside id="historyDrawer" class="cart-drawer">
+            <div class="cart-header">
+                <h3><i class="fa fa-history"></i> Order History</h3>
+                <button type="button" id="closeHistoryBtn" class="close-cart-btn">&times;</button>
+            </div>
+            
+            <div id="historyItemsContainer" class="cart-items-body">
+                <!-- Order history dynamically rendered via Script.js -->
+            </div>
+
+            <div class="cart-footer">
+                <button type="button" id="clearHistoryBtn" class="btn-checkout" style="background: #ef4444;">
+                    <span>Clear History</span>
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Success Modal -->
+        <div id="successModalOverlay" class="kiosk-modal-overlay">
+            <div class="kiosk-modal-card">
+                <div class="success-icon-circle">
+                    <i class="fa fa-check"></i>
+                </div>
+                <h3>Order Sent Successfully!</h3>
+                <p>Your order has been sent to the client chat. You can track it in your order history.</p>
+                <button type="button" id="closeSuccessModalBtn" class="btn-modal-action">Okay</button>
+            </div>
+        </div>
     </form>
 </body>
 </html>

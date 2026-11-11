@@ -143,17 +143,34 @@
             <div class="icon-badge-warning">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
-            
+
             <div class="card-header">
                 <h1>Link Expired or Invalid</h1>
                 <p>The password reset link you clicked is no longer valid or has expired. Please request a new link to reset your password.</p>
             </div>
 
 
-            <asp:HyperLink ID="HyperLink_Login" runat="server" NavigateUrl="~/Login.aspx" CssClass="btn-secondary-action" style="display:none">
+            <asp:HyperLink ID="HyperLink_Login" runat="server" NavigateUrl="~/Login.aspx" CssClass="btn-secondary-action" Style="display: none">
                 <i class="fa-solid fa-arrow-left"></i> Return to Login
             </asp:HyperLink>
         </div>
     </form>
+    <script>
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
+    </script>
 </body>
 </html>

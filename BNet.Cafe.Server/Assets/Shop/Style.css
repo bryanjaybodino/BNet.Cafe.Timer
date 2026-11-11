@@ -50,6 +50,9 @@ body {
     padding: 24px 0;
     min-height: 100vh;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .ecom-store-container {
@@ -239,7 +242,7 @@ body {
     pointer-events: none;
 }
 
-/* Sliding Cart Drawer */
+/* Sliding Cart / History Drawers */
 .cart-overlay {
     position: fixed;
     top: 0;
@@ -402,7 +405,148 @@ body {
         background: #059669;
     }
 
-/* Filter & Controls */
+/* Order History Cards */
+.history-card-row {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: var(--card-shadow);
+}
+
+.history-header-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border-card);
+    padding-bottom: 6px;
+}
+
+.history-id {
+    font-weight: 800;
+    color: var(--accent-primary);
+}
+
+.history-items-list {
+    font-size: 13px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.history-sub-item {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.history-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    border-top: 1px dashed var(--border-card);
+    padding-top: 8px;
+}
+
+.status-badge-sent {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+/* Success Modal Styling */
+.kiosk-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+    .kiosk-modal-overlay.open {
+        display: flex;
+    }
+
+.kiosk-modal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    padding: 32px;
+    border-radius: 24px;
+    text-align: center;
+    max-width: 360px;
+    width: 90%;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.success-icon-circle {
+    width: 64px;
+    height: 64px;
+    background: #10b981;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 16px auto;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.kiosk-modal-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    color: var(--text-primary);
+}
+
+.kiosk-modal-card p {
+    margin: 0 0 24px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.btn-modal-action {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+    .btn-modal-action:hover {
+        background: var(--accent-hover);
+    }
+
+/* Toolbar & Filters */
 .ecom-toolbar {
     display: flex;
     gap: 16px;
@@ -446,7 +590,7 @@ body {
     color: var(--text-secondary);
 }
 
-/* Flying Bubble Animation Styling */
+/* Flying Bubble Animation */
 .fly-to-cart-bubble {
     position: fixed;
     width: 36px;
@@ -464,7 +608,6 @@ body {
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
 }
 
-/* Cart Icon Bounce Effect */
 .cart-bump {
     animation: cartBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -484,13 +627,7 @@ body {
     }
 }
 
-/* Inline SVG Spinner Styles */
-.btn-loading {
-    opacity: 0.85;
-    cursor: wait !important;
-    pointer-events: none;
-}
-
+/* Spinners */
 .spinner-icon {
     display: inline-flex;
     align-items: center;
@@ -517,15 +654,10 @@ body {
         transform: rotate(360deg);
     }
 }
-body {
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
-    user-select: none; /* Standard syntax */
-}
 
-/* Empty State Styling */
+/* Empty States */
 .ecom-empty {
-    grid-column: 1 / -1; /* Spans across all available CSS grid columns */
+    grid-column: 1 / -1;
     display: flex;
     flex-direction: column;
     align-items: center;

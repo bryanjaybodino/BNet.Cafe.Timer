@@ -5,6 +5,9 @@ const urlParams = new URLSearchParams(window.location.search);
 const clientName = (urlParams.get('ClientName') || urlParams.get('clientName') || '').toUpperCase();
 const userId = urlParams.get('userId') || '';
 
+// Unique identifier for the current user session (falls back to clientName or guest if no userId exists)
+const userIdentifier = userId || clientName || 'guest';
+
 // WebSocket Setup
 const encoder = new TextEncoder();
 let agentWs = null;
@@ -34,13 +37,22 @@ function sendPayload(frameType, obj) {
     agentWs.send(payload.buffer);
 }
 
-// LocalStorage Cart Logic
-const CART_STORAGE_KEY = `kiosk_cart_${clientName || 'guest'}`;
+// LocalStorage Cart Logic (Tied to specific user ID)
+const CART_STORAGE_KEY = `kiosk_cart_${userIdentifier}`;
 let cart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');
 
 function saveCart() {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     updateCartUI();
+}
+
+// LocalStorage Order History Logic (Tied to specific user ID)
+const HISTORY_STORAGE_KEY = `kiosk_order_history_${userIdentifier}`;
+let orderHistory = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY) || '[]');
+
+function saveOrderHistory() {
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(orderHistory));
+    updateHistoryUI();
 }
 
 function addToCart(id, name, price, maxStock, clickedButton) {
@@ -58,7 +70,6 @@ function addToCart(id, name, price, maxStock, clickedButton) {
 
     saveCart();
 
-    // Trigger Fly & Cart Bump Animations
     if (clickedButton) {
         animateFlyToCart(clickedButton);
     }
@@ -72,20 +83,15 @@ function animateFlyToCart(sourceEl) {
     const sourceRect = sourceEl.getBoundingClientRect();
     const cartRect = cartToggle.getBoundingClientRect();
 
-    // Create flying bubble element
     const bubble = document.createElement('div');
     bubble.className = 'fly-to-cart-bubble';
 
-    // Add shopping bag icon inside the bubble
     const icon = document.createElement('i');
     icon.className = 'fa fa-shopping-bag';
     bubble.appendChild(icon);
 
-    // Calculate starting center position
     const startX = sourceRect.left + (sourceRect.width / 2) - 18;
     const startY = sourceRect.top + (sourceRect.height / 2) - 18;
-
-    // Calculate ending center position
     const targetX = cartRect.left + (cartRect.width / 2) - 18;
     const targetY = cartRect.top + (cartRect.height / 2) - 18;
 
@@ -94,16 +100,14 @@ function animateFlyToCart(sourceEl) {
 
     document.body.appendChild(bubble);
 
-    // Trigger trajectory towards cart icon
     requestAnimationFrame(() => {
         bubble.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.4)`;
         bubble.style.opacity = '0.2';
     });
 
-    // Animate cart bounce when bubble reaches target
     setTimeout(() => {
         cartToggle.classList.remove('cart-bump');
-        void cartToggle.offsetWidth; // Force reflow
+        void cartToggle.offsetWidth;
         cartToggle.classList.add('cart-bump');
         bubble.remove();
     }, 600);
@@ -175,7 +179,6 @@ function updateCartUI() {
         container.appendChild(itemEl);
     });
 
-    // Bind item buttons
     container.querySelectorAll('.btn-minus').forEach(btn => {
         btn.onclick = () => updateQuantity(btn.dataset.id, -1);
     });
@@ -197,22 +200,93 @@ function closeCartDrawer() {
     document.getElementById('cartOverlay').classList.remove('open');
 }
 
+// Render Order History UI
+function updateHistoryUI() {
+    const container = document.getElementById('historyItemsContainer');
+    if (!container) return;
+
+    if (orderHistory.length === 0) {
+        container.innerHTML = `
+            <div class="cart-empty-state">
+                <i class="fa fa-clipboard-list"></i>
+                <p>No order history found.</p>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = '';
+    orderHistory.forEach(order => {
+        let itemsHtml = order.items.map(i => `<div class="history-sub-item">• ${escapeHtml(i.name)} x ${i.qty} (₱${(i.price * i.qty).toFixed(2)})</div>`).join('');
+
+        const orderEl = document.createElement('div');
+        orderEl.className = 'history-card-row';
+        orderEl.innerHTML = `
+            <div class="history-header-row">
+                <span class="history-id">${order.id}</span>
+                <span class="history-date">${order.date}</span>
+            </div>
+            <div class="history-items-list">${itemsHtml}</div>
+            <div class="history-total-row">
+                <span>Total: <strong>₱${order.total.toFixed(2)}</strong></span>
+                <span class="status-badge-sent">Submitted</span>
+            </div>
+        `;
+        container.appendChild(orderEl);
+    });
+}
+
+function openHistoryDrawer() {
+    document.getElementById('historyDrawer').classList.add('open');
+    document.getElementById('historyOverlay').classList.add('open');
+}
+
+function closeHistoryDrawer() {
+    document.getElementById('historyDrawer').classList.remove('open');
+    document.getElementById('historyOverlay').classList.remove('open');
+}
+
+// Success Modal Control
+function showSuccessModal() {
+    const modal = document.getElementById('successModalOverlay');
+    if (modal) modal.classList.add('open');
+}
+
+function closeSuccessModal() {
+    const modal = document.getElementById('successModalOverlay');
+    if (modal) modal.classList.remove('open');
+}
+
 // Checkout & Send via Chat
-function handleCheckout() {
+function handleCheckout(event) {
+    if (event) {
+        event.preventDefault();
+    }
+
     if (cart.length === 0) {
         alert('Your cart is empty.');
         return;
     }
 
-    // Add explicit newline after Order
     let messageText = "";
+    let orderSummaryItems = [];
 
     cart.forEach(item => {
-        // Add explicit newline after each item
         messageText += `${item.name} x ${item.qty}\n`;
+        orderSummaryItems.push({ name: item.name, qty: item.qty, price: item.price });
     });
 
     messageText = messageText.trim();
+
+    // Save to Order History
+    const newOrder = {
+        id: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
+        date: new Date().toLocaleString(),
+        items: orderSummaryItems,
+        total: cart.reduce((sum, item) => sum + (item.price * item.qty), 0)
+    };
+
+    orderHistory.unshift(newOrder);
+    saveOrderHistory();
 
     // Send via WebSocket and PostBack
     sendPayload(0x03, {
@@ -239,12 +313,14 @@ function handleCheckout() {
 
     clearCart();
     closeCartDrawer();
+    showSuccessModal();
 }
+
 function escapeHtml(str) {
     return str ? String(str).replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s])) : '';
 }
 
-// Button Loading State Handler (Set-based to track multiple concurrent buttons)
+// Button Loading State Handler
 const activeLoadingButtons = new Set();
 
 function setButtonLoading(btn, isLoading) {
@@ -254,7 +330,6 @@ function setButtonLoading(btn, isLoading) {
         btn.disabled = true;
         btn.classList.add('btn-loading');
 
-        // Check if spinner icon already exists
         if (!btn.querySelector('.spinner-icon')) {
             const spinner = document.createElement('span');
             spinner.className = 'spinner-icon';
@@ -274,7 +349,6 @@ function setButtonLoading(btn, isLoading) {
 function resetAllLoadingButtons() {
     activeLoadingButtons.forEach(btn => setButtonLoading(btn, false));
     activeLoadingButtons.clear();
-    // Fallback: search DOM for any orphaned loading buttons created or re-rendered
     document.querySelectorAll('.btn-loading').forEach(btn => setButtonLoading(btn, false));
 }
 
@@ -282,8 +356,8 @@ function resetAllLoadingButtons() {
 document.addEventListener('DOMContentLoaded', () => {
     connectAgentWS();
     updateCartUI();
+    updateHistoryUI();
 
-    // Add to cart click event
     document.addEventListener('click', (e) => {
         const addBtn = e.target.closest('.btn-add-cart');
         if (addBtn) {
@@ -297,13 +371,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Global click tracking for buttons to trigger instant loading feedback
         const targetBtn = e.target.closest('button, .btn-add-cart, .btn-checkout');
 
-        // Exclude theme toggle or non-action buttons
         if (targetBtn && !targetBtn.disabled && targetBtn.id !== 'themeToggle' && !targetBtn.classList.contains('no-loading')) {
             setButtonLoading(targetBtn, true);
-            // Automatically revert this specific button if no postback occurs within 2.5 seconds
             setTimeout(() => {
                 if (activeLoadingButtons.has(targetBtn)) {
                     setButtonLoading(targetBtn, false);
@@ -312,13 +383,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Cart toggles
     document.getElementById('cartToggle').onclick = openCartDrawer;
     document.getElementById('closeCartBtn').onclick = closeCartDrawer;
     document.getElementById('cartOverlay').onclick = closeCartDrawer;
-    document.getElementById('checkoutBtn').onclick = handleCheckout;
+    document.getElementById('checkoutBtn').onclick = (e) => handleCheckout(e);
 
-    // Theme Switcher
+    const historyToggle = document.getElementById('historyToggle');
+    if (historyToggle) historyToggle.onclick = openHistoryDrawer;
+
+    const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+    if (closeHistoryBtn) closeHistoryBtn.onclick = closeHistoryDrawer;
+
+    const historyOverlay = document.getElementById('historyOverlay');
+    if (historyOverlay) historyOverlay.onclick = closeHistoryDrawer;
+
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    if (clearHistoryBtn) {
+        clearHistoryBtn.onclick = () => {
+            if (confirm('Are you sure you want to clear your order history?')) {
+                orderHistory = [];
+                saveOrderHistory();
+            }
+        };
+    }
+
+    const closeSuccessBtn = document.getElementById('closeSuccessModalBtn');
+    if (closeSuccessBtn) closeSuccessBtn.onclick = closeSuccessModal;
+
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', function () {
@@ -332,7 +423,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// PostBack & ASP.NET AJAX Event Listeners
 if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager) {
     const prm = Sys.WebForms.PageRequestManager.getInstance();
 
@@ -347,27 +437,21 @@ if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManage
     prm.add_endRequest(() => {
         resetAllLoadingButtons();
         updateCartUI();
+        updateHistoryUI();
     });
 }
 
-
-
-// Disable right-click context menu
 document.addEventListener('contextmenu', function (e) {
     e.preventDefault();
 });
 
-// Disable keyboard shortcuts for Inspect Element / DevTools
 document.addEventListener('keydown', function (e) {
-    // Prevent F12
     if (e.key === 'F12') {
         e.preventDefault();
     }
-    // Prevent Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
     if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
         e.preventDefault();
     }
-    // Prevent Ctrl+U (View Source)
     if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
         e.preventDefault();
     }
