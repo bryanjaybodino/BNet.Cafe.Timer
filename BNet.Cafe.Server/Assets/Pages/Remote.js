@@ -2,7 +2,8 @@
 let currentClient = '';
 const clientDataMap = new Map();
 const clientActivityMap = new Map();
-const clientCanvases = new Map(); // Store card canvas contexts
+const clientCanvases = new Map(); // key -> 2D context of the card canvas
+const thumbStreams = new Map();   // key -> { ws, pending, last, busy, retry, closed }
 const textDecoder = new TextDecoder('utf-8');
 const textEncoder = new TextEncoder();
 let ws = null;
@@ -50,17 +51,15 @@ function updateInfo(data = {}) {
     });
 }
 
-// WebSocket Connection
+// ---------------------------------------------------------------------------
+// Main WebSocket (client list + activity only)
+// ---------------------------------------------------------------------------
 function connectWebSocket() {
     ws = new WebSocket(`ws://${window.location.hostname}:2050/ws/browser`);
     ws.binaryType = 'arraybuffer';
 
     ws.onopen = () => {
         wsReady = true;
-        // Subscribe to main screen thumbnail feeds for all known connected clients
-        clientDataMap.forEach((_, key) => {
-            sendSubscribe(`screen_1_${key}`);
-        });
     };
 
     ws.onmessage = (e) => {
@@ -68,11 +67,8 @@ function connectWebSocket() {
         const bytes = new Uint8Array(e.data);
         const type = bytes[0];
 
-        // Handle Live Frame Stream Packet (0x10)
-        if (type === 0x10) {
-            handleThumbnailFrame(e.data);
-            return;
-        }
+        // Frames are handled by the per-client thumbnail sockets
+        if (type === 0x10) return;
 
         try {
             const data = JSON.parse(textDecoder.decode(bytes.subarray(1)));
@@ -89,27 +85,109 @@ function connectWebSocket() {
     };
 }
 
-function sendSubscribe(screenKey) {
-    if (!wsReady) return;
-    const kb = textEncoder.encode(screenKey);
-    const msg = new Uint8Array(1 + kb.length);
-    msg[0] = 0x21; // Subscription header flag
-    msg.set(kb, 1);
-    ws.send(msg.buffer);
+// ---------------------------------------------------------------------------
+// Per-client thumbnail streams (one socket per card, same method as Remote.html)
+// ---------------------------------------------------------------------------
+
+// Remote.html strips the first space from the client name, so do the same here
+const thumbSubKey = (key) => `screen_1_${key.replace(' ', '')}`;
+
+function openThumbStream(key) {
+    if (thumbStreams.has(key)) return;
+    const s = { ws: null, pending: null, last: null, busy: false, retry: null, closed: false };
+    thumbStreams.set(key, s);
+
+    const connect = () => {
+        if (s.closed) return;
+        const sock = new WebSocket(`ws://${window.location.hostname}:2050/ws/browser`);
+        sock.binaryType = 'arraybuffer';
+        s.ws = sock;
+
+        sock.onopen = () => {
+            const kb = textEncoder.encode(thumbSubKey(key));
+            const msg = new Uint8Array(1 + kb.length);
+            msg[0] = 0x21; // Subscription header flag
+            msg.set(kb, 1);
+            sock.send(msg.buffer);
+        };
+
+        sock.onmessage = (e) => {
+            if (!(e.data instanceof ArrayBuffer) || !e.data.byteLength) return;
+            if (new Uint8Array(e.data, 0, 1)[0] !== 0x10) return; // ignore 0x11 / 0x12 here
+            s.pending = e.data; // keep only the latest frame
+            s.last = e.data;    // cache so the card can be repainted after a re-render
+            drawThumb(key);
+        };
+
+        sock.onclose = () => {
+            if (!s.closed) s.retry = setTimeout(connect, 3000);
+        };
+    };
+    connect();
 }
 
+function closeThumbStream(key) {
+    const s = thumbStreams.get(key);
+    if (!s) return;
+    s.closed = true;
+    clearTimeout(s.retry);
+    try { s.ws?.close(); } catch { }
+    thumbStreams.delete(key);
+}
+
+function syncThumbStreams(keys) {
+    const wanted = new Set(keys);
+    [...thumbStreams.keys()].forEach((k) => { if (!wanted.has(k)) closeThumbStream(k); });
+    keys.forEach(openThumbStream);
+}
+
+function drawThumb(key) {
+    const s = thumbStreams.get(key);
+    if (!s || s.busy || !s.pending || !clientCanvases.has(key)) return;
+
+    const buf = s.pending;
+    s.pending = null;
+    s.busy = true;
+
+    createImageBitmap(new Blob([new Uint8Array(buf, 1)], { type: 'image/jpeg' }))
+        .then((bm) => {
+            const ctx = clientCanvases.get(key); // look up again in case the list re-rendered
+            if (ctx) {
+                const c = ctx.canvas;
+                if (c.width !== bm.width || c.height !== bm.height) {
+                    c.width = bm.width;
+                    c.height = bm.height;
+                }
+                ctx.drawImage(bm, 0, 0);
+            }
+            bm.close();
+        })
+        .catch(() => { })
+        .finally(() => {
+            s.busy = false;
+            if (s.pending) drawThumb(key);
+        });
+}
+
+// ---------------------------------------------------------------------------
+// Client list / activity handlers
+// ---------------------------------------------------------------------------
 function handleClientListUpdate(clients) {
     clientDataMap.clear();
-    clients.forEach(c => {
-        if (c.ClientName) {
-            const key = c.ClientName.toUpperCase();
-            clientDataMap.set(key, c);
-            if (wsReady) {
-                sendSubscribe(`screen_1_${key}`);
-            }
+    clients.forEach((c) => {
+        if (c.ClientName) clientDataMap.set(c.ClientName.toUpperCase(), c);
+    });
+
+    renderDevices(clients); // rebuilds canvases first
+    syncThumbStreams([...clientDataMap.keys()]);
+
+    // Repaint the last frame so cards don't flash blank after a re-render
+    thumbStreams.forEach((s, key) => {
+        if (s.last) {
+            s.pending = s.last;
+            drawThumb(key);
         }
     });
-    renderDevices(clients);
 
     if (currentClient && clientDataMap.has(currentClient)) {
         selectDevice(currentClient);
@@ -129,26 +207,6 @@ function handleActivityUpdate(activity) {
     if (currentClient === accountKey) {
         selectDevice(currentClient);
     }
-}
-
-// Render individual client frame thumbnail onto its respective card canvas
-function handleThumbnailFrame(arrayBuffer) {
-    // Assuming the server broadcasts frames wrapped or we map them via active stream subscriptions.
-    // If your server prepends client routing metadata or you match by active canvas stream:
-    createImageBitmap(new Blob([new Uint8Array(arrayBuffer, 1)], { type: 'image/jpeg' }))
-        .then((bm) => {
-            // Find target canvas element from active subscriptions or fallback to updating visible canvases
-            clientCanvases.forEach((ctx, key) => {
-                const canvas = ctx.canvas;
-                if (canvas.width !== bm.width || canvas.height !== bm.height) {
-                    canvas.width = bm.width;
-                    canvas.height = bm.height;
-                }
-                ctx.drawImage(bm, 0, 0);
-            });
-            bm.close();
-        })
-        .catch(() => { });
 }
 
 function renderDevices(clients) {
@@ -210,7 +268,7 @@ function renderDevices(clients) {
 function selectDevice(name) {
     currentClient = name ? name.toUpperCase() : '';
 
-    document.querySelectorAll('.device-entry').forEach(el => {
+    document.querySelectorAll('.device-entry').forEach((el) => {
         el.classList.toggle('active', el.dataset.name.toUpperCase() === currentClient);
     });
 
@@ -233,11 +291,11 @@ function selectDevice(name) {
 function deselectDevice() {
     currentClient = '';
     getEl('detailsSidebar')?.classList.remove('visible');
-    document.querySelectorAll('.device-entry').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.device-entry').forEach((el) => el.classList.remove('active'));
 }
 
 function escapeHtml(str) {
-    return str ? String(str).replace(/[&<>]/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[s])) : '';
+    return str ? String(str).replace(/[&<>]/g, (s) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[s])) : '';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
