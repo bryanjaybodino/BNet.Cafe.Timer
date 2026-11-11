@@ -199,7 +199,7 @@ d7be0d3baaf8bd674be8d2498820c2b91a089bea	Forms/AutoCreditSettings.ascx
 d62d813b8f6fe2e67d338be2612aa199ebf82777	Forms/ComputerCreate.ascx
 72e0e840bb048e2ed08625df0f0ca2af6b06d663	Forms/ComputerEarnings.ascx
 2a2bcfc0562cebcdbdbe47068fdf064c6bcf9d1e	Forms/ComputerEdit.ascx
-1b5f580590bf22bc2f3a0af0ec6f1959650ad836	Forms/Computers.ascx
+ebafd55f9695d0b5de5e56b912e3b4dd0afa0bef	Forms/Computers.ascx
 1a28f1edf1f9c574ebc3456babd205f9c36bdb9e	Forms/Config.ascx
 653e46165495c245c182d6ba7c39bbec0f5fe32b	Forms/Dashboard.ascx
 e29d425be105ed5306fadf180ae43d1b6d093bbe	Forms/DownloadApp.ascx
@@ -279,8 +279,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
-db28f8b2feb642e9c5558ab88a1ec3cf69a4a173	bin/BNet.Cafe.Server.dll
-f8706859984d7f879b4199995049368e0ab3de61	bin/BNet.Cafe.Server.pdb
+904dec0fa20e04a0f7bfe7c4f501cdf41f56e6db	bin/BNet.Cafe.Server.dll
+4f2074aceb276f031e4815975bcf8d6db1d03a12	bin/BNet.Cafe.Server.pdb
 3deced8fb5651c5974c47678769fa07b50081631	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 39d8a6be8eee640a418814bb00dd6b5a4c07d87f	bin/BNet.Cafe.Websocket.pdb
@@ -297,7 +297,8 @@ f2d83c51416e90dbc31154545b16df3b3f7a7909	bin/System.Buffers.dll
 c5ba4e4047a15b3adc61340c781307d9c6e89413	bin/System.Runtime.CompilerServices.Unsafe.dll
 eeec92852705946904d0e2fa0443d454075781f5	bin/System.Threading.Tasks.Extensions.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	bin/zxing.dll
-8251168149e76a766a191f870d90d6a55fe0a33a	kiosk-mode.bat
+d1813ba404f0d5e8e31b55560bd2b2e33a2db359	kiosk-loader.html
+6e3fc0d6eefc8abee496b1335913c14c87204264	kiosk-mode.bat
 1635f20e2362bdc60381076fa42361e403ac272d	kiosk-mode.ps1
 c9869f8686fb6fea3be99d09f67568a5bd3eae4c	patcher.bat
 e91827174c587f4cb5b3c3fadc097e4de9880b56	patcher.ps1
