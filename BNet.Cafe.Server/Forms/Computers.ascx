@@ -189,6 +189,12 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
+                        <asp:TemplateField HeaderText="Customer Name" ItemStyle-Width="200px">
+                            <ItemTemplate>
+                                <asp:Label ID="Label_CustomerName" runat="server" Text='<%# Eval("CustomerName") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
                         <asp:TemplateField HeaderText="Time Start" ItemStyle-Width="200px">
                             <ItemTemplate>
                                 <asp:Label ID="Label_TimeStart" runat="server" Text='<%# Eval("TimeStart") %>'></asp:Label>

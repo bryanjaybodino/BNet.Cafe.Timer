@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Loading...</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: #111;
+            color: #fff;
+            font-family: Segoe UI, Arial, sans-serif;
+            cursor: none;
+        }
+
+        .wrap {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner {
+            width: 70px;
+            height: 70px;
+            border: 7px solid #333;
+            border-top-color: #4fc3f7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        h1 {
+            font-weight: 300;
+            margin-top: 30px;
+        }
+
+        p {
+            color: #888;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="spinner"></div>
+        <h1>Starting up, please wait...</h1>
+        <p id="status">Waiting for server</p>
+    </div>
+
+    <script>
+        var TARGET = decodeURIComponent(location.hash.substring(1));
+        var tries = 0;
+
+        if (!/^https?:\/\//i.test(TARGET)) {
+            document.getElementById("status").textContent =
+                "No valid URL was provided to the loading page.";
+        } else {
+            check();
+        }
+
+        function check() {
+            tries++;
+            document.getElementById("status").textContent =
+                "Waiting for server (attempt " + tries + ")";
+            fetch(TARGET, { mode: "no-cors", cache: "no-store" })
+                .then(function () { window.location.replace(TARGET); })
+                .catch(function () { setTimeout(check, 2000); });
+        }
+    </script>
+</body>
+</html>
