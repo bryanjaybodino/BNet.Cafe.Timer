@@ -10,6 +10,13 @@ set "URL=http://localhost:2000/BNet.Cafe.Server/BNetVendoMachine.aspx"
 :: Needed so Web Serial works over plain HTTP.
 for /f "tokens=1,2 delims=/" %%a in ("%URL%") do set "ORIGIN=%%a//%%b"
 
+:: Force-close every other application before the kiosk starts (1 = yes, 0 = no)
+set "CLOSE_APPS=1"
+
+:: Process names (no .exe, comma separated, no spaces) that must NEVER be closed.
+:: Add your server / helper apps here if they have a visible window.
+set "PROTECT_APPS=explorer,cmd,conhost,WindowsTerminal,powershell,pwsh,iisexpress,w3wp,dotnet,BNet.Cafe.Server"
+
 :: Lightweight / low-resource flags (Chromium browsers only).
 :: None of these affect WebSocket or Server-Sent Events (SSE).
 set "PERF_FLAGS=--disable-extensions --disable-background-networking --disable-sync --disable-translate --disable-features=Translate,OptimizationHints --renderer-process-limit=1 --disk-cache-size=52428800 --js-flags=--max-old-space-size=256"
@@ -41,6 +48,22 @@ taskkill /F /IM msedge.exe /T >nul 2>&1
 taskkill /F /IM brave.exe /T >nul 2>&1
 taskkill /F /IM vivaldi.exe /T >nul 2>&1
 taskkill /F /IM firefox.exe /T >nul 2>&1
+
+:: ============================================================
+:: Force-close ALL other applications (anything with a visible window)
+:: ============================================================
+if "%CLOSE_APPS%"=="1" (
+    echo Force closing all other applications...
+
+    :: Close File Explorer windows without killing the taskbar/desktop
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "try { (New-Object -ComObject Shell.Application).Windows() | ForEach-Object { $_.Quit() } } catch {}" >nul 2>&1
+
+    :: Kill every process that owns a visible window, except protected ones
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "$keep = $env:PROTECT_APPS -split ','; Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and $keep -notcontains $_.ProcessName -and $_.Id -ne $PID } | Stop-Process -Force -ErrorAction SilentlyContinue" >nul 2>&1
+
+    :: Close Microsoft Store / UWP app windows (Settings, Calculator, etc.)
+    taskkill /F /IM ApplicationFrameHost.exe >nul 2>&1
+)
 
 timeout /t 1 /nobreak >nul
 
