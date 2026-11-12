@@ -10,6 +10,10 @@ set "URL=http://localhost:2000/BNet.Cafe.Server/BNetVendoMachine.aspx"
 :: Needed so Web Serial works over plain HTTP.
 for /f "tokens=1,2 delims=/" %%a in ("%URL%") do set "ORIGIN=%%a//%%b"
 
+:: Lightweight / low-resource flags (Chromium browsers only).
+:: None of these affect WebSocket or Server-Sent Events (SSE).
+set "PERF_FLAGS=--disable-extensions --disable-background-networking --disable-sync --disable-translate --disable-features=Translate,OptimizationHints --renderer-process-limit=1 --disk-cache-size=52428800 --js-flags=--max-old-space-size=256"
+
 :: ============================================================
 :: Auto-detect kiosk-loader.html (same folder as this .bat first)
 :: ============================================================
@@ -20,7 +24,6 @@ if not defined LOADING_FILE if exist "C:\Kiosk\kiosk-loader.html" set "LOADING_F
 
 if defined LOADING_FILE (
     echo Found loading page: !LOADING_FILE!
-    :: Convert Windows path to a file:// URL
     set "LP=!LOADING_FILE:\=/!"
     set "LP=!LP: =%%20!"
     set "START_URL=file:///!LP!#%URL%"
@@ -35,6 +38,8 @@ if defined LOADING_FILE (
 echo Closing existing browser background tasks...
 taskkill /F /IM chrome.exe /T >nul 2>&1
 taskkill /F /IM msedge.exe /T >nul 2>&1
+taskkill /F /IM brave.exe /T >nul 2>&1
+taskkill /F /IM vivaldi.exe /T >nul 2>&1
 taskkill /F /IM firefox.exe /T >nul 2>&1
 
 timeout /t 1 /nobreak >nul
@@ -52,29 +57,59 @@ if exist "%~dp0kiosk-mode.ps1" (
 echo Launching True Full Screen Mode...
 
 :: ============================================================
-:: Chrome
+:: 1. Google Chrome
 :: ============================================================
-set "CHROME="
-if exist "C:\Program Files\Google\Chrome\Application\chrome.exe" set "CHROME=C:\Program Files\Google\Chrome\Application\chrome.exe"
-if not defined CHROME if exist "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" set "CHROME=C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-if defined CHROME (
-    start "" "!CHROME!" --app="!START_URL!" --kiosk --user-data-dir="%TEMP%\BNetKiosk" --allow-file-access-from-files --unsafely-treat-insecure-origin-as-secure="%ORIGIN%"
-    exit /b
+set "BROWSER="
+if exist "C:\Program Files\Google\Chrome\Application\chrome.exe" (
+    set "BROWSER=C:\Program Files\Google\Chrome\Application\chrome.exe"
+    set "PROFILE_DIR=%TEMP%\BNetKiosk"
+    goto LAUNCH
+)
+if exist "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" (
+    set "BROWSER=C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+    set "PROFILE_DIR=%TEMP%\BNetKiosk"
+    goto LAUNCH
 )
 
 :: ============================================================
-:: Edge (fallback)
+:: 2. Microsoft Edge
 :: ============================================================
-set "EDGE="
-if exist "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" set "EDGE=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-if not defined EDGE if exist "C:\Program Files\Microsoft\Edge\Application\msedge.exe" set "EDGE=C:\Program Files\Microsoft\Edge\Application\msedge.exe"
-if defined EDGE (
-    start "" "!EDGE!" --app="!START_URL!" --kiosk --user-data-dir="%TEMP%\BNetEdgeKiosk" --allow-file-access-from-files --unsafely-treat-insecure-origin-as-secure="%ORIGIN%"
-    exit /b
+if exist "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" (
+    set "BROWSER=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+    set "PROFILE_DIR=%TEMP%\BNetEdgeKiosk"
+    goto LAUNCH
+)
+if exist "C:\Program Files\Microsoft\Edge\Application\msedge.exe" (
+    set "BROWSER=C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+    set "PROFILE_DIR=%TEMP%\BNetEdgeKiosk"
+    goto LAUNCH
 )
 
 :: ============================================================
-:: Firefox (last fallback) - NOTE: Firefox does not support Web Serial
+:: 3. Brave Browser (Lightweight / Privacy Chromium option)
+:: ============================================================
+if exist "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe" (
+    set "BROWSER=C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
+    set "PROFILE_DIR=%TEMP%\BNetBraveKiosk"
+    goto LAUNCH
+)
+if exist "%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe" (
+    set "BROWSER=%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe"
+    set "PROFILE_DIR=%TEMP%\BNetBraveKiosk"
+    goto LAUNCH
+)
+
+:: ============================================================
+:: 4. Vivaldi Browser
+:: ============================================================
+if exist "%LOCALAPPDATA%\Vivaldi\Application\vivaldi.exe" (
+    set "BROWSER=%LOCALAPPDATA%\Vivaldi\Application\vivaldi.exe"
+    set "PROFILE_DIR=%TEMP%\BNetVivaldiKiosk"
+    goto LAUNCH
+)
+
+:: ============================================================
+:: 5. Firefox (Last Fallback - Note: Web Serial not supported)
 :: ============================================================
 set "FIREFOX="
 if exist "C:\Program Files\Mozilla Firefox\firefox.exe" set "FIREFOX=C:\Program Files\Mozilla Firefox\firefox.exe"
@@ -86,3 +121,11 @@ if defined FIREFOX (
 
 echo No supported browser found.
 pause
+exit /b
+
+:: ============================================================
+:: Universal Chromium Launch Routine
+:: ============================================================
+:LAUNCH
+start "" "!BROWSER!" --app="!START_URL!" --kiosk --user-data-dir="!PROFILE_DIR!" --allow-file-access-from-files --unsafely-treat-insecure-origin-as-secure="%ORIGIN%" !PERF_FLAGS!
+exit /b

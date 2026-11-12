@@ -59,7 +59,7 @@ function renderPSPMenu(clientData, onSelectCallback) {
         if (isBillChanger) {
             card.innerHTML = `
                 <div class="pc-icon-wrapper">💵</div>
-                <div class="pc-title">Bill Changer</div>
+                <div class="pc-title bill-changer-title"><span>BILL</span><span>CHANGER</span></div>
                 <div class="pc-details">Utility / Bills<br>Insert & Exchange</div>
                 <div class="psp-badge status-coin-changer">Active</div>
             `;
