@@ -87,7 +87,7 @@ af67fcd6463863c4d443d1ef1079e21aa2c119a1	Assets/Shop/Style.css
 4c1cee70e85d0b4020a9f2affa509d7e59eeb04a	Assets/Vendo/Carousel.js
 b29764681b4f71a54c44504aaa026a4605764695	Assets/Vendo/Clients.js
 2ec97dabf5f1c472c5c14fbda6321d65fd84097a	Assets/Vendo/Idle.js
-547f3577999ea53374ce05b1e1c51137619e8bb9	Assets/Vendo/Main.js
+70b0232a9b41f0927c6fa9aa258236cba175c9b7	Assets/Vendo/Main.js
 d19b3f8360298bf4f3d7800454410a91d87bc25c	Assets/Vendo/Modals.js
 bd402f01cee13772c11801fa11362c0a12966aaa	Assets/Vendo/Serial.js
 0cdee498a4a54bd951825df4589212c85584be6e	Assets/Vendo/Style.css
@@ -279,8 +279,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
-7f415539c38a66a5fca21cc76681ed36b35886e8	bin/BNet.Cafe.Server.dll
-09ac992e6cc2cf55f5fb98a6e6f778e312161189	bin/BNet.Cafe.Server.pdb
+3f552a5f57eec8fb529182147f447afa3fff6567	bin/BNet.Cafe.Server.dll
+2a3503a4b97a843ef5ec82f4f438f1ef2280a2b3	bin/BNet.Cafe.Server.pdb
 3deced8fb5651c5974c47678769fa07b50081631	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 39d8a6be8eee640a418814bb00dd6b5a4c07d87f	bin/BNet.Cafe.Websocket.pdb
@@ -298,7 +298,7 @@ c5ba4e4047a15b3adc61340c781307d9c6e89413	bin/System.Runtime.CompilerServices.Uns
 eeec92852705946904d0e2fa0443d454075781f5	bin/System.Threading.Tasks.Extensions.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	bin/zxing.dll
 d1813ba404f0d5e8e31b55560bd2b2e33a2db359	kiosk-loader.html
-6e3fc0d6eefc8abee496b1335913c14c87204264	kiosk-mode.bat
+91ecfe1371fa85e53db5e03686a30815b659ff1b	kiosk-mode.bat
 1635f20e2362bdc60381076fa42361e403ac272d	kiosk-mode.ps1
 c9869f8686fb6fea3be99d09f67568a5bd3eae4c	patcher.bat
 e91827174c587f4cb5b3c3fadc097e4de9880b56	patcher.ps1
