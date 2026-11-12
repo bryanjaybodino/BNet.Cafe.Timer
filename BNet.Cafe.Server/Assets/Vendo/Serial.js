@@ -4,6 +4,9 @@ let serialQueue = Promise.resolve();
 let serialReader = null;
 
 function updateBoardStatus(isConnected, portName = "COM9") {
+    // Report board state to the server so clients can't insert coins when the kiosk can't accept them.
+    if (typeof sendKioskStatus === 'function') sendKioskStatus(isConnected);
+
     const indicator = document.getElementById('boardStatusIndicator');
     if (!indicator) return;
     if (isConnected) {
@@ -145,7 +148,13 @@ function shouldLock(filteredClientData, selectedIndex, clientData, changerDispen
 }
 
 function syncArduinoState(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen) {
-    sendSerialCommand(shouldLock(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen) ? 'L' : 'U');
+    const shouldBeLocked = shouldLock(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen);
+    sendSerialCommand(shouldBeLocked ? 'L' : 'U');
+
+    // Kiosk is locked -> close the Insert Coin modal on the client PC that asked for it.
+    if (shouldBeLocked && typeof closeInsertCoinModalOnClient === 'function') {
+        closeInsertCoinModalOnClient();
+    }
 }
 
 if ('serial' in navigator) {
@@ -158,7 +167,7 @@ if ('serial' in navigator) {
         }
     });
     navigator.serial.addEventListener('connect', () => {
-        updateBoardStatus(true, "COM9");
-        syncArduinoState();
+        // Re-open the board and re-sync lock state; openSerial() reports the real status.
+        syncArduinoState(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen);
     });
 }

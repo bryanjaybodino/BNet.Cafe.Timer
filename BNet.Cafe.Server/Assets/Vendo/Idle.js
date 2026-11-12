@@ -73,6 +73,9 @@ function showPressAnyKey() {
     if (psp) psp.style.display = 'none';
 
     speakText("System is locked now");
+
+    // Kiosk is now locked: close the Insert Coin modal on the client PC.
+    if (typeof closeInsertCoinModalOnClient === 'function') closeInsertCoinModalOnClient();
 }
 
 function hidePressAnyKey(updateCarouselPosition, resetIdleTimerCb) {
@@ -106,6 +109,9 @@ function forceLockSystem(sendSerialCommand) {
         if (psp) psp.style.display = 'none';
     }
     sendSerialCommand('L');
+
+    // Kiosk is now locked: close the Insert Coin modal on the client PC.
+    if (typeof closeInsertCoinModalOnClient === 'function') closeInsertCoinModalOnClient();
 }
 
 function toggleFullScreen() {

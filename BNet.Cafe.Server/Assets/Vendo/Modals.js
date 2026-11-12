@@ -134,6 +134,9 @@ function handleNumberInput(amount, currentPcName) {
     modalNumberDisplay.innerText = totalAmount;
     showNumberModal(currentPcName);
     resetModalCloseTimer();
+
+    // Show the running amount on the client PC's Insert Coin window.
+    if (typeof reportInsertedAmount === 'function') reportInsertedAmount(currentPcName, totalAmount);
 }
 
 function handleEnterInput(syncArduinoStateCb) {
@@ -247,4 +250,29 @@ function hideWarningModal() {
     if (warningModal) warningModal.classList.remove('visible');
     if (warningCloseTimer) clearTimeout(warningCloseTimer);
     if (warningCountdownInterval) clearInterval(warningCountdownInterval);
+}
+
+function forceProcessCreditOnKiosk(clientName) {
+    if (!insertCoinTargetClient || !sameClientName(insertCoinTargetClient, clientName)) return;
+
+    if (modalCloseTimer) clearTimeout(modalCloseTimer);
+    if (modalCountdownInterval) clearInterval(modalCountdownInterval);
+
+    const insertedAmount = parseInt(modalNumberDisplay.innerText, 10) || 0;
+    if (insertedAmount > 0) {
+        const activeCard = document.querySelector('.psp-card.active');
+        if (activeCard) {
+            const t = activeCard.querySelector('.pc-title');
+            const computerName = t ? t.innerText : clientName;
+
+            const amountField = document.querySelector('[id$="HiddenField_ModalAmount"]');
+            const nameField = document.querySelector('[id$="HiddenField_ModalComputerName"]');
+            const triggerBtn = document.querySelector('[id$="LinkButton_ProcessVendo"]');
+
+            if (amountField) amountField.value = insertedAmount;
+            if (nameField) nameField.value = computerName;
+            if (triggerBtn) triggerBtn.click();
+        }
+    }
+    hideNumberModal();
 }

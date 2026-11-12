@@ -79,18 +79,22 @@ if exist "%~dp0kiosk-mode.ps1" (
 
 echo Launching True Full Screen Mode...
 
+:: NOTE: Browser profiles are stored in %LOCALAPPDATA% (NOT %TEMP%) so the
+:: Web Serial COM port permission survives reboots and temp cleanups.
+:: The folder names must keep the BNet...Kiosk pattern used by kiosk-mode.ps1.
+
 :: ============================================================
 :: 1. Google Chrome
 :: ============================================================
 set "BROWSER="
 if exist "C:\Program Files\Google\Chrome\Application\chrome.exe" (
     set "BROWSER=C:\Program Files\Google\Chrome\Application\chrome.exe"
-    set "PROFILE_DIR=%TEMP%\BNetKiosk"
+    set "PROFILE_DIR=%LOCALAPPDATA%\BNetKiosk"
     goto LAUNCH
 )
 if exist "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" (
     set "BROWSER=C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-    set "PROFILE_DIR=%TEMP%\BNetKiosk"
+    set "PROFILE_DIR=%LOCALAPPDATA%\BNetKiosk"
     goto LAUNCH
 )
 
@@ -99,12 +103,12 @@ if exist "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" (
 :: ============================================================
 if exist "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" (
     set "BROWSER=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-    set "PROFILE_DIR=%TEMP%\BNetEdgeKiosk"
+    set "PROFILE_DIR=%LOCALAPPDATA%\BNetEdgeKiosk"
     goto LAUNCH
 )
 if exist "C:\Program Files\Microsoft\Edge\Application\msedge.exe" (
     set "BROWSER=C:\Program Files\Microsoft\Edge\Application\msedge.exe"
-    set "PROFILE_DIR=%TEMP%\BNetEdgeKiosk"
+    set "PROFILE_DIR=%LOCALAPPDATA%\BNetEdgeKiosk"
     goto LAUNCH
 )
 
@@ -113,12 +117,12 @@ if exist "C:\Program Files\Microsoft\Edge\Application\msedge.exe" (
 :: ============================================================
 if exist "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe" (
     set "BROWSER=C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
-    set "PROFILE_DIR=%TEMP%\BNetBraveKiosk"
+    set "PROFILE_DIR=%LOCALAPPDATA%\BNetBraveKiosk"
     goto LAUNCH
 )
 if exist "%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe" (
     set "BROWSER=%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe"
-    set "PROFILE_DIR=%TEMP%\BNetBraveKiosk"
+    set "PROFILE_DIR=%LOCALAPPDATA%\BNetBraveKiosk"
     goto LAUNCH
 )
 
@@ -127,7 +131,7 @@ if exist "%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe" (
 :: ============================================================
 if exist "%LOCALAPPDATA%\Vivaldi\Application\vivaldi.exe" (
     set "BROWSER=%LOCALAPPDATA%\Vivaldi\Application\vivaldi.exe"
-    set "PROFILE_DIR=%TEMP%\BNetVivaldiKiosk"
+    set "PROFILE_DIR=%LOCALAPPDATA%\BNetVivaldiKiosk"
     goto LAUNCH
 )
 
@@ -138,7 +142,7 @@ set "FIREFOX="
 if exist "C:\Program Files\Mozilla Firefox\firefox.exe" set "FIREFOX=C:\Program Files\Mozilla Firefox\firefox.exe"
 if not defined FIREFOX if exist "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" set "FIREFOX=C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
 if defined FIREFOX (
-    start "" "!FIREFOX!" -kiosk "!START_URL!" -no-remote -profile "%TEMP%\BNetFirefoxKiosk"
+    start "" "!FIREFOX!" -kiosk "!START_URL!" -no-remote -profile "%LOCALAPPDATA%\BNetFirefoxKiosk"
     exit /b
 )
 

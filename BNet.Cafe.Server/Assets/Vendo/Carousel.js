@@ -162,3 +162,82 @@ function initCarouselEvents(updateCallback) {
     window.addEventListener('resize', () => updateCarouselPosition(0, updateCallback));
     window.addEventListener('orientationchange', () => setTimeout(() => updateCarouselPosition(0, updateCallback), 150));
 }
+
+// The PC whose "Insert Coin" modal is currently open on the client side.
+let insertCoinTargetClient = null;
+
+function sameClientName(a, b) {
+    return String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase();
+}
+
+// Send the amount typed in on the kiosk to the PC that is inserting (only if it owns the kiosk).
+function reportInsertedAmount(pcName, amount) {
+    if (!insertCoinTargetClient || !sameClientName(insertCoinTargetClient, pcName)) return;
+    if (typeof sendInsertAmountToPC === 'function') {
+        sendInsertAmountToPC(insertCoinTargetClient, amount);
+    }
+}
+
+// Kiosk just locked -> close that PC's Insert Coin modal (once).
+function closeInsertCoinModalOnClient() {
+    if (!insertCoinTargetClient) return;
+    const target = insertCoinTargetClient;
+    insertCoinTargetClient = null;
+    if (typeof sendCloseModalToPC === 'function') sendCloseModalToPC(target);
+}
+
+// Client closed its Insert Coin modal -> lock the kiosk.
+function lockKioskForClient(clientName) {
+    // Ignore if the kiosk has since moved on to another PC's request.
+    if (!insertCoinTargetClient || !sameClientName(insertCoinTargetClient, clientName)) return;
+    insertCoinTargetClient = null;               // clear first so locking doesn't echo a close back
+
+    // Don't lock in the middle of coins being counted or change being dispensed;
+    // the normal idle lock will take over afterwards.
+    if (isModalOpen() || changerDispensing) return;
+
+    if (!isPressAnyKeyVisible()) forceLockSystem(sendSerialCommand);
+}
+
+function autoSelectClientInCarousel(targetClientName) {
+    if (!targetClientName) return;
+
+    const resetIdle = () => resetIdleTimer(isModalOpen, changerDispensing, updateCarouselPosition);
+    const syncBoard = () => syncArduinoState(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen);
+
+    // 1. Wake the kiosk if it is sitting on the "Press any key" lock screen.
+    //    (The carousel can't be positioned while #pspContainer is hidden.)
+    if (isPressAnyKeyVisible()) {
+        hidePressAnyKey(() => updateCarouselPosition(0), resetIdle);
+    } else {
+        resetIdle();
+    }
+
+    // Remember who is inserting, so we can close their modal when the kiosk locks.
+    insertCoinTargetClient = targetClientName;
+
+    // 2. Select the requesting PC.
+    if (!filteredClientData || filteredClientData.length === 0) {
+        syncBoard();
+        return;
+    }
+
+    const wanted = String(targetClientName).trim().toLowerCase();
+    const targetIndex = filteredClientData.findIndex(client => {
+        const name = client.clientName || client.ClientName || '';
+        return String(name).trim().toLowerCase() === wanted;
+    });
+
+    if (targetIndex !== -1) {
+        selectedIndex = targetIndex;
+        pspCarousel.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+        updateCarouselPosition(0);
+
+        if (typeof speakText === 'function') {
+            speakText(`Terminal ${targetClientName} selected.`);
+        }
+    }
+
+    // 3. Unlock the bill acceptor (or keep it locked if the selected PC is offline/paused/admin).
+    syncBoard();
+}

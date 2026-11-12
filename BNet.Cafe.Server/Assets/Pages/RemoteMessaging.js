@@ -4,7 +4,41 @@ const textEncoderRemoteMessaging = new TextEncoder();
 const textDecoderRemoteMessaging = new TextDecoder('utf-8');
 let serverWsRemoteMessaging = null;
 let browserWsRemoteMessaging = null;
+let coinslotWsRemoteMessaging = null;   // kiosk <-> server coinslot channel (/ws/coinslot)
 let isFetchingNotifications = false;
+let kioskReady = false;
+let lastKioskReadySent = null;
+
+// Only the kiosk page has the "press any key" lock screen.
+function isKioskPage() {
+    return !!document.getElementById('pressAnyKeyScreen');
+}
+
+// Send one binary frame (opcode + JSON) on the coinslot channel.
+function sendCoinslotFrame(opcode, payloadObject) {
+    const ws = coinslotWsRemoteMessaging;
+    if (!ws || ws.readyState !== WebSocket.OPEN) return false;
+
+    const jsonBytes = textEncoderRemoteMessaging.encode(JSON.stringify(payloadObject));
+    const fullPayload = new Uint8Array(1 + jsonBytes.length);
+    fullPayload[0] = opcode;
+    fullPayload.set(jsonBytes, 1);
+    ws.send(fullPayload.buffer);
+    return true;
+}
+
+// Tell the server whether this kiosk's bill-acceptor board is usable (opcode 0x23 on /ws/coinslot).
+// Setup.cs only marks the coinslot "Available" (and enables every client's Insert Coin button)
+// when a /ws/coinslot socket reports Ready = true.
+function sendKioskStatus(ready, force) {
+    kioskReady = !!ready;
+    if (!isKioskPage()) return;
+    if (!coinslotWsRemoteMessaging || coinslotWsRemoteMessaging.readyState !== WebSocket.OPEN) return;
+    if (!force && lastKioskReadySent === kioskReady) return;
+
+    lastKioskReadySent = kioskReady;
+    sendCoinslotFrame(0x23, { Ready: kioskReady });
+}
 
 // Determine handler endpoint path dynamically
 function getHandlerEndpoint(handlerName) {
@@ -223,6 +257,68 @@ function sendTextMessageToPC(targetClient, messageContent) {
     return true;
 }
 
+// Kiosk: report the running amount so the client PC can display it live (opcode 0x06 -> server relays 0x52)
+function sendInsertAmountToPC(targetClient, amount) {
+    if (!targetClient) return false;
+    return sendCoinslotFrame(0x06, { TargetClient: targetClient, Amount: parseInt(amount, 10) || 0 });
+}
+
+// Kiosk locked -> tell the server to free the coinslot and close that PC's Insert Coin modal (opcode 0x05)
+function sendCloseModalToPC(targetClient) {
+    if (!targetClient) return false;
+    return sendCoinslotFrame(0x05, { TargetClient: targetClient });
+}
+
+// WebSocket Connection - Kiosk coinslot channel (kiosk page only)
+function connectCoinslotWebSocket() {
+    if (!isKioskPage()) return;
+    if (coinslotWsRemoteMessaging && (coinslotWsRemoteMessaging.readyState === WebSocket.OPEN || coinslotWsRemoteMessaging.readyState === WebSocket.CONNECTING)) {
+        return;
+    }
+
+    const endpoint = 'ws://' + window.location.hostname + ':2050/ws/coinslot';
+    const ws = new WebSocket(endpoint);
+    ws.binaryType = 'arraybuffer';
+    coinslotWsRemoteMessaging = ws;
+
+    ws.onopen = function () {
+        lastKioskReadySent = null;
+        sendKioskStatus(kioskReady, true);   // (re)register as the coinslot after every (re)connect
+    };
+
+    ws.onmessage = function (event) {
+        if (!(event.data instanceof ArrayBuffer)) return;
+        const bytes = new Uint8Array(event.data);
+        const type = bytes[0];
+        if (type !== 0x04 && type !== 0x05 && type !== 0x07) return;
+
+        try {
+            const data = JSON.parse(textDecoderRemoteMessaging.decode(bytes.subarray(1)));
+            const clientName = data.ClientName || data.clientName;
+            if (!clientName) return;
+
+            if (type === 0x04) {
+                if (typeof autoSelectClientInCarousel === 'function') autoSelectClientInCarousel(clientName);
+            } else if (type === 0x05) {
+                lockKioskForClient(clientName);
+            } else if (type === 0x07) {
+                // Force credit triggered by client PC
+                if (typeof forceProcessCreditOnKiosk === 'function') {
+                    forceProcessCreditOnKiosk(clientName);
+                }
+            }
+        } catch (e) {
+            console.error('Error parsing coinslot WebSocket message', e);
+        }
+    };
+
+    ws.onclose = function () {
+        if (coinslotWsRemoteMessaging === ws) coinslotWsRemoteMessaging = null;
+        lastKioskReadySent = null;
+        setTimeout(connectCoinslotWebSocket, 3000);
+    };
+}
+
 // WebSocket Connection - Global Browser Inbound
 function connectGlobalBrowserWebSocket() {
     if (browserWsRemoteMessaging && (browserWsRemoteMessaging.readyState === WebSocket.OPEN || browserWsRemoteMessaging.readyState === WebSocket.CONNECTING)) {
@@ -326,6 +422,7 @@ document.addEventListener('click', (e) => {
 function initRemoteMessaging() {
     connectServerWebSocket();
     connectGlobalBrowserWebSocket();
+    connectCoinslotWebSocket();
     bindNotificationEvents();
 
     fetchAndRenderNotifications();

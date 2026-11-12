@@ -5,11 +5,20 @@ public class WinApi {
     [DllImport("user32.dll")]
     public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter,
         int X, int Y, int cx, int cy, uint uFlags);
+
+    [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
+    public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 }
 "@
 
 $HWND_TOPMOST = [IntPtr](-1)
-$flags = 0x0001 -bor 0x0002 -bor 0x0040   # NOSIZE | NOMOVE | SHOWWINDOW
+$GWL_EXSTYLE  = -20
+$WS_EX_TOPMOST = 0x00000008
+
+# NOSIZE | NOMOVE | NOACTIVATE
+# NOACTIVATE is important: without it every call steals focus, which closes the
+# Web Serial port picker and fires window 'blur' in the page.
+$flags = 0x0001 -bor 0x0002 -bor 0x0010
 
 # Browsers that will be closed if they are NOT the kiosk instance
 $browserNames = @('chrome', 'msedge', 'brave', 'vivaldi', 'firefox', 'opera', 'iexplore')
@@ -45,7 +54,12 @@ while ($true) {
     if ($kioskWindows.Count -gt 0) {
         $seen = $true
         foreach ($w in $kioskWindows) {
-            [WinApi]::SetWindowPos($w.MainWindowHandle, $HWND_TOPMOST, 0, 0, 0, 0, $flags) | Out-Null
+            $h = $w.MainWindowHandle
+            $ex = [WinApi]::GetWindowLong($h, $GWL_EXSTYLE)
+            # Only touch the window if it is not already topmost.
+            if (($ex -band $WS_EX_TOPMOST) -eq 0) {
+                [WinApi]::SetWindowPos($h, $HWND_TOPMOST, 0, 0, 0, 0, $flags) | Out-Null
+            }
         }
     }
     elseif ($seen -and $kiosk.Count -eq 0) {
@@ -53,4 +67,4 @@ while ($true) {
     }
 
     Start-Sleep -Seconds 1
-}s
+}

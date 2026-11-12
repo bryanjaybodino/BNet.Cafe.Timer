@@ -114,7 +114,8 @@ document.addEventListener('keydown', (e) => {
             return;
         }
         e.preventDefault();
-        let currentPcName = filteredClientData[selectedIndex]?.clientName || "PC-01";
+        const selectedClient = filteredClientData[selectedIndex];
+        let currentPcName = selectedClient?.clientName || selectedClient?.ClientName || "PC-01";
         handleNumberInput(e.key, currentPcName);
         return;
     }
