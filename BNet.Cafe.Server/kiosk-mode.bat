@@ -2,9 +2,13 @@
 setlocal EnableDelayedExpansion
 
 :: ============================================================
-:: CONFIG - the only line you need to edit
+:: CONFIG - the only lines you need to edit
 :: ============================================================
 set "URL=http://localhost:2000/BNet.Cafe.Server/BNetVendoMachine.aspx"
+
+:: Origin (scheme + host + port) is extracted automatically from URL.
+:: Needed so Web Serial works over plain HTTP.
+for /f "tokens=1,2 delims=/" %%a in ("%URL%") do set "ORIGIN=%%a//%%b"
 
 :: ============================================================
 :: Auto-detect kiosk-loader.html (same folder as this .bat first)
@@ -54,7 +58,7 @@ set "CHROME="
 if exist "C:\Program Files\Google\Chrome\Application\chrome.exe" set "CHROME=C:\Program Files\Google\Chrome\Application\chrome.exe"
 if not defined CHROME if exist "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" set "CHROME=C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
 if defined CHROME (
-    start "" "!CHROME!" --app="!START_URL!" --kiosk --user-data-dir="%TEMP%\BNetKiosk" --allow-file-access-from-files
+    start "" "!CHROME!" --app="!START_URL!" --kiosk --user-data-dir="%TEMP%\BNetKiosk" --allow-file-access-from-files --unsafely-treat-insecure-origin-as-secure="%ORIGIN%"
     exit /b
 )
 
@@ -65,12 +69,12 @@ set "EDGE="
 if exist "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" set "EDGE=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 if not defined EDGE if exist "C:\Program Files\Microsoft\Edge\Application\msedge.exe" set "EDGE=C:\Program Files\Microsoft\Edge\Application\msedge.exe"
 if defined EDGE (
-    start "" "!EDGE!" --app="!START_URL!" --kiosk --user-data-dir="%TEMP%\BNetEdgeKiosk" --allow-file-access-from-files
+    start "" "!EDGE!" --app="!START_URL!" --kiosk --user-data-dir="%TEMP%\BNetEdgeKiosk" --allow-file-access-from-files --unsafely-treat-insecure-origin-as-secure="%ORIGIN%"
     exit /b
 )
 
 :: ============================================================
-:: Firefox (last fallback)
+:: Firefox (last fallback) - NOTE: Firefox does not support Web Serial
 :: ============================================================
 set "FIREFOX="
 if exist "C:\Program Files\Mozilla Firefox\firefox.exe" set "FIREFOX=C:\Program Files\Mozilla Firefox\firefox.exe"

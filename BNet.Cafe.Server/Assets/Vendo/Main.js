@@ -77,6 +77,19 @@ discoverImages();
 fetchClientData();
 initCarouselEvents(() => syncArduinoState(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen));
 
+
+//mouse clicks and touch taps on the lock screen
+document.getElementById('pressAnyKeyScreen').addEventListener('pointerdown', (e) => {
+    if (isPressAnyKeyVisible()) {
+        e.preventDefault();
+        serialTask(async () => {
+            if (await openSerial(true)) {
+                hidePressAnyKey(() => updateCarouselPosition(0), () => resetIdleTimer(isModalOpen, changerDispensing, updateCarouselPosition));
+                await serialWriter.write(new TextEncoder().encode('U'));
+            }
+        });
+    }
+});
 // Keydown listeners
 document.addEventListener('keydown', (e) => {
     if (isPressAnyKeyVisible()) {
