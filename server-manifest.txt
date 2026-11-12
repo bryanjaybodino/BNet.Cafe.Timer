@@ -279,8 +279,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
-f0eada04fb6db82b56e83ac8260c4b39ea427631	bin/BNet.Cafe.Server.dll
-e5f19bd031ee964134b02042dc22dcf8e8c2e4c9	bin/BNet.Cafe.Server.pdb
+4ae6e7b7ba10873e597d8a424db9f5c7c2f42abe	bin/BNet.Cafe.Server.dll
+f7b4921fee410081f9360ba0ce89246ff22efff7	bin/BNet.Cafe.Server.pdb
 3deced8fb5651c5974c47678769fa07b50081631	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 39d8a6be8eee640a418814bb00dd6b5a4c07d87f	bin/BNet.Cafe.Websocket.pdb
@@ -298,8 +298,8 @@ c5ba4e4047a15b3adc61340c781307d9c6e89413	bin/System.Runtime.CompilerServices.Uns
 eeec92852705946904d0e2fa0443d454075781f5	bin/System.Threading.Tasks.Extensions.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	bin/zxing.dll
 d1813ba404f0d5e8e31b55560bd2b2e33a2db359	kiosk-loader.html
-f919f65ce5b167ba5d775335b96cb6794ce48544	kiosk-mode.bat
-1635f20e2362bdc60381076fa42361e403ac272d	kiosk-mode.ps1
+e0d726e4d7c46ced806adfe679cc1866aa4c122d	kiosk-mode.bat
+0b34905eaf926ecbd1cf62cb31d1be78caed8fde	kiosk-mode.ps1
 c9869f8686fb6fea3be99d09f67568a5bd3eae4c	patcher.bat
 e91827174c587f4cb5b3c3fadc097e4de9880b56	patcher.ps1
 5f282702bb03ef11d7184d19c80927b47f919764	temp_files/Barcodes/placeholder.txt
