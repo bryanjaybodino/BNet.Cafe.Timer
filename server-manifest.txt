@@ -82,8 +82,8 @@ ebf4b023fda28b7299ecb0c58cc98834ec9bbafd	Assets/Portal/Script.js
 7e4ed21775ffd763fe34e874ca7cc86a55eba492	Assets/Portal/Style.css
 0dd5a0fa3a0317d5ecc4e5d24798650caceafa55	Assets/ResetPassword/Script.js
 05040ff052bbca19b0988c4a9dc88bec34a2d91e	Assets/ResetPassword/Style.css
-bb93fd4488e4131a656920f77786e97b1be961ae	Assets/Shop/Script.js
-045a101b461089bee44ec2d24ac74ec3cea18ef9	Assets/Shop/Style.css
+d614f3cbd2c23e543dc3281d87c4aaf16318cb61	Assets/Shop/Script.js
+af67fcd6463863c4d443d1ef1079e21aa2c119a1	Assets/Shop/Style.css
 4c1cee70e85d0b4020a9f2affa509d7e59eeb04a	Assets/Vendo/Carousel.js
 b29764681b4f71a54c44504aaa026a4605764695	Assets/Vendo/Clients.js
 2ec97dabf5f1c472c5c14fbda6321d65fd84097a	Assets/Vendo/Idle.js
@@ -194,7 +194,7 @@ a3d0f0acded5cbc0e549d9d94b2f13a1ab8e1637	Databases/Queries/Users/GetByEmail.sql
 1c05ce7584c754209abfd811be5db12b738d8bdc	Databases/Queries/Users/GetLogin.sql
 e5ac43be343719ed4111661ba0f924f91c0c05ba	Databases/Queries/Users/Update.sql
 b6fb1d7ede8e452d5916a424e73840e21e8ba75c	Databases/Queries/Users/UpdateCount.sql
-5adbfad5f0190048ead7872cafd0d326b7cbfc0c	ExpiredOrInvalid.aspx
+e16b491765262218e57dd0e396c2f4a84eaf45d8	ExpiredOrInvalid.aspx
 d7be0d3baaf8bd674be8d2498820c2b91a089bea	Forms/AutoCreditSettings.ascx
 d62d813b8f6fe2e67d338be2612aa199ebf82777	Forms/ComputerCreate.ascx
 72e0e840bb048e2ed08625df0f0ca2af6b06d663	Forms/ComputerEarnings.ascx
@@ -266,7 +266,7 @@ f076ad8ed5abb8fdc7924b57a0bad1dd3b2a80af	Login.aspx
 6713910088031c38fdbe8ce0e51fed1a84f00ea1	Remote.html
 e5948e14374bc30dd7370fe041148e1aee443a51	ResetPassword.aspx
 c4de12e93ee321ab4507003ee471d85f5c84e1eb	ServerChat.html
-322b211d73f6c710a2d071aa3fd6d0494f48b0a3	Shop.aspx
+1ff0845314f81235bd0f6205667c55863bb242f2	Shop.aspx
 db15667f9a6089b6f72ae576e5b07703ec8df2bb	Uploads/default.png
 73cb0b9a769cd3ffd12b8d36013f1055f96ea081	Web.config
 dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
@@ -279,8 +279,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 5c16cd3e8a008bdcbed97022c005278971f810c2	Website/assets/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
-904dec0fa20e04a0f7bfe7c4f501cdf41f56e6db	bin/BNet.Cafe.Server.dll
-4f2074aceb276f031e4815975bcf8d6db1d03a12	bin/BNet.Cafe.Server.pdb
+7f415539c38a66a5fca21cc76681ed36b35886e8	bin/BNet.Cafe.Server.dll
+09ac992e6cc2cf55f5fb98a6e6f778e312161189	bin/BNet.Cafe.Server.pdb
 3deced8fb5651c5974c47678769fa07b50081631	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 39d8a6be8eee640a418814bb00dd6b5a4c07d87f	bin/BNet.Cafe.Websocket.pdb
