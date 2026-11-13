@@ -64,7 +64,7 @@ ab91d00cccfeec4d9a0600fa57ab1474885a3ce3	Assets/Pages/PointsSettings.js
 72667e4d91fb5b995031be2941ac8c5175ef8584	Assets/Pages/PricingSettings.js
 976d68948571adfa2567b29b067852fd7bcabbb4	Assets/Pages/Remote.css
 97d1e2c3246d3a19575ec3ad099c406ac85efe94	Assets/Pages/Remote.js
-80c70b2911496ed111e512dbe524aed7811b0eaf	Assets/Pages/RemoteMessaging.js
+9f52b46275761d7f47910f39875582b4d5fe338c	Assets/Pages/RemoteMessaging.js
 f0baa5004913c12133d42e342890e5bddcb4139d	Assets/Pages/RentalManage.css
 fd980f33518560ee0a6f2391e884ad031d924c52	Assets/Pages/RentalManage.js
 6ab36719c91237127ab0502dbadcc03ead8c3d67	Assets/Pages/Script.js
@@ -87,8 +87,8 @@ af67fcd6463863c4d443d1ef1079e21aa2c119a1	Assets/Shop/Style.css
 f487753cf49076a5205925a13bebbd55a9c46c15	Assets/Vendo/Carousel.js
 b29764681b4f71a54c44504aaa026a4605764695	Assets/Vendo/Clients.js
 b234257c4e9066363d2da458573502555169c661	Assets/Vendo/Idle.js
-fe8a28fcf1145477757fa87dc1ca014aa3ba3db0	Assets/Vendo/Main.js
-1748160b5b0e49604379b6fe9dcd77f1e836ca56	Assets/Vendo/Modals.js
+608879dc2168fc1449fb43d00d173eb6a2754a32	Assets/Vendo/Main.js
+5de5c217005b662c3055a8e2336b6207101b0cd1	Assets/Vendo/Modals.js
 7e64f3e184570c72484289db7e5630c75479882a	Assets/Vendo/Serial.js
 805d99b21464705b0054652afba81299ad9a1f37	Assets/Vendo/Style.css
 eb4e48c60b804d6dc048af49d488a12512a67c3e	Assets/Vendo/Utils.js
@@ -280,11 +280,11 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-b00fc8df9642303a8710448f61ccf3f98e95ba33	bin/BNet.Cafe.Server.dll
-fab38efda4b5676be3c399273a70e335598bfddc	bin/BNet.Cafe.Server.pdb
-bbfdd03e1a60c60c07901d1004bb0467f779617c	bin/BNet.Cafe.Websocket.exe
+bea57c2dc213e947af689290d0895dba55865c78	bin/BNet.Cafe.Server.dll
+478958cc106885bb8675dfdc66e112fffb3a4b24	bin/BNet.Cafe.Server.pdb
+d46cc1b754a6ddef0792c13cbc865eaf9ee7aa48	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
-61dc8841d55cb70fde586f144262a8bc6ac6c747	bin/BNet.Cafe.Websocket.pdb
+2ca8ac31e4754cd78f5e0d42b377980de68c73d5	bin/BNet.Cafe.Websocket.pdb
 0fd4bf6141810a8c3dd2fc76e2be94fdd572e82e	bin/BNet.FTPServer.dll
 1b1f204165327bd0fbd04378350e87e793645b59	bin/Microsoft.Extensions.Logging.Abstractions.dll
 1acaf092a11563a6ad8608e898a6761e9a14afa4	bin/MySqlConnector.dll
