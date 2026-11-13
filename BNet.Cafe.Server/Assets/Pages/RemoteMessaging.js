@@ -8,6 +8,9 @@ let coinslotWsRemoteMessaging = null;   // kiosk <-> server coinslot channel (/w
 let isFetchingNotifications = false;
 let kioskReady = false;
 let lastKioskReadySent = null;
+let kioskBusy = false;            // kiosk number modal (modalNumberDisplay) is open
+let lastKioskBusySent = null;
+let kioskBusyTarget = '';   // PC selected on the kiosk while the modal is open
 
 // Only the kiosk page has the "press any key" lock screen.
 function isKioskPage() {
@@ -38,6 +41,21 @@ function sendKioskStatus(ready, force) {
 
     lastKioskReadySent = kioskReady;
     sendCoinslotFrame(0x23, { Ready: kioskReady });
+}
+
+// Tell the server the kiosk's number modal is open/closed (opcode 0x24 on /ws/coinslot).
+// The server relays it to every client PC so their Insert Coin button is disabled while the kiosk is in use.
+function sendKioskBusy(busy, force, target) {
+    kioskBusy = !!busy;
+    kioskBusyTarget = kioskBusy ? (target || '') : '';
+    if (!isKioskPage()) return;
+    if (!coinslotWsRemoteMessaging || coinslotWsRemoteMessaging.readyState !== WebSocket.OPEN) return;
+
+    const key = kioskBusy + '|' + kioskBusyTarget;
+    if (!force && lastKioskBusySent === key) return;
+
+    lastKioskBusySent = key;
+    sendCoinslotFrame(0x24, { Busy: kioskBusy, TargetClient: kioskBusyTarget });
 }
 
 // Determine handler endpoint path dynamically
@@ -282,8 +300,13 @@ function connectCoinslotWebSocket() {
     coinslotWsRemoteMessaging = ws;
 
     ws.onopen = function () {
+        console.log("[Coinslot WS] Connected to server. Re-registering board status...");
         lastKioskReadySent = null;
-        sendKioskStatus(kioskReady, true);   // (re)register as the coinslot after every (re)connect
+
+        // Force an immediate re-sync of the kiosk ready state upon reconnection
+        sendKioskStatus(kioskReady, true);
+        lastKioskBusySent = null;
+        sendKioskBusy(kioskBusy, true, kioskBusyTarget);
     };
 
     ws.onmessage = function (event) {
@@ -302,7 +325,6 @@ function connectCoinslotWebSocket() {
             } else if (type === 0x05) {
                 lockKioskForClient(clientName);
             } else if (type === 0x07) {
-                // Force credit triggered by client PC
                 if (typeof forceProcessCreditOnKiosk === 'function') {
                     forceProcessCreditOnKiosk(clientName);
                 }
@@ -313,12 +335,13 @@ function connectCoinslotWebSocket() {
     };
 
     ws.onclose = function () {
+        console.warn("[Coinslot WS] Connection lost. Attempting reconnect in 3s...");
         if (coinslotWsRemoteMessaging === ws) coinslotWsRemoteMessaging = null;
         lastKioskReadySent = null;
+        lastKioskBusySent = null;
         setTimeout(connectCoinslotWebSocket, 3000);
     };
 }
-
 // WebSocket Connection - Global Browser Inbound
 function connectGlobalBrowserWebSocket() {
     if (browserWsRemoteMessaging && (browserWsRemoteMessaging.readyState === WebSocket.OPEN || browserWsRemoteMessaging.readyState === WebSocket.CONNECTING)) {

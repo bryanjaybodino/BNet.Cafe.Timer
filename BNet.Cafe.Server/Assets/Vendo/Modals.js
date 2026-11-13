@@ -28,6 +28,22 @@ let warningCloseTimer = null;
 let warningCountdownInterval = null;
 let warningRemainingSeconds = 5;
 
+// Report the kiosk's number modal open/closed state so client PCs can lock their Insert Coin button.
+// Observing the class covers every open/close path (typing, timeout, force credit, bill changer).
+if (numberModal) {
+    new MutationObserver(function () {
+        if (typeof sendKioskBusy === 'function') {
+            const visible = numberModal.classList.contains('visible');
+            let target = '';
+            if (visible && !isBillChangerActive()) {
+                const t = document.querySelector('.psp-card.active .pc-title');
+                target = t ? t.innerText.trim() : '';
+            }
+            sendKioskBusy(visible, false, target);
+        }
+    }).observe(numberModal, { attributes: true, attributeFilter: ['class'] });
+}
+
 function setModalErrorStyle(isError) {
     const color = isError ? CHANGER_ERROR_COLOR : '';
     modalTimerText.style.color = color;

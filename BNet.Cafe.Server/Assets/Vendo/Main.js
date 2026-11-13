@@ -127,6 +127,9 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
+    // Block arrow/navigation keys if the modal or client insert is active
+    if (isModalOpen() || (typeof isClientInsertingCoin === 'function' && isClientInsertingCoin())) return;
+
     const key = e.key.toLowerCase();
 
     // Block arrow/navigation keys if a client is currently inserting coins[cite: 8]
