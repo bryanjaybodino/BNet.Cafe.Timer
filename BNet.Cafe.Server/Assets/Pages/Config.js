@@ -6,6 +6,12 @@ function ValidateConfig() {
     var intervalInput = document.querySelector('[id$="TextBox_AutoShutDownInterval"]');
     var inputId = intervalInput ? intervalInput.id : 'TextBox_AutoShutDownInterval';
 
+    var minLoginInput = document.querySelector('[id$="TextBox_MinimumLoginTime"]');
+    var minLoginId = minLoginInput ? minLoginInput.id : 'TextBox_MinimumLoginTime';
+
+    var minTransferInput = document.querySelector('[id$="TextBox_MinimumTransferTime"]');
+    var minTransferId = minTransferInput ? minTransferInput.id : 'TextBox_MinimumTransferTime';
+
     var openingTimeInput = document.querySelector('[id$="TextBox_OpeningTime"]');
     var openingTimeId = openingTimeInput ? openingTimeInput.id : 'TextBox_OpeningTime';
 
@@ -20,6 +26,18 @@ function ValidateConfig() {
     var isValidInterval = requiredValidation(inputId);
     if (!isValidInterval) {
         ShowAlert('Please enter an auto shutdown interval.');
+        return false;
+    }
+
+    var isValidMinLogin = requiredValidation(minLoginId);
+    if (!isValidMinLogin) {
+        ShowAlert('Please enter the minimum login time.');
+        return false;
+    }
+
+    var isValidMinTransfer = requiredValidation(minTransferId);
+    if (!isValidMinTransfer) {
+        ShowAlert('Please enter the minimum transfer time.');
         return false;
     }
 

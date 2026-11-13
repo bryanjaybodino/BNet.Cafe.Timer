@@ -1,5 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="PricingSettings.ascx.cs" Inherits="BNet.Cafe.Server.Forms.PricingSettings" %>
 <%@ Register Src="~/Forms/Modals/PricingSettingDelete.ascx" TagPrefix="uc1" TagName="PricingSettingDelete" %>
+<%@ Register Src="~/Forms/Modals/PricingRequiredModal.ascx" TagPrefix="uc2" TagName="PricingRequiredModal" %>
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
@@ -34,7 +35,7 @@
                 <!-- Left: Form Panel -->
                 <div class="pricing-form-panel">
                     <div class="form-card">
-                        <h2 class="form-section-title" style="padding-bottom:25px">
+                        <h2 class="form-section-title" style="padding-bottom: 25px">
                             <i class="fa-solid fa-plus-circle"></i>Add/Edit Pricing Rule
                         </h2>
 
@@ -212,5 +213,6 @@
             </div>
         </div>
         <uc1:PricingSettingDelete runat="server" ID="PricingSettingDelete" />
+        <uc2:PricingRequiredModal runat="server" ID="PricingRequiredModal" />
     </ContentTemplate>
 </asp:UpdatePanel>

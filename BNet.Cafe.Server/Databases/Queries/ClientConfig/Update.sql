@@ -3,6 +3,8 @@ SET
     DBTimeZone = '{DBTimeZone}',
     DBAccountCreationAllowed = '{DBAccountCreationAllowed}',
     DBAutoShutDownInterval = '{DBAutoShutDownInterval}',
+    DBMinimumLoginTime = '{DBMinimumLoginTime}',
+    DBMinimumTransferTime = '{DBMinimumTransferTime}',
     DBDesktopSlideShow = '{DBDesktopSlideShow}',
     DBResetShutdownCountdown = '{DBResetShutdownCountdown}',
     DBTimerSizeMode = '{DBTimerSizeMode}',

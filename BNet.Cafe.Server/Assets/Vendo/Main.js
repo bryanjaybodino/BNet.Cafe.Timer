@@ -107,6 +107,7 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
+    // Allow coin/bill acceptor numbers (0-9) to pass through so currency inputs work properly[cite: 8]
     if (e.key >= '0' && e.key <= '9') {
         if (e.key === '0') {
             e.preventDefault();
@@ -127,14 +128,18 @@ document.addEventListener('keydown', (e) => {
     }
 
     const key = e.key.toLowerCase();
+
+    // Block arrow/navigation keys if a client is currently inserting coins[cite: 8]
     if (key === 'arrowright' || key === 'x' || (e.ctrlKey && key === 'c')) {
         e.preventDefault();
+        if (typeof isClientInsertingCoin === 'function' && isClientInsertingCoin()) return;
         if (selectedIndex < filteredClientData.length - 1) {
             selectedIndex++;
             updateCarouselPosition(0, () => syncArduinoState(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen));
         }
     } else if (key === 'arrowleft' || key === 'z' || (e.ctrlKey && key === 'a')) {
         e.preventDefault();
+        if (typeof isClientInsertingCoin === 'function' && isClientInsertingCoin()) return;
         if (selectedIndex > 0) {
             selectedIndex--;
             updateCarouselPosition(0, () => syncArduinoState(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen));

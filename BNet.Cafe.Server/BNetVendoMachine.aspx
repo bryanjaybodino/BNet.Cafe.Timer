@@ -39,7 +39,9 @@
     <!-- Press Any Key Overlay Screen: full screen cover when locked -->
     <div id="pressAnyKeyScreen">
         <div class="attract-header">
-            <span class="attract-brand">BNet Cafe</span>
+            <span class="attract-brand">
+                <asp:Label ID="Label_ComshopName" runat="server" Text="BNet Cafe"></asp:Label>
+            </span>
         </div>
         <div class="attract-grid" id="attractGrid"></div>
         <div class="attract-footer">

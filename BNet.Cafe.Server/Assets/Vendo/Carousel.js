@@ -77,7 +77,7 @@ function renderPSPMenu(clientData, onSelectCallback) {
         }
 
         card.addEventListener('click', () => {
-            if (isModalOpen()) return;
+            if (isModalOpen() || isClientInsertingCoin()) return; // Block clicks during modal/insert[cite: 6]
             if (Math.abs(currentDeltaX) < 10) {
                 selectedIndex = index;
                 updateCarouselPosition(0);
@@ -124,7 +124,7 @@ let isDragging = false;
 
 function initCarouselEvents(updateCallback) {
     function onPointerDown(e) {
-        if (isModalOpen() || filteredClientData.length === 0) return;
+        if (isModalOpen() || isClientInsertingCoin() || filteredClientData.length === 0) return; // Block swipe when inserting[cite: 6]
         isDragging = true;
         startX = e.clientX || (e.touches && e.touches[0].clientX);
         currentDeltaX = 0;
@@ -132,7 +132,7 @@ function initCarouselEvents(updateCallback) {
     }
 
     function onPointerMove(e) {
-        if (!isDragging || isModalOpen()) return;
+        if (!isDragging || isModalOpen() || isClientInsertingCoin()) return; // Block move when inserting[cite: 6]
         const currentX = e.clientX || (e.touches && e.touches[0].clientX);
         currentDeltaX = currentX - startX;
         updateCarouselPosition(currentDeltaX, updateCallback);
@@ -166,6 +166,53 @@ function initCarouselEvents(updateCallback) {
 // The PC whose "Insert Coin" modal is currently open on the client side.
 let insertCoinTargetClient = null;
 
+function isClientInsertingCoin() {
+    return insertCoinTargetClient !== null;
+}
+
+function setClientInsertOverlay(clientName) {
+    let overlay = document.getElementById('clientInsertCoinOverlay');
+    
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'clientInsertCoinOverlay';
+        Object.assign(overlay.style, {
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(15, 23, 42, 0.85)',
+            backdropFilter: 'blur(6px)',
+            zIndex: '99999',
+            display: 'none',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#f8fafc',
+            textAlign: 'center',
+            padding: '20px',
+            userSelect: 'none'
+        });
+        document.body.appendChild(overlay);
+    }
+
+    if (clientName) {
+        overlay.innerHTML = `
+            <div style="font-size: 3.5rem; margin-bottom: 16px;">🪙</div>
+            <h2 style="font-size: 2rem; font-weight: 700; margin: 0 0 12px 0; color: #22c55e;">
+                ${escapeHtml(clientName)} IS INSERTING COINS
+            </h2>
+            <p style="font-size: 1.25rem; max-width: 500px; color: #cbd5e1; margin: 0;">
+                Please wait until the customer finishes or closes their Insert Coin window.
+            </p>
+        `;
+        overlay.style.display = 'flex';
+    } else {
+        overlay.style.display = 'none';
+    }
+}
+
 function sameClientName(a, b) {
     return String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase();
 }
@@ -178,22 +225,21 @@ function reportInsertedAmount(pcName, amount) {
     }
 }
 
-// Kiosk just locked -> close that PC's Insert Coin modal (once).
+// Kiosk just locked -> close that PC's Insert Coin modal (once)[cite: 6].
 function closeInsertCoinModalOnClient() {
     if (!insertCoinTargetClient) return;
     const target = insertCoinTargetClient;
     insertCoinTargetClient = null;
+    setClientInsertOverlay(null); // Hide warning overlay
     if (typeof sendCloseModalToPC === 'function') sendCloseModalToPC(target);
 }
 
-// Client closed its Insert Coin modal -> lock the kiosk.
+// Client closed its Insert Coin modal -> unlock UI and lock the kiosk[cite: 6].
 function lockKioskForClient(clientName) {
-    // Ignore if the kiosk has since moved on to another PC's request.
     if (!insertCoinTargetClient || !sameClientName(insertCoinTargetClient, clientName)) return;
-    insertCoinTargetClient = null;               // clear first so locking doesn't echo a close back
+    insertCoinTargetClient = null;               
+    setClientInsertOverlay(null); // Hide warning overlay
 
-    // Don't lock in the middle of coins being counted or change being dispensed;
-    // the normal idle lock will take over afterwards.
     if (isModalOpen() || changerDispensing) return;
 
     if (!isPressAnyKeyVisible()) forceLockSystem(sendSerialCommand);
@@ -205,18 +251,16 @@ function autoSelectClientInCarousel(targetClientName) {
     const resetIdle = () => resetIdleTimer(isModalOpen, changerDispensing, updateCarouselPosition);
     const syncBoard = () => syncArduinoState(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen);
 
-    // 1. Wake the kiosk if it is sitting on the "Press any key" lock screen.
-    //    (The carousel can't be positioned while #pspContainer is hidden.)
     if (isPressAnyKeyVisible()) {
         hidePressAnyKey(() => updateCarouselPosition(0), resetIdle);
     } else {
         resetIdle();
     }
 
-    // Remember who is inserting, so we can close their modal when the kiosk locks.
+    // Remember who is inserting and display the blocking message overlay
     insertCoinTargetClient = targetClientName;
+    setClientInsertOverlay(targetClientName);
 
-    // 2. Select the requesting PC.
     if (!filteredClientData || filteredClientData.length === 0) {
         syncBoard();
         return;
@@ -238,6 +282,6 @@ function autoSelectClientInCarousel(targetClientName) {
         }
     }
 
-    // 3. Unlock the bill acceptor (or keep it locked if the selected PC is offline/paused/admin).
+    // Keeps physical bill/coin acceptor unlocked ('U') so the user can insert coins[cite: 10]
     syncBoard();
 }

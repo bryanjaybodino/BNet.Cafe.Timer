@@ -82,7 +82,7 @@
                     <div class="search-box">
                         <asp:TextBox ID="TextBox_Search" AutoPostBack="true" runat="server" CssClass="search-input" placeholder="Search computers..." />
                     </div>
-                    <div class="search-box" style="min-width: 200px!important">
+                    <div class="search-box" style="min-width: 160px!important">
                         <asp:DropDownList ID="DropDownList_Status" AutoPostBack="true" runat="server" CssClass="form-control bnet-select">
                             <asp:ListItem Text="All Status" Value="All"></asp:ListItem>
                             <asp:ListItem Text="Occupied" Value="Occupied"></asp:ListItem>
@@ -90,6 +90,15 @@
                             <asp:ListItem Text="Paused" Value="Paused"></asp:ListItem>
                             <asp:ListItem Text="Offline" Value="Offline"></asp:ListItem>
                             <asp:ListItem Text="Administrator" Value="Administrator"></asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
+                    <div class="search-box" style="min-width: 160px!important">
+                        <asp:DropDownList ID="DropDownList_Role" AutoPostBack="true" runat="server" CssClass="form-control bnet-select">
+                            <asp:ListItem Text="All Roles" Value="All"></asp:ListItem>
+                            <asp:ListItem Text="Guest" Value="GUEST"></asp:ListItem>
+                            <asp:ListItem Text="Member" Value="MEMBER"></asp:ListItem>
+                            <asp:ListItem Text="VIP" Value="VIP"></asp:ListItem>
+                            <asp:ListItem Text="Admin" Value="ADMIN"></asp:ListItem>
                         </asp:DropDownList>
                     </div>
                 </div>
@@ -191,7 +200,7 @@
 
                         <asp:TemplateField HeaderText="Customer Name" ItemStyle-Width="200px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_CustomerName" runat="server" Text='<%# Eval("CustomerName") %>'></asp:Label>
+                                <asp:Label ID="Label_CustomerName" runat="server" Text='<%# Eval("CustomerName") %>' Style='<%# "color: " + Eval("CustomerNameColor") + "; font-weight: 600;" %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
 

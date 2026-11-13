@@ -75,6 +75,16 @@
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="<%= TextBox_MinimumLoginTime.ClientID %>">Minimum Login Time (Minutes) <span class="required">*</span></label>
+                        <asp:TextBox ID="TextBox_MinimumLoginTime" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="1" MaxLength="10"></asp:TextBox>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="<%= TextBox_MinimumTransferTime.ClientID %>">Minimum Transfer Time (Minutes) <span class="required">*</span></label>
+                        <asp:TextBox ID="TextBox_MinimumTransferTime" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="1" MaxLength="10"></asp:TextBox>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
                         <label for="<%= CheckBox_DesktopSlideShow.ClientID %>" class="toggle-label">
                             <div class="toggle-text">
                                 <span class="toggle-title">Desktop Slide Show</span>

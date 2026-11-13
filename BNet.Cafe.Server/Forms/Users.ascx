@@ -114,7 +114,7 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
-                        <asp:TemplateField HeaderText="Email" ItemStyle-Width="220px">
+                        <asp:TemplateField HeaderText="Username/Email" ItemStyle-Width="220px">
                             <ItemTemplate>
                                 <asp:Label ID="Label_DBEmail" runat="server" Text='<%# Eval("DBEmail") %>'></asp:Label>
                             </ItemTemplate>
