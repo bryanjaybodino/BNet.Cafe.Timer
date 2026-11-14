@@ -109,6 +109,7 @@
                         <asp:HiddenField ID="HiddenField_CustomerType" runat="server" />
                         <asp:HiddenField ID="HF_RedeemMinutes" runat="server" />
                         <asp:HiddenField ID="HF_RedeemPoints" runat="server" />
+                        <asp:HiddenField ID="HF_TransferNonce" runat="server" />
                         <!-- Tabs Navigation using LinkButton -->
                         <div class="portal-tabs">
                             <asp:LinkButton ID="lnkTabTransactions" runat="server" CssClass="portal-tab active" OnClick="lnkTab_Click" CommandArgument="Transactions">
@@ -264,10 +265,16 @@
                                 <div style="font-size: 13px; color: var(--portal-text-muted);">
                                     Send available account balance minutes safely to another registered user.                              
                                 </div>
+                                <div style="font-size: 13px; color: var(--portal-text-main); font-weight: 600;">
+                                    Available to transfer: <span style="color: var(--portal-accent);">
+                                        <asp:Literal ID="litTransferableMins" runat="server">0</asp:Literal>
+                                        mins</span>
+                                    <span style="font-weight: 400; color: var(--portal-text-muted);">(account balance + remaining time of your active session)</span>
+                                </div>
                                 <!-- Transfer Warning Note -->
                                 <div style="font-size: 12px; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.2); display: flex; align-items: center; gap: 8px; width: 100%;">
                                     <i class="fa fa-exclamation-triangle"></i>
-                                    <span><strong>Note:</strong> Completing a successful balance transfer will automatically force-logout your account for session security.</span>
+                                    <span><strong>Note:</strong> If you are currently logged in on a PC, completing a transfer will automatically log that PC out and return its unused time to your balance before the transfer is applied. If you are not logged in, the minutes are taken directly from your account balance.</span>
                                 </div>
 
                                 <div style="width: 100%; display: flex; flex-direction: column; gap: 14px; max-width: 480px;">
@@ -345,13 +352,16 @@
                                         <asp:Literal ID="litTransferModalMins" runat="server"></asp:Literal>
                                         minutes</strong> to <strong>
                                             <asp:Literal ID="litTransferModalRecipient" runat="server"></asp:Literal></strong>.
+                                    <div style="margin-top: 10px; font-size: 12px; color: #f59e0b;">
+                                        <asp:Literal ID="litTransferModalNotice" runat="server"></asp:Literal>
+                                    </div>
                                     <div style="margin-top: 14px;">
                                         <asp:TextBox ID="txtTransferPassword" runat="server" TextMode="Password" placeholder="Enter your password" CssClass="form-control" Style="width: 100%; padding: 10px; border-radius: 10px; background: var(--portal-card-bg); color: var(--portal-text-main); border: 1px solid var(--portal-card-border);"></asp:TextBox>
                                         <asp:Label ID="litTransferError" runat="server" CssClass="text-danger" Style="color: #ef4444; font-size: 12px; display: block; margin-top: 6px;"></asp:Label>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <asp:Button ID="btnConfirmTransfer" runat="server" CssClass="btn-redeem-rate" Text="Confirm & Transfer" OnClick="btnConfirmTransfer_Click" Style="background: #10b981;" />
+                                    <asp:Button ID="btnConfirmTransfer" runat="server" CssClass="btn-redeem-rate" Text="Confirm & Transfer" OnClick="btnConfirmTransfer_Click" OnClientClick="this.style.pointerEvents='none'; this.value='Processing...'; return true;" Style="background: #10b981;" />
                                     <asp:Button ID="btnCancelTransfer" runat="server" CssClass="btn-theme-toggle" Text="Cancel" OnClick="btnCancelTransfer_Click" Style="width: auto; padding: 8px 16px; border-radius: 10px;" />
                                 </div>
                             </div>
