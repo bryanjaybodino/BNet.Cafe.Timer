@@ -303,5 +303,7 @@ d1813ba404f0d5e8e31b55560bd2b2e33a2db359	kiosk-loader.html
 5248b3baa5325dbeebf2301b0ae35ebdd6ec2bd1	kiosk-mode.ps1
 c9869f8686fb6fea3be99d09f67568a5bd3eae4c	patcher.bat
 e91827174c587f4cb5b3c3fadc097e4de9880b56	patcher.ps1
+b4558b5a6c91859aa7fccc8356b03617aa7b43ae	tailscale-runner.bat
+4ed58319cbec85b2ffd3b5badf1b83111c3dac82	tailscale-setup-1.104.7.exe
 5f282702bb03ef11d7184d19c80927b47f919764	temp_files/Barcodes/placeholder.txt
 5f282702bb03ef11d7184d19c80927b47f919764	temp_files/QRCodes/placeholder.txt
