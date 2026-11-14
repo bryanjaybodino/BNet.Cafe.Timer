@@ -9,6 +9,17 @@ const textEncoder = new TextEncoder();
 let ws = null;
 let wsReady = false;
 
+// WebSocket URL builder: localhost / IP address -> port 2050, domain -> same host as the page.
+// Uses wss:// automatically when the page is served over HTTPS.
+function buildWsUrl(path) {
+    const { protocol, hostname, host } = window.location;
+    const proto = protocol === 'https:' ? 'wss://' : 'ws://';
+    const isLocalOrIp = hostname === 'localhost'
+        || /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)   // IPv4, e.g. 192.168.1.10
+        || hostname.startsWith('[');                    // IPv6, e.g. [::1]
+    return proto + (isLocalOrIp ? hostname + ':2050' : host) + path;
+}
+
 // UI & Clock Helpers
 const getEl = (id) => document.getElementById(id);
 setInterval(() => {
@@ -55,7 +66,7 @@ function updateInfo(data = {}) {
 // Main WebSocket (client list + activity only)
 // ---------------------------------------------------------------------------
 function connectWebSocket() {
-    ws = new WebSocket(`ws://${window.location.hostname}:2050/ws/browser`);
+    ws = new WebSocket(buildWsUrl('/ws/browser'));
     ws.binaryType = 'arraybuffer';
 
     ws.onopen = () => {
@@ -79,9 +90,12 @@ function connectWebSocket() {
         }
     };
 
+    ws.onerror = () => { try { ws.close(); } catch { } };
+
     ws.onclose = () => {
         wsReady = false;
-        setTimeout(connectWebSocket, 3000);
+        clearTimeout(ws._retry);
+        ws._retry = setTimeout(connectWebSocket, 3000);
     };
 }
 
@@ -99,7 +113,7 @@ function openThumbStream(key) {
 
     const connect = () => {
         if (s.closed) return;
-        const sock = new WebSocket(`ws://${window.location.hostname}:2050/ws/browser`);
+        const sock = new WebSocket(buildWsUrl('/ws/browser'));
         sock.binaryType = 'arraybuffer';
         s.ws = sock;
 

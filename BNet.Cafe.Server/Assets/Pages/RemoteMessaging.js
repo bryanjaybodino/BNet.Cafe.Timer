@@ -247,12 +247,23 @@ function renderNotificationUI(messages) {
     });
 }
 
+// WebSocket URL builder: localhost / IP address -> port 2050, domain -> same host as the page.
+// Uses wss:// automatically when the page is served over HTTPS.
+function buildWsUrl(path) {
+    const { protocol, hostname, host } = window.location;
+    const proto = protocol === 'https:' ? 'wss://' : 'ws://';
+    const isLocalOrIp = hostname === 'localhost'
+        || /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)   // IPv4, e.g. 192.168.1.10
+        || hostname.startsWith('[');                    // IPv6, e.g. [::1]
+    return proto + (isLocalOrIp ? hostname + ':2050' : host) + path;
+}
+
 // WebSocket Connection - Outbound to PC
 function connectServerWebSocket() {
     if (serverWsRemoteMessaging && (serverWsRemoteMessaging.readyState === WebSocket.OPEN || serverWsRemoteMessaging.readyState === WebSocket.CONNECTING)) {
         return;
     }
-    const endpoint = 'ws://' + window.location.hostname + ':2050/ws/server';
+    const endpoint = buildWsUrl('/ws/server');
     serverWsRemoteMessaging = new WebSocket(endpoint);
     serverWsRemoteMessaging.binaryType = 'arraybuffer';
 
@@ -294,7 +305,7 @@ function connectCoinslotWebSocket() {
         return;
     }
 
-    const endpoint = 'ws://' + window.location.hostname + ':2050/ws/coinslot';
+    const endpoint = buildWsUrl('/ws/coinslot');
     const ws = new WebSocket(endpoint);
     ws.binaryType = 'arraybuffer';
     coinslotWsRemoteMessaging = ws;
@@ -348,7 +359,7 @@ function connectGlobalBrowserWebSocket() {
         return;
     }
 
-    const endpoint = 'ws://' + window.location.hostname + ':2050/ws/browser';
+    const endpoint = buildWsUrl('/ws/browser');
     browserWsRemoteMessaging = new WebSocket(endpoint);
     browserWsRemoteMessaging.binaryType = 'arraybuffer';
 
