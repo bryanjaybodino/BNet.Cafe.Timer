@@ -1,7 +1,6 @@
 759ecb02c985c1baa5db6e0e77e9a1d2c40a3ade	App/Installation.aspx
 fa306d5ab61fb2e134f679bf40785171957bc0ad	App/icon.png
 160352f71e879149c31bb0c1ea243ad3b32bef93	App/manifest-template.json
-923fabe9ffc95c495a53226ef6c8212ccf2a1f12	App/manifest.json
 d5b9e5fb09c315ab973e4d7ce8f41726a89b8b56	App/script.js
 7365c608a05630145f19b2ddf4781088c2c03430	App/service-worker.js
 316cd9f99d1c6a8571c9ea8cb1af7dba783e7fe8	Ashx/CalculateAmountFromDurationHandler.ashx
@@ -280,11 +279,11 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-340bd057cd64327fb268da2b25c986ab374e002a	bin/BNet.Cafe.Server.dll
-bda60f0b0facd0b142c619e5f44174f5cf2f0d40	bin/BNet.Cafe.Server.pdb
-71ab505ad0d58995798adcbb2809df77facb5f6a	bin/BNet.Cafe.Websocket.exe
+6f78c734cbb8737b7cf54481401661d19b7c359c	bin/BNet.Cafe.Server.dll
+b324fe8668c8d2cb5c2fea867d6821376bbed15b	bin/BNet.Cafe.Server.pdb
+b52ffb7b1d763fd535f90ca6f0851989bb12a26d	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
-96e300e9988af0d63e49fe1c098dba6c329dbeef	bin/BNet.Cafe.Websocket.pdb
+ea80502fd55ad520b9917817de23bf8e840600e7	bin/BNet.Cafe.Websocket.pdb
 0fd4bf6141810a8c3dd2fc76e2be94fdd572e82e	bin/BNet.FTPServer.dll
 1b1f204165327bd0fbd04378350e87e793645b59	bin/Microsoft.Extensions.Logging.Abstractions.dll
 1acaf092a11563a6ad8608e898a6761e9a14afa4	bin/MySqlConnector.dll
