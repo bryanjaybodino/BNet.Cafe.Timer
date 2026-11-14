@@ -63,8 +63,8 @@ ab91d00cccfeec4d9a0600fa57ab1474885a3ce3	Assets/Pages/PointsSettings.js
 334b21ab3a6c210af720789e61ae238591f44667	Assets/Pages/PricingSettings.css
 72667e4d91fb5b995031be2941ac8c5175ef8584	Assets/Pages/PricingSettings.js
 976d68948571adfa2567b29b067852fd7bcabbb4	Assets/Pages/Remote.css
-97d1e2c3246d3a19575ec3ad099c406ac85efe94	Assets/Pages/Remote.js
-9f52b46275761d7f47910f39875582b4d5fe338c	Assets/Pages/RemoteMessaging.js
+6021c1a24c04b63a27d4fb7f1ba6aad304ad8ee1	Assets/Pages/Remote.js
+78dd0f4c90ee70f26c3a8b0bc68da777d39a4cd6	Assets/Pages/RemoteMessaging.js
 f0baa5004913c12133d42e342890e5bddcb4139d	Assets/Pages/RentalManage.css
 fd980f33518560ee0a6f2391e884ad031d924c52	Assets/Pages/RentalManage.js
 6ab36719c91237127ab0502dbadcc03ead8c3d67	Assets/Pages/Script.js
@@ -263,7 +263,7 @@ f076ad8ed5abb8fdc7924b57a0bad1dd3b2a80af	Login.aspx
 77956847c349c7391a9448c2287e700007ac2ee5	Offline Packages/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	Offline Packages/zxing/zxing.dll
 4505e8f3d50503883f1b021d13e53e230b2edbd0	Portal.aspx
-6713910088031c38fdbe8ce0e51fed1a84f00ea1	Remote.html
+049d01d2cbe6e91a1a308cb926ea9325e02945c8	Remote.html
 e5948e14374bc30dd7370fe041148e1aee443a51	ResetPassword.aspx
 c4de12e93ee321ab4507003ee471d85f5c84e1eb	ServerChat.html
 1ff0845314f81235bd0f6205667c55863bb242f2	Shop.aspx
@@ -280,11 +280,11 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-bea57c2dc213e947af689290d0895dba55865c78	bin/BNet.Cafe.Server.dll
-478958cc106885bb8675dfdc66e112fffb3a4b24	bin/BNet.Cafe.Server.pdb
-d46cc1b754a6ddef0792c13cbc865eaf9ee7aa48	bin/BNet.Cafe.Websocket.exe
+340bd057cd64327fb268da2b25c986ab374e002a	bin/BNet.Cafe.Server.dll
+bda60f0b0facd0b142c619e5f44174f5cf2f0d40	bin/BNet.Cafe.Server.pdb
+71ab505ad0d58995798adcbb2809df77facb5f6a	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
-2ca8ac31e4754cd78f5e0d42b377980de68c73d5	bin/BNet.Cafe.Websocket.pdb
+96e300e9988af0d63e49fe1c098dba6c329dbeef	bin/BNet.Cafe.Websocket.pdb
 0fd4bf6141810a8c3dd2fc76e2be94fdd572e82e	bin/BNet.FTPServer.dll
 1b1f204165327bd0fbd04378350e87e793645b59	bin/Microsoft.Extensions.Logging.Abstractions.dll
 1acaf092a11563a6ad8608e898a6761e9a14afa4	bin/MySqlConnector.dll
