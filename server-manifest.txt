@@ -261,7 +261,7 @@ f076ad8ed5abb8fdc7924b57a0bad1dd3b2a80af	Login.aspx
 4bb5792ba6e2231164ba438e4087fe3a40e90b22	Offline Packages/System.Runtime.Caching/System.Runtime.Caching.dll
 77956847c349c7391a9448c2287e700007ac2ee5	Offline Packages/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	Offline Packages/zxing/zxing.dll
-4505e8f3d50503883f1b021d13e53e230b2edbd0	Portal.aspx
+db8818ab6d2f684f4336f93371da1bb6f14c5377	Portal.aspx
 049d01d2cbe6e91a1a308cb926ea9325e02945c8	Remote.html
 e5948e14374bc30dd7370fe041148e1aee443a51	ResetPassword.aspx
 c4de12e93ee321ab4507003ee471d85f5c84e1eb	ServerChat.html
@@ -279,8 +279,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-6f78c734cbb8737b7cf54481401661d19b7c359c	bin/BNet.Cafe.Server.dll
-b324fe8668c8d2cb5c2fea867d6821376bbed15b	bin/BNet.Cafe.Server.pdb
+452120f4c51abaed7241472c547642aabcc5852c	bin/BNet.Cafe.Server.dll
+a4f6a3fac784ed9c10293f7819ba41e6075a2f58	bin/BNet.Cafe.Server.pdb
 b52ffb7b1d763fd535f90ca6f0851989bb12a26d	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 ea80502fd55ad520b9917817de23bf8e840600e7	bin/BNet.Cafe.Websocket.pdb
