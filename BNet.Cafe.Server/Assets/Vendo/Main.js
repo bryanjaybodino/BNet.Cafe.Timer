@@ -53,9 +53,16 @@ async function fetchClientData() {
 ['mousedown', 'keydown', 'touchstart', 'wheel', 'click'].forEach(event => {
     window.addEventListener(event, () => resetIdleTimer(isModalOpen, changerDispensing, updateCarouselPosition), { passive: true });
 });
+function buildSseUrl() {
+    const { protocol, hostname, host } = window.location;
+    const isLocalOrIp = hostname === 'localhost'
+        || /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)
+        || hostname.startsWith('[');
+    return protocol + '//' + (isLocalOrIp ? hostname + ':2050' : host) + '/sse';
+}
 
 window.addEventListener('load', function () {
-    const endpoint = window.location.protocol + '//' + window.location.hostname + ':2050/sse';
+    const endpoint = buildSseUrl();
     try {
         const evtSource = new EventSource(endpoint);
         evtSource.onmessage = function () {
@@ -80,6 +87,7 @@ initCarouselEvents(() => syncArduinoState(filteredClientData, selectedIndex, cli
 
 //mouse clicks and touch taps on the lock screen
 document.getElementById('pressAnyKeyScreen').addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.trial-activation-btn, #licenseModal')) return;
     if (isPressAnyKeyVisible()) {
         e.preventDefault();
         serialTask(async () => {
@@ -92,6 +100,25 @@ document.getElementById('pressAnyKeyScreen').addEventListener('pointerdown', (e)
 });
 // Keydown listeners
 document.addEventListener('keydown', (e) => {
+    // Check if the license modal or its inputs are currently active/focused
+    const licenseModal = document.getElementById('licenseModal');
+    const isLicenseModalVisible = licenseModal && !licenseModal.classList.contains('d-none') && licenseModal.style.display !== 'none';
+    const activeElement = document.activeElement;
+    const isEditingLicense = activeElement && (
+        activeElement.id === 'TextBox_ServerSerial' ||
+        activeElement.id === 'TextBox_LicenseKey' ||
+        activeElement.closest('#licenseModal')
+    );
+
+    // Allow normal copy (Ctrl+C), paste (Ctrl+V), select all (Ctrl+A), and typing when inside the license modal
+    if (isLicenseModalVisible && isEditingLicense) {
+        if (e.ctrlKey && ['c', 'v', 'a', 'x'].includes(e.key.toLowerCase())) {
+            return; // Let the browser handle native copy/paste/select-all
+        }
+        // Allow regular typing inside the license inputs
+        return;
+    }
+
     if (isPressAnyKeyVisible()) {
         if (['arrowleft', 'arrowright', 'z', 'x'].includes(e.key.toLowerCase()) || (e.ctrlKey && ['a', 'c'].includes(e.key.toLowerCase()))) {
             e.preventDefault();
@@ -107,7 +134,7 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
-    // Allow coin/bill acceptor numbers (0-9) to pass through so currency inputs work properly[cite: 8]
+    // Allow coin/bill acceptor numbers (0-9) to pass through so currency inputs work properly
     if (e.key >= '0' && e.key <= '9') {
         if (e.key === '0') {
             e.preventDefault();
@@ -132,7 +159,7 @@ document.addEventListener('keydown', (e) => {
 
     const key = e.key.toLowerCase();
 
-    // Block arrow/navigation keys if a client is currently inserting coins[cite: 8]
+    // Block arrow/navigation keys if a client is currently inserting coins
     if (key === 'arrowright' || key === 'x' || (e.ctrlKey && key === 'c')) {
         e.preventDefault();
         if (typeof isClientInsertingCoin === 'function' && isClientInsertingCoin()) return;

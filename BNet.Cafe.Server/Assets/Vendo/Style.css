@@ -820,3 +820,39 @@ textarea {
     font-size: clamp(1.2rem, 3.5vw, 2.5rem);
     text-align: center;
 }
+
+.trial-activation-btn {
+    position: fixed;
+    top: 15px;
+    left: 20px;
+    z-index: 100;
+    background: rgba(0, 123, 255, 0.85);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s, transform 0.2s;
+    cursor: pointer;
+    border: none;
+}
+
+    .trial-activation-btn:hover {
+        background: rgba(0, 123, 255, 1);
+        transform: translateY(-1px);
+    }
+
+.trial-activation-btn {
+    z-index: 100000; /* was 100 */
+}
+
+#licenseModal {
+    z-index: 100001;
+}

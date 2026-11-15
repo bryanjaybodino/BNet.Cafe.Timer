@@ -55,8 +55,16 @@
     setInterval(updateRunningTimers, 1000);
 
     // 1. Wait until the window load completes completely
+    function buildSseUrl() {
+        const { protocol, hostname, host } = window.location;
+        const isLocalOrIp = hostname === 'localhost'
+            || /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)
+            || hostname.startsWith('[');
+        return protocol + '//' + (isLocalOrIp ? hostname + ':2050' : host) + '/sse';
+    }
+
     window.addEventListener('load', function () {
-        const endpoint = window.location.protocol + '//' + window.location.hostname + ':2050/sse';
+        const endpoint = buildSseUrl();
         let evtSource = null;
 
         // 3. Set a connection timeout (5 seconds after initiating connection)

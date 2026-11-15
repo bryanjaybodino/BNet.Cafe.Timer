@@ -78,10 +78,13 @@
                 <asp:HiddenField ID="HiddenField_ModalAmount" runat="server" />
                 <asp:HiddenField ID="HiddenField_ModalComputerName" runat="server" />
 
-
+                <!-- Trial Mode Activation Button -->
+                <asp:LinkButton ID="LinkButton_ShowActivation" runat="server" CssClass="trial-activation-btn" OnClick="LinkButton_ShowActivation_Click" Visible="false">
+                    <i class="fas fa-key"></i><span id="Span_TrialButtonText" runat="server">Activate License</span>
+                </asp:LinkButton>
 
                 <!-- License Modal -->
-                <asp:Panel ID="licenseModal" runat="server" CssClass="number-modal-overlay visible" ClientIDMode="Static">
+                <asp:Panel ID="licenseModal" runat="server" CssClass="number-modal-overlay visible" Visible="false" ClientIDMode="Static">
                     <div class="number-modal-box" style="max-width: 420px;">
                         <div class="number-modal-pc-target">Server Licensing</div>
                         <div class="number-modal-label" style="margin-top: 10px;">Unique Server Serial Number</div>
