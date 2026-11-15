@@ -88,7 +88,7 @@ af67fcd6463863c4d443d1ef1079e21aa2c119a1	Assets/Shop/Style.css
 f487753cf49076a5205925a13bebbd55a9c46c15	Assets/Vendo/Carousel.js
 b29764681b4f71a54c44504aaa026a4605764695	Assets/Vendo/Clients.js
 b234257c4e9066363d2da458573502555169c661	Assets/Vendo/Idle.js
-73e2ad21ea759abb70c1c73ddb2d2a34f71256ab	Assets/Vendo/Main.js
+d9e29ad12e6c9deb2ee0cf23afea818757ecfbf1	Assets/Vendo/Main.js
 5de5c217005b662c3055a8e2336b6207101b0cd1	Assets/Vendo/Modals.js
 7e64f3e184570c72484289db7e5630c75479882a	Assets/Vendo/Serial.js
 c04416b2fd031a2adc7aea45d42c00e31f122f67	Assets/Vendo/Style.css
@@ -281,8 +281,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-d39b41d19ad43eecc59c70af2d708bdf22038962	bin/BNet.Cafe.Server.dll
-51e162e094789bb1141e8b0d0a70cbce16594231	bin/BNet.Cafe.Server.pdb
+a4dbd87165d424b52e7a67ad8f8e8d7a5b5066dd	bin/BNet.Cafe.Server.dll
+2bb604fa37cd2e0a323bd940e9b096f627f60327	bin/BNet.Cafe.Server.pdb
 cdc4b348edb1d080e881fa98b7d7312497870f23	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 ffb774c655ce5a134fe9d82a1705b90dcd0f3d2c	bin/BNet.Cafe.Websocket.pdb
@@ -300,8 +300,8 @@ c5ba4e4047a15b3adc61340c781307d9c6e89413	bin/System.Runtime.CompilerServices.Uns
 eeec92852705946904d0e2fa0443d454075781f5	bin/System.Threading.Tasks.Extensions.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	bin/zxing.dll
 d1813ba404f0d5e8e31b55560bd2b2e33a2db359	kiosk-loader.html
-99549cf1d753f7e3fd9a2c872140eb39bb8ec609	kiosk-mode.bat
-5248b3baa5325dbeebf2301b0ae35ebdd6ec2bd1	kiosk-mode.ps1
+31bb9d2652cc2151a967bb07f38ab1d177ba3c6d	kiosk-mode.bat
+6c8911ef0394ce8529a2b4fc664973a2fffadf1a	kiosk-mode.ps1
 c9869f8686fb6fea3be99d09f67568a5bd3eae4c	patcher.bat
 e91827174c587f4cb5b3c3fadc097e4de9880b56	patcher.ps1
 b4558b5a6c91859aa7fccc8356b03617aa7b43ae	tailscale-runner.bat
