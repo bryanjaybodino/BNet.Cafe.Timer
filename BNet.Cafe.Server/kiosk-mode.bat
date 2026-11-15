@@ -19,6 +19,10 @@ set "PROTECT_APPS=explorer,cmd,conhost,WindowsTerminal,powershell,pwsh,iisexpres
 
 :: Lightweight / low-resource flags (Chromium browsers only).
 :: None of these affect WebSocket or Server-Sent Events (SSE).
+:: Fresh-PC friendly flags: no first-run / default-browser dialogs (they steal
+:: keyboard focus), no crash bubble, and allow text-to-speech without a click.
+set "KIOSK_FLAGS=--no-first-run --no-default-browser-check --disable-session-crashed-bubble --disable-infobars --autoplay-policy=no-user-gesture-required"
+
 set "PERF_FLAGS=--disable-extensions --disable-background-networking --disable-sync --disable-translate --disable-features=Translate,OptimizationHints --renderer-process-limit=1 --disk-cache-size=52428800 --js-flags=--max-old-space-size=256"
 
 :: ============================================================
@@ -154,5 +158,5 @@ exit /b
 :: Universal Chromium Launch Routine
 :: ============================================================
 :LAUNCH
-start "" "!BROWSER!" --app="!START_URL!" --kiosk --user-data-dir="!PROFILE_DIR!" --allow-file-access-from-files --unsafely-treat-insecure-origin-as-secure="%ORIGIN%" !PERF_FLAGS!
+start "" "!BROWSER!" --app="!START_URL!" --kiosk --user-data-dir="!PROFILE_DIR!" --allow-file-access-from-files --unsafely-treat-insecure-origin-as-secure="%ORIGIN%" !PERF_FLAGS! !KIOSK_FLAGS!
 exit /b

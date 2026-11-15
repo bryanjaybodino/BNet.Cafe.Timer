@@ -61,7 +61,40 @@ function buildSseUrl() {
     return protocol + '//' + (isLocalOrIp ? hostname + ':2050' : host) + '/sse';
 }
 
+// ---------------------------------------------------------------------------
+// Keyboard focus helper
+// A page can only receive key presses when its OS window is the foreground
+// window AND the document itself has focus. On a fresh launch (especially on
+// another PC) neither is guaranteed, so keep asking for focus until we get it.
+// (The OS-level part is handled by kiosk-mode.ps1; this is the page-level part.)
+// ---------------------------------------------------------------------------
+function grabKeyboardFocus() {
+    try { window.focus(); } catch (e) { }
+    const ae = document.activeElement;
+    const nothingFocused = !ae || ae === document.body || ae === document.documentElement;
+    if (nothingFocused && document.body) {
+        if (!document.body.hasAttribute('tabindex')) document.body.setAttribute('tabindex', '-1');
+        try { document.body.focus({ preventScroll: true }); } catch (e) { }
+    }
+}
+
+function ensureKeyboardFocus() {
+    grabKeyboardFocus();
+    let attempts = 0;
+    const timer = setInterval(() => {
+        attempts++;
+        if (document.hasFocus() || attempts > 60) { // stop once focused, or after ~30 s
+            clearInterval(timer);
+            return;
+        }
+        grabKeyboardFocus();
+    }, 500);
+}
+
+window.addEventListener('focus', grabKeyboardFocus);
+
 window.addEventListener('load', function () {
+    ensureKeyboardFocus();
     const endpoint = buildSseUrl();
     try {
         const evtSource = new EventSource(endpoint);
