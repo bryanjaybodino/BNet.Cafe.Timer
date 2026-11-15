@@ -40,6 +40,7 @@ LEFT JOIN users u ON b.DBUserId = u.DBId
 LEFT JOIN users uc ON b.DBCreatedById = uc.DBId
 WHERE 1 = 1 
   AND b.DBIsDeleted = '{DBIsDeleted}'
+  AND b.DBIsCollected = '{DBIsCollected}'
   AND b.DBUserId = '{DBUserId}'
   AND b.DBDateCreated BETWEEN '{DBDateStart}' AND '{DBDateEnd}'
   AND (u.DBEmail LIKE '%{DBSearch}%' OR u.DBName LIKE '%{DBSearch}%' OR b.DBDescription LIKE '%{DBSearch}%')

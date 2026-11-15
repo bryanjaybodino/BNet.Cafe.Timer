@@ -6,6 +6,8 @@
 <%@ Register Src="~/Forms/Modals/RemoteShutdown.ascx" TagPrefix="uc1" TagName="RemoteShutdown" %>
 <%@ Register Src="~/Forms/Modals/RemoteRestart.ascx" TagPrefix="uc1" TagName="RemoteRestart" %>
 <%@ Register Src="~/Forms/Modals/RemoteWakeUp.ascx" TagPrefix="uc1" TagName="RemoteWakeUp" %>
+<%@ Register Src="~/Forms/Modals/RemoteAnnouncements.ascx" TagPrefix="uc1" TagName="RemoteAnnouncements" %>
+
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
     <ContentTemplate>
@@ -104,6 +106,9 @@
                 </div>
 
                 <div style="display: flex; gap: 8px;">
+                    <a class="btn btn-secondary" onclick="openRemoteAnnouncementsModal()">
+                        <i class="fa-solid fa-bullhorn"></i>Announcement
+                    </a>
                     <a class="btn btn-secondary" onclick="openPauseModal('')">
                         <i class="fa-solid fa-circle-pause"></i>Pause / Resume Time
                     </a>
@@ -253,5 +258,6 @@
         <uc1:RemoteShutdown runat="server" ID="RemoteShutdown" />
         <uc1:RemoteRestart runat="server" ID="RemoteRestart" />
         <uc1:RemoteWakeUp runat="server" ID="RemoteWakeUp" />
+        <uc1:RemoteAnnouncements runat="server" id="RemoteAnnouncements" />
     </ContentTemplate>
 </asp:UpdatePanel>

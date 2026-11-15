@@ -21,6 +21,9 @@ function ValidateConfig() {
     var warningTimeInput = document.querySelector('[id$="TextBox_WarningTime"]');
     var warningTimeId = warningTimeInput ? warningTimeInput.id : 'TextBox_WarningTime';
 
+    var kioskIdleTimerInput = document.querySelector('[id$="TextBox_KioskIdleTimer"]');
+    var kioskIdleTimerId = kioskIdleTimerInput ? kioskIdleTimerInput.id : 'TextBox_KioskIdleTimer';
+
     var birthdayCreditsInput = document.querySelector('[id$="TextBox_BirthdayCredits"]');
 
     var isValidInterval = requiredValidation(inputId);
@@ -57,6 +60,22 @@ function ValidateConfig() {
     if (!isValidWarningTime) {
         ShowAlert('Please enter the warning time before closing.');
         return false;
+    }
+
+    var isValidKioskIdleTimer = requiredValidation(kioskIdleTimerId);
+    if (!isValidKioskIdleTimer) {
+        ShowAlert('Please enter the kiosk idle timer.');
+        return false;
+    }
+
+    // Ensure the kiosk idle timer minimum value is at least 5
+    if (kioskIdleTimerInput) {
+        var idleVal = parseInt(kioskIdleTimerInput.value.trim(), 10);
+        if (isNaN(idleVal) || idleVal < 5) {
+            ShowAlert('Kiosk Idle Timer must be at least 5 seconds.');
+            kioskIdleTimerInput.focus();
+            return false;
+        }
     }
 
     // Optional: Auto-fill '0' if left completely blank before submitting

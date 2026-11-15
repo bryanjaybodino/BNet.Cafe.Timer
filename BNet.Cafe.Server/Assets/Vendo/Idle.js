@@ -1,7 +1,6 @@
 ﻿let idleTimer = null;
 let lockCountdownInterval = null;
-let lockRemainingSeconds = 60;
-const IDLE_TIMEOUT_MS = 10000;
+let lockRemainingSeconds = 15;
 
 function resetIdleTimer(isModalOpen, changerDispensing, updateCarouselPosition) {
     if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
@@ -14,10 +13,13 @@ function resetIdleTimer(isModalOpen, changerDispensing, updateCarouselPosition) 
     const isMainMenuViewable = psp && psp.style.display !== 'none';
 
     if (isMainMenuViewable && !isModalOpen()) {
+        // Use fetched kioskIdleTimer configuration (converted to milliseconds), defaulting to 10000ms (10s)
+        const idleTimeoutMs = (typeof kioskConfig !== 'undefined' && kioskConfig.kioskIdleTimer) ? kioskConfig.kioskIdleTimer * 1000 : 10000;
+
         idleTimer = setTimeout(() => {
             if (isModalOpen() || changerDispensing) { cancelIdleLock(); return; }
             startLockCountdown(isModalOpen, changerDispensing);
-        }, IDLE_TIMEOUT_MS);
+        }, idleTimeoutMs);
     }
 }
 

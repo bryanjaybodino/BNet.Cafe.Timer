@@ -26,7 +26,7 @@ function speakText(text) {
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.2;
+        utterance.rate = 1.7;
         utterance.pitch = 1.3;
 
         const voices = window.speechSynthesis.getVoices();

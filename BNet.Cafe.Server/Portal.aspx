@@ -253,7 +253,7 @@
                         </asp:Panel>
 
                         <!-- Tab 4: Transfer Balance Panel -->
-                        <asp:Panel ID="PanelTransfer" runat="server" CssClass="tab-content-panel" Visible="false">
+                        <asp:Panel ID="PanelTransfer" runat="server" CssClass="tab-content-panel" Visible="false" DefaultButton="btnInitTransfer">
                             <div class="user-hero-card" style="flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 20px;">
                                 <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
                                     <div style="font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--portal-text-main);">
@@ -293,7 +293,7 @@
                                         </label>
                                         <asp:TextBox ID="txtTransferMinutes" runat="server" TextMode="Number" min="1" placeholder="Enter minutes"
                                             oninput="NumberOnly(this);"
-                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                            onkeypress="return event.charCode == 13 || (event.charCode >= 48 && event.charCode <= 57)"
                                             CssClass="form-control" Style="padding: 10px; border-radius: 10px; background: var(--portal-card-bg); color: var(--portal-text-main); border: 1px solid var(--portal-card-border);">
                                          </asp:TextBox>
                                     </div>
@@ -342,7 +342,7 @@
                         </asp:Panel>
 
                         <!-- Password Confirmation Modal for Transfer -->
-                        <asp:Panel ID="PanelTransferPasswordModal" runat="server" CssClass="modal-backdrop-overlay" Visible="false">
+                        <asp:Panel ID="PanelTransferPasswordModal" runat="server" CssClass="modal-backdrop-overlay" Visible="false" DefaultButton="btnConfirmTransfer">
                             <div class="modal-card">
                                 <div class="modal-header">
                                     <i class="fa fa-lock" style="color: var(--portal-accent);"></i>Security Verification

@@ -23,6 +23,7 @@ SET
     DBEnableWindowsKey = '{DBEnableWindowsKey}',
     DBKioskScreenLockTimer = '{DBKioskScreenLockTimer}',
     DBKioskInsertBillTimer = '{DBKioskInsertBillTimer}',
+    DBKioskIdleTimer = '{DBKioskIdleTimer}',
     DBKioskType = '{DBKioskType}',
     DBSharedDataPath = '{DBSharedDataPath}',
     DBId = '{DBId}'

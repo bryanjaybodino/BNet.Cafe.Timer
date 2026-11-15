@@ -4,6 +4,29 @@ let selectedIndex = 0;
 let filteredClientData = [];
 let lastSpokenPC = "";
 
+// ---- Drag / glide state ----
+let startX = 0;
+let currentDeltaX = 0;
+let isDragging = false;
+let samples = [];        // recent {x, t} points used to measure swipe speed
+let glideTimer = null;
+let rafId = null;
+let isGliding = false;
+let downCard = null;     // card under the finger when the touch started
+let moved = false;       // true if the finger moved enough to count as a swipe
+let lastTouchTime = 0;   // used to ignore the fake mouse events that follow a touch
+let lastTapTime = 0;     // used so the click handler doesn't select twice
+
+// ---- Tuning ----
+const TAP_MOVE_LIMIT = 10; // px. Moving less than this = a tap, not a swipe
+const VELOCITY_WINDOW_MS = 100;  // measure speed over the last 100ms
+const MIN_FLICK_SPEED = 0.5;  // px/ms. Below this = normal drag (1 card)
+const MAX_SPEED = 3;    // px/ms cap
+const STEPS_PER_SPEED = 2;    // higher = more cards per unit of force
+const MAX_STEPS = 5;    // most cards one flick can pass
+const GLIDE_BASE_MS = 350;  // glide time for 1 card
+const GLIDE_PER_CARD_MS = 120;  // extra time per additional card
+
 function renderPSPMenu(clientData, onSelectCallback) {
     if (!pspCarousel) return;
     pspCarousel.innerHTML = '';
@@ -77,8 +100,9 @@ function renderPSPMenu(clientData, onSelectCallback) {
         }
 
         card.addEventListener('click', () => {
-            if (isModalOpen() || isClientInsertingCoin()) return; // Block clicks during modal/insert[cite: 6]
-            if (Math.abs(currentDeltaX) < 10) {
+            if (isModalOpen() || isClientInsertingCoin()) return; // Block clicks during modal/insert
+            if (performance.now() - lastTapTime < 500) return;    // tap already handled on touch release
+            if (Math.abs(currentDeltaX) < TAP_MOVE_LIMIT) {
                 selectedIndex = index;
                 updateCarouselPosition(0);
             }
@@ -102,13 +126,14 @@ function updateCarouselPosition(extraOffset = 0, checkSyncStateCb) {
     if (pspContainer.style.display === 'none') return;
 
     const target = cards[selectedIndex];
-    if (target) {
-        const titleEl = target.querySelector('.pc-title');
-        const pcName = titleEl ? titleEl.innerText : `PC-${String(selectedIndex + 1).padStart(2, '0')}`;
-        if (pcName !== lastSpokenPC) {
-            lastSpokenPC = pcName;
-            speakText(pcName);
-        }
+    if (!target) return;
+
+    const titleEl = target.querySelector('.pc-title');
+    const pcName = titleEl ? titleEl.innerText : `PC-${String(selectedIndex + 1).padStart(2, '0')}`;
+    // Don't speak every card while the carousel is gliding past them
+    if (pcName !== lastSpokenPC && !isGliding) {
+        lastSpokenPC = pcName;
+        speakText(pcName);
     }
 
     const cardCenter = (target.offsetLeft - pspCarousel.offsetLeft) + (target.offsetWidth / 2);
@@ -118,38 +143,171 @@ function updateCarouselPosition(extraOffset = 0, checkSyncStateCb) {
     if (checkSyncStateCb) checkSyncStateCb();
 }
 
-let startX = 0;
-let currentDeltaX = 0;
-let isDragging = false;
-
 function initCarouselEvents(updateCallback) {
+    function getX(e) {
+        return e.touches && e.touches.length ? e.touches[0].clientX : e.clientX;
+    }
+
+    function recordSample(x) {
+        const now = performance.now();
+        samples.push({ x, t: now });
+        while (samples.length > 1 && now - samples[0].t > VELOCITY_WINDOW_MS) {
+            samples.shift();
+        }
+    }
+
+    function getVelocity() {
+        if (samples.length < 2) return 0;
+        const first = samples[0];
+        const last = samples[samples.length - 1];
+        if (performance.now() - last.t > 60) return 0; // finger stopped before release
+        const dt = last.t - first.t;
+        if (dt < 16) return 0; // too little data to trust
+        const v = (last.x - first.x) / dt;
+        return Math.max(-MAX_SPEED, Math.min(MAX_SPEED, v));
+    }
+
+    // Which card is currently closest to the screen center (even mid-animation)
+    function centerIndex() {
+        const cards = document.querySelectorAll('.psp-card');
+        const mid = window.innerWidth / 2;
+        let best = selectedIndex, bestDist = Infinity;
+        cards.forEach((c, i) => {
+            const r = c.getBoundingClientRect();
+            const d = Math.abs(r.left + r.width / 2 - mid);
+            if (d < bestDist) { bestDist = d; best = i; }
+        });
+        return best;
+    }
+
+    // Keeps the highlight on whichever card is passing through the center
+    function trackActiveCard() {
+        if (!isGliding) return;
+        const best = centerIndex();
+        document.querySelectorAll('.psp-card').forEach((c, i) => {
+            c.classList.toggle('active', i === best);
+        });
+        rafId = requestAnimationFrame(trackActiveCard);
+    }
+
+    function cancelGlide() {
+        clearTimeout(glideTimer);
+        cancelAnimationFrame(rafId);
+        glideTimer = null;
+        rafId = null;
+        isGliding = false;
+    }
+
+    // One continuous ease-out animation across the whole distance
+    function glide(direction, count) {
+        cancelGlide();
+
+        const newIndex = Math.max(0, Math.min(filteredClientData.length - 1, selectedIndex + direction * count));
+        const travelled = Math.abs(newIndex - selectedIndex);
+
+        if (travelled === 0) {
+            pspCarousel.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+            updateCarouselPosition(0, updateCallback);
+            return;
+        }
+
+        const duration = GLIDE_BASE_MS + (travelled - 1) * GLIDE_PER_CARD_MS;
+        isGliding = true;
+
+        pspCarousel.style.transition = `transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+        selectedIndex = newIndex;
+        updateCarouselPosition(0, updateCallback);
+        trackActiveCard();
+
+        glideTimer = setTimeout(() => {
+            isGliding = false;
+            glideTimer = null;
+            cancelAnimationFrame(rafId);
+            updateCarouselPosition(0, updateCallback); // highlights and speaks the final card
+        }, duration + 30);
+    }
+
     function onPointerDown(e) {
-        if (isModalOpen() || isClientInsertingCoin() || filteredClientData.length === 0) return; // Block swipe when inserting[cite: 6]
+        if (isModalOpen() || isClientInsertingCoin() || filteredClientData.length === 0) return;
+
+        // Browsers fire fake mouse events right after a touch; ignore them
+        if (e.type === 'touchstart') {
+            lastTouchTime = performance.now();
+        } else if (performance.now() - lastTouchTime < 800) {
+            return;
+        }
+
+        // Remember which card the finger landed on (before anything moves)
+        downCard = e.target && e.target.closest ? e.target.closest('.psp-card') : null;
+        moved = false;
+
+        // Grabbing the carousel mid-glide: stop and continue from the card in the center
+        if (isGliding) {
+            const current = centerIndex();
+            cancelGlide();
+            selectedIndex = current;
+        }
+
         isDragging = true;
-        startX = e.clientX || (e.touches && e.touches[0].clientX);
+        startX = getX(e);
+        samples = [{ x: startX, t: performance.now() }];
         currentDeltaX = 0;
         pspCarousel.style.transition = 'none';
     }
 
     function onPointerMove(e) {
-        if (!isDragging || isModalOpen() || isClientInsertingCoin()) return; // Block move when inserting[cite: 6]
-        const currentX = e.clientX || (e.touches && e.touches[0].clientX);
+        if (!isDragging || isModalOpen() || isClientInsertingCoin()) return;
+        const currentX = getX(e);
+        recordSample(currentX);
         currentDeltaX = currentX - startX;
+        if (Math.abs(currentDeltaX) > TAP_MOVE_LIMIT) moved = true;
         updateCarouselPosition(currentDeltaX, updateCallback);
     }
 
-    function onPointerUp() {
+    function onPointerUp(e) {
         if (!isDragging) return;
         isDragging = false;
-        pspCarousel.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+        if (e && e.type === 'touchend') lastTouchTime = performance.now();
+
+        // TAP: select the card that was touched, right away (even right after a glide)
+        if (!moved && downCard) {
+            const tappedIndex = Array.from(document.querySelectorAll('.psp-card')).indexOf(downCard);
+            downCard = null;
+            lastTapTime = performance.now();
+            if (tappedIndex !== -1) {
+                selectedIndex = tappedIndex;
+                currentDeltaX = 0;
+                pspCarousel.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                updateCarouselPosition(0, updateCallback);
+                return;
+            }
+        }
+        downCard = null;
+
+        const velocity = getVelocity();
+        const speed = Math.abs(velocity);
         const swipeThreshold = window.innerWidth * 0.12;
 
-        if (currentDeltaX < -swipeThreshold && selectedIndex < filteredClientData.length - 1) {
-            selectedIndex++;
-        } else if (currentDeltaX > swipeThreshold && selectedIndex > 0) {
-            selectedIndex--;
+        let count = 0;
+        let direction = currentDeltaX < 0 ? 1 : -1; // swipe left = next card
+
+        if (speed >= MIN_FLICK_SPEED) {
+            direction = velocity < 0 ? 1 : -1;
+            count = 1 + Math.round((speed - MIN_FLICK_SPEED) * STEPS_PER_SPEED);
+        } else if (Math.abs(currentDeltaX) > swipeThreshold) {
+            count = 1;
         }
-        updateCarouselPosition(0, updateCallback);
+
+        count = Math.min(MAX_STEPS, count);
+
+        if (count === 0) {
+            // not enough movement: snap back
+            pspCarousel.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+            updateCarouselPosition(0, updateCallback);
+            return;
+        }
+
+        glide(direction, count);
     }
 
     pspContainer.addEventListener('mousedown', onPointerDown);
@@ -172,7 +330,7 @@ function isClientInsertingCoin() {
 
 function setClientInsertOverlay(clientName) {
     let overlay = document.getElementById('clientInsertCoinOverlay');
-    
+
     if (!overlay) {
         overlay = document.createElement('div');
         overlay.id = 'clientInsertCoinOverlay';
@@ -225,7 +383,7 @@ function reportInsertedAmount(pcName, amount) {
     }
 }
 
-// Kiosk just locked -> close that PC's Insert Coin modal (once)[cite: 6].
+// Kiosk just locked -> close that PC's Insert Coin modal (once).
 function closeInsertCoinModalOnClient() {
     if (!insertCoinTargetClient) return;
     const target = insertCoinTargetClient;
@@ -234,10 +392,10 @@ function closeInsertCoinModalOnClient() {
     if (typeof sendCloseModalToPC === 'function') sendCloseModalToPC(target);
 }
 
-// Client closed its Insert Coin modal -> unlock UI and lock the kiosk[cite: 6].
+// Client closed its Insert Coin modal -> unlock UI and lock the kiosk.
 function lockKioskForClient(clientName) {
     if (!insertCoinTargetClient || !sameClientName(insertCoinTargetClient, clientName)) return;
-    insertCoinTargetClient = null;               
+    insertCoinTargetClient = null;
     setClientInsertOverlay(null); // Hide warning overlay
 
     if (isModalOpen() || changerDispensing) return;
@@ -282,6 +440,6 @@ function autoSelectClientInCarousel(targetClientName) {
         }
     }
 
-    // Keeps physical bill/coin acceptor unlocked ('U') so the user can insert coins[cite: 10]
+    // Keeps physical bill/coin acceptor unlocked ('U') so the user can insert coins
     syncBoard();
 }

@@ -6,6 +6,7 @@
 FROM rentals r
 WHERE 1 = 1
   AND r.DBIsDeleted = '{DBIsDeleted}'
+  AND r.DBIsCollected = '{DBIsCollected}'
   AND r.DBDateCreated BETWEEN '{DBDateStart}' AND '{DBDateEnd}'
 GROUP BY DBHour, DBHourLabel
 ORDER BY DBHour ASC;

@@ -77,8 +77,8 @@
                     </div>
                     <div class="search-box" style="min-width: 200px!important">
                         <asp:DropDownList ID="DropDownList_Status" AutoPostBack="true" runat="server" CssClass="form-control bnet-select">
-                            <asp:ListItem Text="ACTIVE" Value="FALSE"></asp:ListItem>
-                            <asp:ListItem Text="DELETED" Value="TRUE"></asp:ListItem>
+                            <asp:ListItem Text="FOR COLLECTION" Value="FALSE"></asp:ListItem>
+                            <asp:ListItem Text="COLLECTED" Value="TRUE"></asp:ListItem>
                         </asp:DropDownList>
                     </div>
                 </div>

@@ -7,6 +7,7 @@
 FROM balances b
 LEFT JOIN users u ON b.DBUserId = u.DBId
 WHERE b.DBIsDeleted = '{DBIsDeleted}'
+  AND b.DBIsCollected = '{DBIsCollected}'
   AND b.DBDescription = 'TOP-UP LOAD CREDIT'
   AND (b.DBDateCreated BETWEEN '{DBDateStart}' AND '{DBDateEnd}' OR '{DBDateStart}' = '')
 GROUP BY b.DBUserId, MemberName

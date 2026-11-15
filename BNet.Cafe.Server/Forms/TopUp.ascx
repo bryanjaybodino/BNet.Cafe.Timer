@@ -70,8 +70,16 @@
 
         <div class="bnet-table-wrapper">
             <div class="bnet-table-toolbar">
-                <div class="search-box">
-                    <asp:TextBox ID="TextBox_Search" runat="server" CssClass="search-input" AutoPostBack="True" OnTextChanged="TextBox_Search_TextChanged" placeholder="Search customer or email..." />
+                <div class="toolbar-filters">
+                    <div class="search-box">
+                        <asp:TextBox ID="TextBox_Search" runat="server" CssClass="search-input" AutoPostBack="True" OnTextChanged="TextBox_Search_TextChanged" placeholder="Search computer or customer..." />
+                    </div>
+                    <div class="search-box" style="min-width: 200px!important">
+                        <asp:DropDownList ID="DropDownList_Status" AutoPostBack="true" runat="server" CssClass="form-control bnet-select">
+                            <asp:ListItem Text="FOR COLLECTION" Value="FALSE"></asp:ListItem>
+                            <asp:ListItem Text="COLLECTED" Value="TRUE"></asp:ListItem>
+                        </asp:DropDownList>
+                    </div>
                 </div>
                 <asp:TextBox ID="TextBox_DateRage" AutoPostBack="true" CssClass="bnet-datepicker" data-mode="range" runat="server"></asp:TextBox>
             </div>

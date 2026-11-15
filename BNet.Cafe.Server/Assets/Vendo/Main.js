@@ -1,6 +1,7 @@
 ﻿let kioskConfig = {
     screenLockTimer: 15,
     insertBillTimer: 5,
+    kioskIdleTimer: 10,
     kioskType: "WITH MONITOR"
 };
 
@@ -17,6 +18,7 @@ async function fetchClientConfig() {
             kioskConfig = {
                 screenLockTimer: data.kioskScreenLockTimer ?? 15,
                 insertBillTimer: data.kioskInsertBillTimer ?? 5,
+                kioskIdleTimer: data.kioskIdleTimer ?? 10,
                 kioskType: data.kioskType || "WITH MONITOR"
             };
         }

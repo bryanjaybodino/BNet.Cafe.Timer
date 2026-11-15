@@ -145,6 +145,9 @@
                         <asp:HyperLink ID="HyperLink_Config" runat="server" ToolTip="Config" onclick="navigateTo('?Form=Config'); return false;">
                             <i class="fas fa-code"></i><span>Config</span>
                         </asp:HyperLink>
+                        <asp:HyperLink ID="HyperLink_Transactions" runat="server" ToolTip="Transactions" onclick="navigateTo('?Form=Transactions'); return false;">
+                            <i class="fas fa-file-invoice"></i><span>Transactions</span>
+                        </asp:HyperLink>
                     </div>
                 </details>
                 <!-- DOWNLOAD APP -->

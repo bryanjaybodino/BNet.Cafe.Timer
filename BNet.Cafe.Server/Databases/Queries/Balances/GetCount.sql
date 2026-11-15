@@ -27,5 +27,6 @@ FROM balances b
 LEFT JOIN users u ON b.DBUserId = u.DBId
 WHERE 1 = 1 
   AND b.DBIsDeleted = '{DBIsDeleted}'
+  AND b.DBIsCollected = '{DBIsCollected}'
   AND b.DBUserId = '{DBUserId}'
   AND b.DBDateCreated BETWEEN '{DBDateStart}' AND '{DBDateEnd}'

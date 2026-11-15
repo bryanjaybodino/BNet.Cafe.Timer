@@ -7,8 +7,18 @@
 
         <div class="bnet-table-toolbar dashboard-toolbar">
             <h2 class="dashboard-heading">Dashboard</h2>
-            <asp:TextBox ID="TextBox_DateRage" AutoPostBack="true" CssClass="bnet-datepicker" data-mode="range"
-                runat="server"></asp:TextBox>
+            <div class="toolbar-filters">
+                <div class="search-box" style="min-width: 200px!important">
+                    <asp:DropDownList ID="DropDownList_Status" AutoPostBack="true" runat="server" CssClass="form-control bnet-select">
+                        <asp:ListItem Text="FOR COLLECTION" Value="FALSE"></asp:ListItem>
+                        <asp:ListItem Text="COLLECTED" Value="TRUE"></asp:ListItem>
+                    </asp:DropDownList>
+                </div>
+                <asp:TextBox ID="TextBox_DateRage" AutoPostBack="true" CssClass="bnet-datepicker" data-mode="range"
+                    runat="server"></asp:TextBox>
+            </div>
+
+
         </div>
 
         <!-- KPI Cards Grid - Row 1 -->

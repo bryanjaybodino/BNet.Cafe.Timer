@@ -276,6 +276,11 @@
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="<%= TextBox_KioskIdleTimer.ClientID %>">Kiosk Idle Timer (Seconds) <span class="required">*</span></label>
+                        <asp:TextBox ID="TextBox_KioskIdleTimer" oninput="NumberOnly(this);" TextMode="Number" runat="server" CssClass="form-control" placeholder="10" MaxLength="10"></asp:TextBox>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
                         <label for="<%= DropDownList_KioskType.ClientID %>">Kiosk Type</label>
                         <asp:DropDownList ID="DropDownList_KioskType" runat="server" CssClass="form-control bnet-select">
                             <asp:ListItem Value="WITH MONITOR" Text="WITH MONITOR"></asp:ListItem>
