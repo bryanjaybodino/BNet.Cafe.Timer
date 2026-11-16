@@ -1,9 +1,9 @@
 # ============================================================================
 # Kiosk helper
 #  - closes any browser that is not the kiosk instance
-#  - keeps the kiosk window TOPMOST
-#  - makes sure the kiosk window really owns KEYBOARD FOCUS (the fix for
-#    "keyboard does nothing until I click with the mouse")
+#  - keeps the kiosk window TOPMOST and owning KEYBOARD FOCUS
+#  - ALT+TAB is allowed: pressing it pauses topmost/focus enforcement for
+#    $PauseSeconds so you can switch to / close other windows
 # ============================================================================
 Add-Type @"
 using System;
@@ -40,25 +40,34 @@ public class WinApi {
     [DllImport("user32.dll")]
     public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
+    [DllImport("user32.dll")]
+    public static extern short GetAsyncKeyState(int vKey);
+
     [DllImport("kernel32.dll")]
     public static extern uint GetCurrentThreadId();
 }
 "@
 
-$HWND_TOPMOST  = [IntPtr](-1)
-$GWL_EXSTYLE   = -20
-$WS_EX_TOPMOST = 0x00000008
-$SW_RESTORE    = 9
+$HWND_TOPMOST   = [IntPtr](-1)
+$HWND_NOTOPMOST = [IntPtr](-2)
+$GWL_EXSTYLE    = -20
+$WS_EX_TOPMOST  = 0x00000008
+$SW_RESTORE     = 9
 
-# NOSIZE | NOMOVE | NOACTIVATE  (topmost call itself must not steal focus)
+# NOSIZE | NOMOVE | NOACTIVATE  (these calls must not steal focus)
 $flags = 0x0001 -bor 0x0002 -bor 0x0010
 
 # Set to $false if you do NOT want the kiosk to take keyboard focus back.
 $KeepKeyboardFocus = $true
 
-# Give the foreground to the kiosk window. Windows blocks plain
-# SetForegroundWindow() from background processes, so we attach to the
-# current foreground thread (and fall back to an ALT key tap) to be allowed.
+# How long enforcement stays paused after an Alt+Tab press
+$PauseSeconds = 60
+
+function Test-AltTab {
+    # GetAsyncKeyState is negative while the key is physically down
+    ([WinApi]::GetAsyncKeyState(0x12) -lt 0) -and ([WinApi]::GetAsyncKeyState(0x09) -lt 0)
+}
+
 function Set-KioskForeground([IntPtr]$h) {
     if ([WinApi]::IsIconic($h)) { [WinApi]::ShowWindow($h, $SW_RESTORE) | Out-Null }
 
@@ -75,7 +84,6 @@ function Set-KioskForeground([IntPtr]$h) {
     [WinApi]::SetForegroundWindow($h) | Out-Null
     if ($attached) { [WinApi]::AttachThreadInput($myThread, $fgThread, $false) | Out-Null }
 
-    # Fallback: a synthetic ALT tap unlocks SetForegroundWindow
     if ([WinApi]::GetForegroundWindow() -ne $h) {
         [WinApi]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero)   # ALT down
         [WinApi]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)   # ALT up
@@ -83,31 +91,38 @@ function Set-KioskForeground([IntPtr]$h) {
     }
 }
 
-# Browsers that will be closed if they are NOT the kiosk instance
 $browserNames = @('chrome', 'msedge', 'brave', 'vivaldi', 'firefox', 'opera', 'iexplore')
 
-# The kiosk browser is identified by its profile folder, set in kiosk-mode.bat:
-# BNetKiosk, BNetEdgeKiosk, BNetBraveKiosk, BNetVivaldiKiosk, BNetFirefoxKiosk
+# Kiosk browser is identified by its profile folder (see kiosk-mode.bat)
 $kioskPattern = 'BNet\w*Kiosk'
 
-$seen = $false
+$seen       = $false
+$pauseUntil = [datetime]::MinValue
+$tick       = 0
 
 while ($true) {
-    # Every running browser process with its command line
+    # Check the keyboard every 100 ms so a quick Alt+Tab is never missed
+    if (Test-AltTab) { $pauseUntil = (Get-Date).AddSeconds($PauseSeconds) }
+
+    $tick++
+    if ($tick % 5 -ne 0) { Start-Sleep -Milliseconds 100; continue }
+
+    $paused = (Get-Date) -lt $pauseUntil
+
     $all = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue |
            Where-Object { $browserNames -contains ($_.Name -replace '\.exe$', '').ToLower() }
 
     $kiosk = @($all | Where-Object { $_.CommandLine -match $kioskPattern })
     $other = @($all | Where-Object { $_.CommandLine -notmatch $kioskPattern })
 
-    # 1. Close any browser that is not the kiosk (e.g. one started by Windows startup)
+    # 1. Close any browser that is not the kiosk
     if ($kiosk.Count -gt 0) {
         foreach ($p in $other) {
             Stop-Process -Id $p.ProcessId -Force -ErrorAction SilentlyContinue
         }
     }
 
-    # 2. Keep only the kiosk window on top
+    # 2. Topmost handling
     $kioskWindows = @()
     foreach ($k in $kiosk) {
         $proc = Get-Process -Id $k.ProcessId -ErrorAction SilentlyContinue
@@ -117,22 +132,23 @@ while ($true) {
     if ($kioskWindows.Count -gt 0) {
         $seen = $true
         foreach ($w in $kioskWindows) {
-            $h = $w.MainWindowHandle
+            $h  = $w.MainWindowHandle
             $ex = [WinApi]::GetWindowLong($h, $GWL_EXSTYLE)
-            # Only touch the window if it is not already topmost.
-            if (($ex -band $WS_EX_TOPMOST) -eq 0) {
+            $isTop = (($ex -band $WS_EX_TOPMOST) -ne 0)
+
+            if ($paused -and $isTop) {
+                # Let other windows appear above the kiosk during Alt+Tab
+                [WinApi]::SetWindowPos($h, $HWND_NOTOPMOST, 0, 0, 0, 0, $flags) | Out-Null
+            }
+            elseif (-not $paused -and -not $isTop) {
                 [WinApi]::SetWindowPos($h, $HWND_TOPMOST, 0, 0, 0, 0, $flags) | Out-Null
             }
         }
 
-        # 3. Make sure the kiosk owns keyboard focus.
-        # Only act when the foreground window belongs to some OTHER program
-        # (cmd window, Explorer, a leftover app...). If the foreground window is
-        # any kiosk-browser process (including the Web Serial port picker),
-        # leave it alone so we never steal focus from it.
-        if ($KeepKeyboardFocus) {
+        # 3. Keyboard focus (skipped while paused)
+        if ($KeepKeyboardFocus -and -not $paused) {
             $fg = [WinApi]::GetForegroundWindow()
-            if ($fg -ne [IntPtr]::Zero) {            # 0 = secure desktop / transition
+            if ($fg -ne [IntPtr]::Zero) {
                 $fgPid = [uint32]0
                 [WinApi]::GetWindowThreadProcessId($fg, [ref]$fgPid) | Out-Null
                 $kioskPids = @($kiosk | ForEach-Object { [uint32]$_.ProcessId })
@@ -143,8 +159,8 @@ while ($true) {
         }
     }
     elseif ($seen -and $kiosk.Count -eq 0) {
-        break   # kiosk was closed, stop the helper
+        break   # kiosk was closed; the .bat starts a fresh helper on relaunch
     }
 
-    Start-Sleep -Milliseconds 500
+    Start-Sleep -Milliseconds 100
 }

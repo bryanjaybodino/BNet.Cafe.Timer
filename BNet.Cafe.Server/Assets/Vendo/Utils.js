@@ -22,28 +22,119 @@ function logKioskEvent(details, amount, isSuccess, type = "ACCEPTOR") {
         });
 }
 
-function speakText(text) {
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.7;
-        utterance.pitch = 1.3;
+// ---------------------------------------------------------------------------
+// Speech
+// ---------------------------------------------------------------------------
+const SPEECH_DEFAULT_RATE = 1.3;   // safe default for every PC
+const SPEECH_MAX_RATE = 1.6;       // hard cap so it never gets unreadable (raise to 1.7 only after testing)
+const SPEECH_PITCH = 1.3;
 
-        const voices = window.speechSynthesis.getVoices();
-        const preferredVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Microsoft')));
-        if (preferredVoice) {
-            utterance.voice = preferredVoice;
-        }
-        window.speechSynthesis.speak(utterance);
+// Male voice preference, first match wins. Different browsers/OSes name voices differently.
+const MALE_VOICE_PATTERNS = [
+    /david/i,                                   // Microsoft David (Windows)
+    /\bmark\b/i,                                // Microsoft Mark (Windows)
+    /\b(guy|ryan|christopher|eric|george|james|daniel|alex|fred|aaron|arthur)\b/i,
+    /male/i                                     // e.g. "Google UK English Male"
+];
+
+function isFemaleName(name) {
+    return /female|zira|hazel|susan|aria|jenny|samantha|karen|victoria|sonia|libby/i.test(name);
+}
+
+function getSpeechRate() {
+    // Per-PC override: run localStorage.setItem('speechRate', '1.5') in the browser console
+    let saved = NaN;
+    try {
+        saved = parseFloat(localStorage.getItem('speechRate'));
+    } catch (e) { /* localStorage blocked */ }
+
+    const rate = isNaN(saved) ? SPEECH_DEFAULT_RATE : saved;
+    return Math.min(SPEECH_MAX_RATE, Math.max(0.5, rate));
+}
+
+// Pick the voice once a male voice is found and reuse it, so every call starts instantly
+let cachedVoice = null;
+
+function pickVoice() {
+    if (cachedVoice) return cachedVoice;
+
+    const voices = window.speechSynthesis.getVoices()
+        .filter(v => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith('en'));
+    if (!voices.length) return null;
+
+    // Voice pinned for this browser, if any
+    let savedName = null;
+    try {
+        savedName = localStorage.getItem('speechVoice');
+    } catch (e) { /* localStorage blocked */ }
+
+    const saved = savedName && voices.find(v => v.name === savedName);
+    if (saved) return (cachedVoice = saved);
+
+    // Male voices in order of preference (local first, to avoid network delay)
+    for (const pattern of MALE_VOICE_PATTERNS) {
+        const matches = voices.filter(v => pattern.test(v.name) && !isFemaleName(v.name));
+        const match = matches.find(v => v.localService) || matches[0];
+        if (match) return (cachedVoice = match);
     }
+
+    // No male voice in this browser: fall back to any local English voice (not cached,
+    // so a male voice is picked up automatically if the list finishes loading later)
+    return voices.find(v => v.localService) || voices[0];
+}
+
+function doSpeak(text) {
+    // cancel() right before speak() causes a delay on some browsers, so only cancel if busy
+    if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+        window.speechSynthesis.cancel();
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = getSpeechRate();
+    utterance.pitch = SPEECH_PITCH;
+
+    const voice = pickVoice();
+    if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+    }
+
+    window.speechSynthesis.speak(utterance);
+}
+
+function speakText(text) {
+    if (!('speechSynthesis' in window)) return;
+
+    // Chrome/Edge load voices asynchronously. If the list is still empty, speaking now
+    // would use the browser's default (often female) voice, so wait for it first.
+    if (!window.speechSynthesis.getVoices().length) {
+        let done = false;
+        const go = () => {
+            if (done) return;
+            done = true;
+            window.speechSynthesis.removeEventListener('voiceschanged', go);
+            doSpeak(text);
+        };
+        window.speechSynthesis.addEventListener('voiceschanged', go);
+        setTimeout(go, 1000); // don't wait forever
+        return;
+    }
+
+    doSpeak(text);
 }
 
 if ('speechSynthesis' in window) {
     window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.getVoices();
+        cachedVoice = null;
+        pickVoice();
     };
+    window.speechSynthesis.getVoices(); // warm up so the first speak() isn't slow
 }
 
+// ---------------------------------------------------------------------------
+// Audio
+// ---------------------------------------------------------------------------
 let sharedAudioCtx = null;
 function getAudioContext() {
     if (!sharedAudioCtx) {
@@ -98,6 +189,9 @@ function playCoinSound() {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Date / text helpers
+// ---------------------------------------------------------------------------
 function formatDateTimeString(dateStr) {
     if (!dateStr || dateStr.trim() === "") return "";
     if (dateStr.includes("9999-12-31")) return "∞";
@@ -121,6 +215,9 @@ function escapeHtml(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+// ---------------------------------------------------------------------------
+// Server time
+// ---------------------------------------------------------------------------
 let serverTimeOffset = null;
 async function fetchServerTime() {
     var endpoint = /\.aspx$/i.test(window.location.pathname)
