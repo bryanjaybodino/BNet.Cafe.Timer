@@ -92,7 +92,7 @@ fd3ee8f6bcc5c6a0b5200c694cea837d12be421d	Assets/Vendo/Main.js
 5de5c217005b662c3055a8e2336b6207101b0cd1	Assets/Vendo/Modals.js
 7e64f3e184570c72484289db7e5630c75479882a	Assets/Vendo/Serial.js
 c04416b2fd031a2adc7aea45d42c00e31f122f67	Assets/Vendo/Style.css
-cb897ac6ff0a32396b2026460fb83b25cdfc2f7d	Assets/Vendo/Utils.js
+8efd2040e3615ef13c7ec66110256bdee3f78e62	Assets/Vendo/Utils.js
 7a4d96f20d4148d7120156eece51f9eb1b0db0e9	Assets/Vendo/Wallpapers.js
 dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Assets/fontawesome/font-awesome.min.css
 71e31852689289b8d7b94ce0541953df40f76500	Assets/fontawesome/webfonts/fa-brands-400.woff2
@@ -285,8 +285,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Website/assets/webfonts/fa-v4compatibility.woff2
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-fbc6e849f175bc30a3ee29906e5f32efb6d63ee6	bin/BNet.Cafe.Server.dll
-3090c5eec8a78db8c7ded5eae9d20b0fa7c547f2	bin/BNet.Cafe.Server.pdb
+d290319266655f1f18bc7ee5fa4f3485ec0d1a47	bin/BNet.Cafe.Server.dll
+a625d6c17df5d878bdb95eb403ddd1c9163cd3b8	bin/BNet.Cafe.Server.pdb
 cdc4b348edb1d080e881fa98b7d7312497870f23	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 ffb774c655ce5a134fe9d82a1705b90dcd0f3d2c	bin/BNet.Cafe.Websocket.pdb
@@ -303,9 +303,9 @@ f2d83c51416e90dbc31154545b16df3b3f7a7909	bin/System.Buffers.dll
 c5ba4e4047a15b3adc61340c781307d9c6e89413	bin/System.Runtime.CompilerServices.Unsafe.dll
 eeec92852705946904d0e2fa0443d454075781f5	bin/System.Threading.Tasks.Extensions.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	bin/zxing.dll
-d1813ba404f0d5e8e31b55560bd2b2e33a2db359	kiosk-loader.html
-31bb9d2652cc2151a967bb07f38ab1d177ba3c6d	kiosk-mode.bat
-6c8911ef0394ce8529a2b4fc664973a2fffadf1a	kiosk-mode.ps1
+9af4faf82b124ebd84430b355b7a6a7d93b723de	kiosk-loader.html
+4103e027d99ca2d5fb91247db81bd695d2942d4e	kiosk-mode.bat
+b7a8206a587b47576caa2c6c35515780651e9394	kiosk-mode.ps1
 c9869f8686fb6fea3be99d09f67568a5bd3eae4c	patcher.bat
 e91827174c587f4cb5b3c3fadc097e4de9880b56	patcher.ps1
 b4558b5a6c91859aa7fccc8356b03617aa7b43ae	tailscale-runner.bat
