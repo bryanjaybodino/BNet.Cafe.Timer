@@ -89,7 +89,7 @@ c0a0fa65cb1c1b1758837b3387698fe929d224ae	Assets/Vendo/Carousel.js
 b29764681b4f71a54c44504aaa026a4605764695	Assets/Vendo/Clients.js
 9a0ebc8681c4b3275c3a51db025910f320f6d60a	Assets/Vendo/Idle.js
 fd3ee8f6bcc5c6a0b5200c694cea837d12be421d	Assets/Vendo/Main.js
-5de5c217005b662c3055a8e2336b6207101b0cd1	Assets/Vendo/Modals.js
+c790d75b8996a744c4af51a729c2662c65f8768c	Assets/Vendo/Modals.js
 7e64f3e184570c72484289db7e5630c75479882a	Assets/Vendo/Serial.js
 c04416b2fd031a2adc7aea45d42c00e31f122f67	Assets/Vendo/Style.css
 8efd2040e3615ef13c7ec66110256bdee3f78e62	Assets/Vendo/Utils.js
@@ -288,8 +288,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-5a9b20ba9e4fc81d34cca8550e92506a2173dec2	bin/BNet.Cafe.Server.dll
-56c0b847b78e2f47387f44b65ab4b5339daea645	bin/BNet.Cafe.Server.pdb
+2176b15e3b99643c9802c7b1b0c8d1be961b8450	bin/BNet.Cafe.Server.dll
+c2d38a596a4b13ab80027fe19caf332ea0b25d11	bin/BNet.Cafe.Server.pdb
 4d00c5b12eb43cca3019fdc9aa9d13aad7a85e62	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 385540891899323d249b26d8c34d56c4bd463dea	bin/BNet.Cafe.Websocket.pdb
@@ -307,7 +307,7 @@ c5ba4e4047a15b3adc61340c781307d9c6e89413	bin/System.Runtime.CompilerServices.Uns
 eeec92852705946904d0e2fa0443d454075781f5	bin/System.Threading.Tasks.Extensions.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	bin/zxing.dll
 9af4faf82b124ebd84430b355b7a6a7d93b723de	kiosk-loader.html
-4103e027d99ca2d5fb91247db81bd695d2942d4e	kiosk-mode.bat
+a396650b41c4b9c984c298463a9656013e2e817f	kiosk-mode.bat
 b7a8206a587b47576caa2c6c35515780651e9394	kiosk-mode.ps1
 c9869f8686fb6fea3be99d09f67568a5bd3eae4c	patcher.bat
 e91827174c587f4cb5b3c3fadc097e4de9880b56	patcher.ps1
