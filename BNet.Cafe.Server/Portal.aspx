@@ -102,7 +102,10 @@
                         </div>
                     </div>
                 </div>
-
+                <div style="font-size: 13px; color: #3b82f6; background: rgba(59, 130, 246, 0.1); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.2); display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    <i class="fa fa-info-circle" style="font-size: 16px;"></i>
+                    <span><strong>Notice:</strong> If your active session time does not reflect your latest time, please log out of your account and log back in to refresh it before making a transfer.</span>
+                </div>
                 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                     <ContentTemplate>
                         <asp:HiddenField ID="HiddenField_UserId" runat="server" />
@@ -295,7 +298,7 @@
                                             oninput="NumberOnly(this);"
                                             onkeypress="return event.charCode == 13 || (event.charCode >= 48 && event.charCode <= 57)"
                                             CssClass="form-control" Style="padding: 10px; border-radius: 10px; background: var(--portal-card-bg); color: var(--portal-text-main); border: 1px solid var(--portal-card-border);">
-                                         </asp:TextBox>
+                                        </asp:TextBox>
                                     </div>
 
                                     <asp:Button ID="btnInitTransfer" runat="server" CssClass="btn-redeem-rate" Text="Proceed to Transfer" OnClick="btnInitTransfer_Click" Style="margin-top: 8px;" />
