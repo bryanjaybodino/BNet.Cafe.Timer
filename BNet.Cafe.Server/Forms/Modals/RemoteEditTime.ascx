@@ -17,12 +17,12 @@
 
             <div class="form-group" style="margin-bottom: 12px;">
                 <label for="<%= TextBox_ModalDuration.ClientID %>">Initial Duration (Minutes)</label>
-                <asp:TextBox ID="TextBox_ModalDuration" runat="server" CssClass="form-control" TextMode="Number" min="0" placeholder="e.g., 120 (for 2 hrs)" oninput="syncModalAmountFromDuration()"></asp:TextBox>
+                <asp:TextBox ID="TextBox_ModalDuration" runat="server" CssClass="form-control" TextMode="Number" min="0" placeholder="e.g., 120 (for 2 hrs)" oninput="NumberOnly(this); syncModalAmountFromDuration()"></asp:TextBox>
             </div>
 
             <div class="form-group" style="margin-bottom: 8px;">
                 <label for="<%= TextBox_ModalAmount.ClientID %>">Initial Amount (₱)</label>
-                <asp:TextBox ID="TextBox_ModalAmount" runat="server" CssClass="form-control" TextMode="Number" step="0.01" min="0" placeholder="e.g., 25.00" oninput="syncModalDurationFromAmount()"></asp:TextBox>
+                <asp:TextBox ID="TextBox_ModalAmount" runat="server" CssClass="form-control" TextMode="Number" step="0.01" min="0" placeholder="e.g., 25.00" oninput="NumberOnly(this); syncModalDurationFromAmount()"></asp:TextBox>
             </div>
         </div>
         <div class="bnet-modal-footer" style="display: flex; justify-content: flex-end; align-items: center;">

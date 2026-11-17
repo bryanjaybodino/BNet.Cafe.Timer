@@ -138,7 +138,18 @@
                         </h3>
                         <p style="font-size: 12px; color: var(--text-light-secondary);">Configure comshop branding and built-in game menu launcher features.</p>
                     </div>
-
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label>Tutorial Link</label>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px;">
+                            <a href="https://www.youtube.com/watch?v=fdFyozXMbss" target="_blank" class="btn-youtube-tutorial">
+                                <i class="fa-brands fa-youtube" style="color: #ff0000; font-size: 16px;"></i>
+                                <span>Watch Game Menu Tutorial</span>
+                                <i class="fa-solid fa-external-link-alt" style="font-size: 11px; opacity: 0.7; margin-left: 4px;"></i>
+                            </a>
+                        </div>
+                        <span style="font-size: 11px; color: var(--text-light-secondary); display: block; margin-top: 6px;">Opens a step-by-step video guide on how to configure and use the game menu.
+                        </span>
+                    </div>
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label for="<%= TextBox_ComshopName.ClientID %>">Comshop Name</label>
                         <asp:TextBox ID="TextBox_ComshopName" runat="server" CssClass="form-control" placeholder="Enter Comshop Name" MaxLength="100"></asp:TextBox>

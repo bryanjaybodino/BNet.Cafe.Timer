@@ -437,7 +437,7 @@ if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManage
         if (btn) {
             btn.classList.remove('disabled');
             btn.style.pointerEvents = 'auto';
-            btn.innerHTML = 'Submit';
+            btn.innerHTML = '<i class="fa fa-save"></i>Add Rental';
         }
     });
 }

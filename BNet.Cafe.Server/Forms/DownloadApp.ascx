@@ -55,6 +55,18 @@
                 </li>
             </ul>
 
+            <!-- YouTube Tutorial Link Button -->
+            <div style="margin-top: 10px; margin-bottom: 20px;">
+                <a href="https://www.youtube.com/watch?v=8S-PL1pyA2g" target="_blank" class="btn-youtube-tutorial">
+                    <i class="fa-brands fa-youtube" style="color: #ff0000; font-size: 16px;"></i>
+                    <span>Watch Installation Tutorial</span>
+                    <i class="fa-solid fa-external-link-alt" style="font-size: 11px; opacity: 0.7; margin-left: 4px;"></i>
+                </a>
+                <span style="font-size: 11px; color: var(--text-light-secondary); display: block; margin-top: 6px;">
+                    Opens a step-by-step video guide on how to install and configure the app.
+                </span>
+            </div>
+
             <!-- SSL / PWA Edge Flag Notice -->
             <div class="ssl-instruction-box">
                 <div class="ssl-instruction-title">
@@ -91,21 +103,4 @@
 
     </div>
 
-    <!-- Modern YouTube Video Embed Card -->
-    <div class="youtube-embed-card">
-        <div class="youtube-header-group">
-            <h3 class="youtube-title-main">Tutorial</h3>
-            <span class="youtube-title-sub">Watch Installation Guide</span>
-        </div>
-
-        <div class="video-wrapper">
-            <iframe 
-                src="https://www.youtube.com/embed/8S-PL1pyA2g?si=1_HtztzKpBF9hYUB" 
-                title="BNet Cafe Installation Video Guide" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                referrerpolicy="strict-origin-when-cross-origin" 
-                allowfullscreen>
-            </iframe>
-        </div>
-    </div>
 </div>

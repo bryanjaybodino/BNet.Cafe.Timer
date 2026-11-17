@@ -70,7 +70,7 @@
     gap: 10px;
     list-style: none;
     padding: 0;
-    margin: 0 0 20px 0;
+    margin: 0 0 10px 0;
 }
 
 .feature-item {
@@ -114,6 +114,31 @@
     letter-spacing: 0.5px;
     display: inline-block;
 }
+
+/* YouTube Tutorial Link Button Style */
+.btn-youtube-tutorial {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-light, #d1d5db);
+    border-radius: 6px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+    .btn-youtube-tutorial:hover {
+        background: #f9fafb;
+        border-color: #ff0000;
+        color: #ff0000;
+        text-decoration: none;
+        box-shadow: 0 2px 4px rgba(255, 0, 0, 0.1);
+    }
 
 /* SSL Bypass Instructions Box */
 .ssl-instruction-box {
@@ -218,64 +243,6 @@
         stroke-width: 2.5;
     }
 
-/* Modern YouTube Embed Card */
-.youtube-embed-card {
-    background-color: var(--bg-light-secondary);
-    border: 1px solid var(--border-light);
-    border-radius: 16px;
-    padding: 32px 36px;
-    width: 100%;
-    box-sizing: border-box;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.youtube-header-group {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-}
-
-.youtube-title-main {
-    font-size: 24px;
-    font-weight: 900;
-    letter-spacing: -0.5px;
-    color: var(--text-light);
-    text-transform: uppercase;
-    margin: 0;
-}
-
-.youtube-title-sub {
-    font-size: 13px;
-    font-weight: 700;
-    color: #4f46e5;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Responsive 16:9 Video Wrapper */
-.video-wrapper {
-    position: relative;
-    width: 100%;
-    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-    height: 0;
-    border-radius: 12px;
-    overflow: hidden;
-    background-color: #000000;
-    box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.1);
-}
-
-    .video-wrapper iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-    }
-
 /* Responsive Scaling */
 @media (max-width: 768px) {
     .download-card-container {
@@ -292,9 +259,5 @@
     .qr-code-card {
         width: 100%;
         box-sizing: border-box;
-    }
-
-    .youtube-embed-card {
-        padding: 24px;
     }
 }

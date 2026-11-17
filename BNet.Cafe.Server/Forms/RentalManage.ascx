@@ -1,7 +1,8 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RentalManage.ascx.cs" Inherits="BNet.Cafe.Server.Forms.RentalManage" %>
 <%@ Register Src="~/Forms/Modals/RemoteOpenTime.ascx" TagPrefix="uc1" TagName="RemoteOpenTime" %>
-<%-- Change 1: Update register directive prefix and tag name --%>
-<%@ Register Src="~/Forms/Modals/RemoteEditTime.ascx" TagPrefix="uc2" TagName="RemoteEditTime" %>
+<%@ Register Src="~/Forms/Modals/RemoteEditTime.ascx" TagPrefix="uc1" TagName="RemoteEditTime" %>
+<%@ Register Src="~/Forms/Modals/RemoteDeductionTime.ascx" TagPrefix="uc1" TagName="RemoteDeductionTime" %>
+
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
     <ContentTemplate>
@@ -82,8 +83,13 @@
                 <asp:Panel ID="Panel_Buttons" runat="server">
                     <!-- Form Actions -->
                     <div class="form-grid-action">
-                        <span type="button" class="btn btn-secondary" onclick="openRemoteEditTimeModal('<%= Label_RentalId.Text %>', document.getElementById('<%= HiddenField_InitialDuration.ClientID %>').value, document.getElementById('<%= HiddenField_InitialAmount.ClientID %>').value)" style="padding: 8px 12px;">
-                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        <span id="LinkButton_EditTime" runat="server">
+                            <a class="btn btn-secondary" style="padding: 8px 12px;" onclick="openRemoteEditTimeModal('<%= Label_RentalId.Text %>', document.getElementById('<%= HiddenField_InitialDuration.ClientID %>').value, document.getElementById('<%= HiddenField_InitialAmount.ClientID %>').value)">
+                                <i class="fa-solid fa-pen-to-square"></i>Edit
+                            </a>
+                        </span>
+                        <span id="LinkButton_DeductTime" runat="server">
+                            <a class="btn btn-warning" onclick="openRemoteDeductionTimeModal('<%= Label_RentalId.Text %>', document.getElementById('<%= HiddenField_InitialDuration.ClientID %>').value, document.getElementById('<%= HiddenField_InitialAmount.ClientID %>').value)"><i class="fa-solid fa-clock-rotate-left"></i>Deduct Time</a>
                         </span>
                         <span id="LinkButton_OpenTime" runat="server">
                             <a class="btn btn-danger" onclick="openOpenTimeModal('<%= Label_RentalId.Text %>','<%= TextBox_ComputerName.Text %>','<%= DropDownList_Customer.SelectedValue %>','<%= Label_Status.Text %>')"><i class="fa fa-hourglass"></i>Open Time</a>
@@ -114,8 +120,8 @@
                 </asp:HyperLink>
             </div>
         </asp:Panel>
-        <%-- Change 3: Update control ID/Tag --%>
-        <uc2:RemoteEditTime runat="server" ID="RemoteEditTime" />
+        <uc1:RemoteDeductionTime runat="server" id="RemoteDeductionTime" />
+        <uc1:RemoteEditTime runat="server" ID="RemoteEditTime" />
         <uc1:RemoteOpenTime runat="server" ID="RemoteOpenTime" />
     </ContentTemplate>
 </asp:UpdatePanel>

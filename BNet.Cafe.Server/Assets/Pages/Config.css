@@ -124,3 +124,27 @@
     .config-tab-pane.active {
         display: block;
     }
+
+.btn-youtube-tutorial {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 6px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+    .btn-youtube-tutorial:hover {
+        background: #f9fafb;
+        border-color: #ff0000;
+        color: #ff0000;
+        text-decoration: none;
+        box-shadow: 0 2px 4px rgba(255, 0, 0, 0.1);
+    }
