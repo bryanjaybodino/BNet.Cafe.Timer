@@ -15,6 +15,28 @@ if "!NEED_REG!"=="1" (
     echo Edge-swipe policy missing. Requesting administrator permission once...
     powershell -NoProfile -Command "Start-Process -FilePath '%~f0' -ArgumentList 'regonly' -Verb RunAs -Wait" >nul 2>&1
 )
+
+:: The policy is only read when explorer.exe STARTS. If it was written while
+:: Explorer was already running (first run on a new PC), the swipe still works
+:: until a reboot. So restart Explorer ONCE per user to make it apply now.
+reg query "HKLM\SOFTWARE\Policies\Microsoft\Windows\EdgeUI" /v AllowEdgeSwipe 2>nul | find "0x0" >nul
+if not errorlevel 1 (
+    reg query "HKCU\Software\BNetKiosk" /v ExplorerRestarted >nul 2>&1
+    if errorlevel 1 (
+        tasklist /fi "imagename eq explorer.exe" 2>nul | find /i "explorer.exe" >nul
+        if not errorlevel 1 (
+            echo Applying edge-swipe policy: restarting Windows Explorer once...
+            taskkill /f /im explorer.exe >nul 2>&1
+            timeout /t 2 /nobreak >nul
+            start "" explorer.exe
+            timeout /t 3 /nobreak >nul
+        )
+        reg add "HKCU\Software\BNetKiosk" /v ExplorerRestarted /t REG_DWORD /d 1 /f >nul
+    )
+) else (
+    echo WARNING: edge-swipe policy was NOT applied - administrator permission was refused.
+    timeout /t 5 /nobreak >nul
+)
 goto POLICY_DONE
 
 :APPLY_POLICY

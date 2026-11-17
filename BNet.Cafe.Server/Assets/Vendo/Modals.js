@@ -260,14 +260,47 @@ function showWarningModal() {
     cancelIdleLock();
     if (warningModal) warningModal.classList.add('visible');
     logKioskEvent(`Anti Static Ignition Detection triggered`, "0", false, "ACCEPTOR");
+
+    // Clear any existing warning timers
+    if (warningCloseTimer) clearTimeout(warningCloseTimer);
+    if (warningCountdownInterval) clearInterval(warningCountdownInterval);
+
+    warningRemainingSeconds = 5; // Adjust duration as needed
+    if (warningModalTimerText) {
+        warningModalTimerText.innerText = `Closing in ${warningRemainingSeconds}s`;
+    }
+
+    // Start countdown ticker
+    warningCountdownInterval = setInterval(() => {
+        warningRemainingSeconds--;
+        if (warningRemainingSeconds > 0) {
+            if (warningModalTimerText) {
+                warningModalTimerText.innerText = `Closing in ${warningRemainingSeconds}s`;
+            }
+        } else {
+            if (warningModalTimerText) {
+                warningModalTimerText.innerText = `Closing...`;
+            }
+        }
+    }, 1000);
+
+    // Automatically close the warning modal after the timeout expires
+    warningCloseTimer = setTimeout(() => {
+        hideWarningModal();
+    }, warningRemainingSeconds * 1000);
 }
 
 function hideWarningModal() {
     if (warningModal) warningModal.classList.remove('visible');
-    if (warningCloseTimer) clearTimeout(warningCloseTimer);
-    if (warningCountdownInterval) clearInterval(warningCountdownInterval);
+    if (warningCloseTimer) {
+        clearTimeout(warningCloseTimer);
+        warningCloseTimer = null;
+    }
+    if (warningCountdownInterval) {
+        clearInterval(warningCountdownInterval);
+        warningCountdownInterval = null;
+    }
 }
-
 function forceProcessCreditOnKiosk(clientName) {
     if (!insertCoinTargetClient || !sameClientName(insertCoinTargetClient, clientName)) return;
 
