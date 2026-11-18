@@ -298,7 +298,7 @@
         exitFullscreenBtn.addEventListener('click', toggleFullscreen);
 
         var urlParams = new URLSearchParams(window.location.search);
-        var currentClient = urlParams.get('client').toUpperCase().replace(' ', '') || '';
+        var currentClient = (urlParams.get('client') || '').toUpperCase().replace(' ', '');
         var currentScreen = 'screen_1';
         var currentScreenIndex = 0;
         var screenCount = 1;
@@ -310,7 +310,7 @@
         var ctx2d = canvas.getContext('2d', { alpha: false });
         ctx2d.imageSmoothingEnabled = false;
         var frameNaturalW = 1920, frameNaturalH = 1080;
-        var pendingFrame = null, decodeInFlight = 0, lastFrameAt = 0, frameCount = 0, lastFpsTime = performance.now();
+        var pendingFrame = null, readyBitmap = null, decoding = false, lastFrameAt = 0, frameCount = 0, lastFpsTime = performance.now();
 
         setInterval(function () {
             var now = performance.now();
@@ -320,32 +320,44 @@
             document.getElementById('lagBadge').style.display = (lastFrameAt > 0 && (Date.now() - lastFrameAt) > 3000) ? 'block' : 'none';
         }, 1000);
 
-        function renderLoop() {
-            requestAnimationFrame(renderLoop);
-
-            // Skip cycle if there is no frame OR if browser is still decoding previous frame
-            if (!pendingFrame || decodeInFlight > 0) return;
+        // Decode starts the moment a frame arrives (no waiting for the next animation frame),
+        // only the newest frame is kept, and painting is synced to the display refresh.
+        function pumpDecode() {
+            if (decoding || !pendingFrame) return;
 
             var buf = pendingFrame;
-            pendingFrame = null; // Clear queue reference immediately
-            decodeInFlight++;
+            pendingFrame = null;
+            decoding = true;
 
             createImageBitmap(new Blob([new Uint8Array(buf, 1)], { type: 'image/jpeg' }))
                 .then(function (bm) {
-                    if (canvas.width !== bm.width || canvas.height !== bm.height) {
-                        frameNaturalW = bm.width;
-                        frameNaturalH = bm.height;
-                        canvas.width = bm.width;
-                        canvas.height = bm.height;
-                    }
-                    ctx2d.drawImage(bm, 0, 0);
-                    bm.close();
-                    frameCount++;
-                    lastFrameAt = Date.now();
+                    if (readyBitmap) readyBitmap.close(); // a newer frame replaces one that was never shown
+                    readyBitmap = bm;
                 })
-                .finally(function () {
-                    decodeInFlight--;
+                .catch(function () { })
+                .then(function () {
+                    decoding = false;
+                    pumpDecode(); // a newer frame may have arrived while decoding
                 });
+        }
+
+        function renderLoop() {
+            requestAnimationFrame(renderLoop);
+            if (!readyBitmap) return;
+
+            var bm = readyBitmap;
+            readyBitmap = null;
+
+            if (canvas.width !== bm.width || canvas.height !== bm.height) {
+                frameNaturalW = bm.width;
+                frameNaturalH = bm.height;
+                canvas.width = bm.width;
+                canvas.height = bm.height;
+            }
+            ctx2d.drawImage(bm, 0, 0);
+            bm.close();
+            frameCount++;
+            lastFrameAt = Date.now();
         }
         renderLoop();
 
@@ -378,22 +390,31 @@
                 if (view[0] === 0x10) {
                     // Always overwrite with the LATEST frame and drop queued frame
                     pendingFrame = evt.data;
+                    pumpDecode();
+                    return; // a frame is a JPEG, never try to read it as JSON
                 }
 
                 try {
                     const jsonString = _decoder.decode(view.subarray(1));
                     const data = JSON.parse(jsonString);
 
+                    // Ignore other PCs' updates, they would change this PC's tabs
+                    var from = data.clientName || data.ClientName;
+                    if (from && String(from).toUpperCase().replace(' ', '') !== currentClient) return;
+
                     // Get screenCount (with a fallback to 1 if it doesn't exist)
                     if (data.screenCount !== undefined) {
-                        screenCount = parseInt(data.screenCount, 10) || 1;
-                        renderTabs(); // Re-render the UI tabs for multiple screens
+                        var count = parseInt(data.screenCount, 10) || 1;
+                        if (count !== screenCount) {
+                            screenCount = count;
+                            renderTabs(); // Re-render the UI tabs only when the number of screens changed
+                        }
                     }
                 } catch (err) {
                 }
 
             };
-            ws.onclose = function () { wsReady = false; setTimeout(connectWS, 3000); };
+            ws.onclose = function () { wsReady = false; setTimeout(connectWS, 1000); };
         }
 
         function sendSubscribe(screenKey) {

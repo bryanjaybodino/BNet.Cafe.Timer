@@ -3,11 +3,13 @@ let currentClient = '';
 const clientDataMap = new Map();
 const clientActivityMap = new Map();
 const clientCanvases = new Map(); // key -> 2D context of the card canvas
+const deviceEls = new Map();      // key -> card element (cards are reused, never rebuilt)
 const thumbStreams = new Map();   // key -> { ws, pending, last, busy, retry, closed }
 const textDecoder = new TextDecoder('utf-8');
 const textEncoder = new TextEncoder();
 let ws = null;
 let wsReady = false;
+let lastListJson = '';            // skip re-processing when the client list did not change
 
 // WebSocket URL builder: localhost / IP address -> port 2050, domain -> same host as the page.
 // Uses wss:// automatically when the page is served over HTTPS.
@@ -187,21 +189,18 @@ function drawThumb(key) {
 // Client list / activity handlers
 // ---------------------------------------------------------------------------
 function handleClientListUpdate(clients) {
+    // Nothing changed -> nothing to do (avoids needless work on repeated broadcasts)
+    const json = JSON.stringify(clients);
+    if (json === lastListJson) return;
+    lastListJson = json;
+
     clientDataMap.clear();
     clients.forEach((c) => {
         if (c.ClientName) clientDataMap.set(c.ClientName.toUpperCase(), c);
     });
 
-    renderDevices(clients); // rebuilds canvases first
+    renderDevices(clients); // updates cards in place, canvases are kept
     syncThumbStreams([...clientDataMap.keys()]);
-
-    // Repaint the last frame so cards don't flash blank after a re-render
-    thumbStreams.forEach((s, key) => {
-        if (s.last) {
-            s.pending = s.last;
-            drawThumb(key);
-        }
-    });
 
     if (currentClient && clientDataMap.has(currentClient)) {
         selectDevice(currentClient);
@@ -226,56 +225,78 @@ function handleActivityUpdate(activity) {
 function renderDevices(clients) {
     const list = getEl('deviceList');
     if (!list) return;
-    list.innerHTML = '';
-    clientCanvases.clear();
 
-    if (!clients.length) {
-        list.innerHTML = `
-            <div class="no-devices" id="noDevices">
-                <svg style="width: 36px; height: 36px; margin-bottom: 10px; opacity: 0.4; fill: currentColor;" viewBox="0 0 24 24">
-                    <path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/>
-                </svg>
-                <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">Waiting for connected PCs…</div>
-                <div style="font-size: 12px; opacity: 0.7;">Client stations will appear here once they connect to the network.</div>
-            </div>
-        `;
+    const valid = clients.filter((c) => c.ClientName);
+
+    if (!valid.length) {
+        deviceEls.clear();
+        clientCanvases.clear();
+        if (!getEl('noDevices')) {
+            list.innerHTML = `
+                <div class="no-devices" id="noDevices">
+                    <svg style="width: 36px; height: 36px; margin-bottom: 10px; opacity: 0.4; fill: currentColor;" viewBox="0 0 24 24">
+                        <path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/>
+                    </svg>
+                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">Waiting for connected PCs…</div>
+                    <div style="font-size: 12px; opacity: 0.7;">Client stations will appear here once they connect to the network.</div>
+                </div>
+            `;
+        }
         return;
     }
 
-    clients.forEach((item) => {
+    getEl('noDevices')?.remove();
+
+    const seen = new Set();
+
+    valid.forEach((item) => {
         const name = item.ClientName;
-        if (!name) return;
         const key = name.toUpperCase();
-        const act = clientActivityMap.get(key);
-        const status = act ? (act.windowTitle || act.appName) : 'Idle / Online';
+        seen.add(key);
 
-        const el = document.createElement('div');
-        el.className = `device-entry ${currentClient === key ? 'active' : ''}`;
-        el.dataset.name = name;
-        el.innerHTML = `
-            <div class="device-top">
-                <div class="device-avatar-wrap"><div class="avatar">${escapeHtml(name).toUpperCase()}</div></div>
-                <div class="status-badge"><span class="activity-dot"></span>Active</div>
-            </div>
-            <div class="screen-preview-container" style="background:#000; width:100%; height:120px; overflow:hidden; display:flex; align-items:center; justify-content:center; border-radius:4px; margin:8px 0;">
-                <canvas id="canvas-${key}" style="max-width:100%; max-height:100%; object-fit:contain;"></canvas>
-            </div>
-            <div class="device-body">
-                <div class="device-body-label">Activity</div>
-                <div class="device-sub" id="sub-${key}">${escapeHtml(status)}</div>
-            </div>`;
+        let el = deviceEls.get(key);
 
-        el.addEventListener('click', (e) => {
-            e.stopPropagation();
-            selectDevice(name);
-        });
-        list.appendChild(el);
+        if (!el) {
+            // New client -> create the card once
+            const act = clientActivityMap.get(key);
+            const status = act ? (act.windowTitle || act.appName) : 'Idle / Online';
 
-        // Register canvas context for real-time updating
-        const canvasEl = document.getElementById(`canvas-${key}`);
-        if (canvasEl) {
-            clientCanvases.set(key, canvasEl.getContext('2d', { alpha: false }));
+            el = document.createElement('div');
+            el.dataset.name = name;
+            el.innerHTML = `
+                <div class="device-top">
+                    <div class="device-avatar-wrap"><div class="avatar">${escapeHtml(name).toUpperCase()}</div></div>
+                    <div class="status-badge"><span class="activity-dot"></span>Active</div>
+                </div>
+                <div class="screen-preview-container" style="background:#000; width:100%; height:120px; overflow:hidden; display:flex; align-items:center; justify-content:center; border-radius:4px; margin:8px 0;">
+                    <canvas id="canvas-${key}" style="max-width:100%; max-height:100%; object-fit:contain;"></canvas>
+                </div>
+                <div class="device-body">
+                    <div class="device-body-label">Activity</div>
+                    <div class="device-sub" id="sub-${key}">${escapeHtml(status)}</div>
+                </div>`;
+
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectDevice(name);
+            });
+
+            list.appendChild(el);
+            deviceEls.set(key, el);
+
+            // Register canvas context for real-time updating
+            clientCanvases.set(key, el.querySelector('canvas').getContext('2d', { alpha: false }));
         }
+
+        el.className = `device-entry ${currentClient === key ? 'active' : ''}`;
+    });
+
+    // Remove cards for clients that are gone
+    [...deviceEls.keys()].forEach((key) => {
+        if (seen.has(key)) return;
+        deviceEls.get(key).remove();
+        deviceEls.delete(key);
+        clientCanvases.delete(key);
     });
 }
 
