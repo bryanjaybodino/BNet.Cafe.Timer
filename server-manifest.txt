@@ -64,7 +64,7 @@ ab91d00cccfeec4d9a0600fa57ab1474885a3ce3	Assets/Pages/PointsSettings.js
 334b21ab3a6c210af720789e61ae238591f44667	Assets/Pages/PricingSettings.css
 72667e4d91fb5b995031be2941ac8c5175ef8584	Assets/Pages/PricingSettings.js
 976d68948571adfa2567b29b067852fd7bcabbb4	Assets/Pages/Remote.css
-6021c1a24c04b63a27d4fb7f1ba6aad304ad8ee1	Assets/Pages/Remote.js
+4428ae61f00a126ddfc103f8f3e2e497df5595f3	Assets/Pages/Remote.js
 78dd0f4c90ee70f26c3a8b0bc68da777d39a4cd6	Assets/Pages/RemoteMessaging.js
 abcbc20a941f4669dee4d3cbc968ad1c9533d502	Assets/Pages/RentalManage.css
 37bd59f47eb74da848d85795372d0385a1e811e8	Assets/Pages/RentalManage.js
@@ -270,7 +270,7 @@ f076ad8ed5abb8fdc7924b57a0bad1dd3b2a80af	Login.aspx
 77956847c349c7391a9448c2287e700007ac2ee5	Offline Packages/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	Offline Packages/zxing/zxing.dll
 2acf86aeba6a96cc43aa73c6f1d20c45a0a223c6	Portal.aspx
-049d01d2cbe6e91a1a308cb926ea9325e02945c8	Remote.html
+d05b48efaba44c7230a04707964e353235a0915f	Remote.html
 e5948e14374bc30dd7370fe041148e1aee443a51	ResetPassword.aspx
 c4de12e93ee321ab4507003ee471d85f5c84e1eb	ServerChat.html
 1ff0845314f81235bd0f6205667c55863bb242f2	Shop.aspx
@@ -288,8 +288,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-ff22d59f666848da22f4736743ab1fd3d0267d94	bin/BNet.Cafe.Server.dll
-68911f440f64c26eee5d31745c1133bd1820af67	bin/BNet.Cafe.Server.pdb
+4c7f10a38b05004cd13ac90d476d4c76fe5fb01c	bin/BNet.Cafe.Server.dll
+5f81fa19b416c82573b07f0bb95d31bfd396909e	bin/BNet.Cafe.Server.pdb
 4d00c5b12eb43cca3019fdc9aa9d13aad7a85e62	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 385540891899323d249b26d8c34d56c4bd463dea	bin/BNet.Cafe.Websocket.pdb
