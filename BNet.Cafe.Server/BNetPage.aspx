@@ -148,6 +148,9 @@
                         <asp:HyperLink ID="HyperLink_Transactions" runat="server" ToolTip="Transactions" onclick="navigateTo('?Form=Transactions'); return false;">
                             <i class="fas fa-file-invoice"></i><span>Transactions</span>
                         </asp:HyperLink>
+                        <asp:HyperLink ID="HyperLink_Maintenance" runat="server" ToolTip="Maintenance" onclick="navigateTo('?Form=Maintenance'); return false;">
+                            <i class="fas fa-screwdriver-wrench"></i><span>Maintenance</span>
+                        </asp:HyperLink>
                     </div>
                 </details>
                 <!-- DOWNLOAD APP -->
