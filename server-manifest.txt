@@ -67,7 +67,7 @@ ab91d00cccfeec4d9a0600fa57ab1474885a3ce3	Assets/Pages/PointsSettings.js
 4428ae61f00a126ddfc103f8f3e2e497df5595f3	Assets/Pages/Remote.js
 78dd0f4c90ee70f26c3a8b0bc68da777d39a4cd6	Assets/Pages/RemoteMessaging.js
 abcbc20a941f4669dee4d3cbc968ad1c9533d502	Assets/Pages/RentalManage.css
-37bd59f47eb74da848d85795372d0385a1e811e8	Assets/Pages/RentalManage.js
+23724d8bd47f041c852fb27b0ac703da8492deaa	Assets/Pages/RentalManage.js
 6ab36719c91237127ab0502dbadcc03ead8c3d67	Assets/Pages/Script.js
 4e91e8f4f946e673879d8abdb00300f5f3785270	Assets/Pages/SeatMap.css
 585689934d20f589689adc62a9f67fb2f6540b62	Assets/Pages/SeatMap.js
@@ -223,7 +223,7 @@ df8cd4cc8cde865a8c8a847f7c437cb6d2272981	Forms/Modals/PricingRequiredModal.ascx
 5df5ea01c86466836377a35f78e394483b4c9619	Forms/Modals/PricingSettingDelete.ascx
 8142a74ee91c8683196eabfddf3289ac7100683d	Forms/Modals/RemoteAnnouncements.ascx
 c98ffd4fe05bb85755a044822f0b2a9a14ba2a38	Forms/Modals/RemoteDeductionTime.ascx
-8a1005d5c71c67025d48bfcef6287af4f89e3be6	Forms/Modals/RemoteEditTime.ascx
+e7d61288145805b20be5056d3d0504bffd6bb377	Forms/Modals/RemoteEditTime.ascx
 250837d525b0cb6b162393db01c82cddfc48bd15	Forms/Modals/RemoteLogout.ascx
 4d77aa5ad413d0e7c02a5eb82e62b1ba25deead5	Forms/Modals/RemoteMaintenance.ascx
 0e2b931706ba520904e664b8f536f42886c6f663	Forms/Modals/RemoteMessage.ascx
@@ -290,8 +290,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-ef728013878903d0739b6660bf8f909a410b854d	bin/BNet.Cafe.Server.dll
-88a4efd239993bd93b5fc2c545a7fcc06d3337e9	bin/BNet.Cafe.Server.pdb
+95ce25933bf663d4bfd0924e7d73f0264e994ae1	bin/BNet.Cafe.Server.dll
+90104dc8f0a55986af2326fdb5fc92c8d6856838	bin/BNet.Cafe.Server.pdb
 cdc4b348edb1d080e881fa98b7d7312497870f23	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 ffb774c655ce5a134fe9d82a1705b90dcd0f3d2c	bin/BNet.Cafe.Websocket.pdb
