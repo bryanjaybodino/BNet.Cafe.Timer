@@ -4,150 +4,167 @@
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
     <ContentTemplate>
         <div class="pos-container">
-            <!-- Left Panel: Catalog -->
-            <div class="pos-catalog-panel">
+
+            <!-- ============ Catalog ============ -->
+            <section class="pos-catalog-panel" aria-label="Product catalog">
                 <div class="pos-toolbar">
                     <div class="pos-filter-group">
                         <div class="pos-search-box">
-                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                             <asp:TextBox ID="TextBox_Search" runat="server" CssClass="search-input"
-                                Placeholder="Search items..." AutoPostBack="true"
+                                Placeholder="Search products" AutoPostBack="true"
                                 OnTextChanged="Filter_Changed"
                                 onkeydown="if(event.keyCode===13){this.blur(); return false;}" />
                         </div>
 
                         <div class="pos-select-box">
-                            <i class="fa-solid fa-filter select-icon"></i>
+                            <i class="fa-solid fa-layer-group select-icon" aria-hidden="true"></i>
                             <asp:DropDownList ID="DropDownList_Category" runat="server" CssClass="category-select"
                                 AutoPostBack="true" OnSelectedIndexChanged="Filter_Changed">
                             </asp:DropDownList>
                         </div>
                     </div>
                 </div>
-                <div class="form-actions"></div>
+
                 <div class="product-grid">
                     <asp:Repeater ID="Repeater_Products" runat="server" OnItemCommand="Repeater_Products_ItemCommand">
                         <ItemTemplate>
                             <asp:LinkButton ID="btnSelectProduct" runat="server" CommandName="AddToCart" CommandArgument='<%# Eval("DBId") %>' CssClass="pos-card-link">
-                                <div class="pos-product-card">
-                                    <div class='<%# Convert.ToInt32(Eval("DBQuantityInStock")) <= 0 ? "stock-badge out-of-stock" : "stock-badge in-stock" %>'>
-                                        <%# Convert.ToInt32(Eval("DBQuantityInStock")) <= 0 ? "Out of Stock" : Eval("DBQuantityInStock") + " left" %>
-                                    </div>
+                                <div class='<%# Convert.ToInt32(Eval("DBQuantityInStock")) <= 0 ? "pos-product-card is-out" : "pos-product-card" %>'>
                                     <div class="product-img-wrapper">
-                                        <img src='<%# GetProductImage(Eval("DBId")) %>' alt='<%# Eval("DBItemName") %>' />
+                                        <img src='<%# GetProductImage(Eval("DBId")) %>' alt='<%# Eval("DBItemName") %>' loading="lazy" decoding="async" />
+                                        <div class='<%# Convert.ToInt32(Eval("DBQuantityInStock")) <= 0 ? "stock-badge out-of-stock" : (Convert.ToInt32(Eval("DBQuantityInStock")) <= 5 ? "stock-badge low-stock" : "stock-badge in-stock") %>'>
+                                            <%# Convert.ToInt32(Eval("DBQuantityInStock")) <= 0 ? "Out of stock" : Eval("DBQuantityInStock") + " left" %>
+                                        </div>
                                     </div>
                                     <div class="product-info">
                                         <div class="product-name" title='<%# Eval("DBItemName") %>'><%# Eval("DBItemName") %></div>
                                         <div class="product-category"><%# Eval("DBCategory") %></div>
                                         <div class="product-price-row">
                                             <span class="product-price">₱<%# Convert.ToDouble(Eval("DBUnitPrice")).ToString("N2") %></span>
-                                            <span class="add-btn-icon"><i class="fa-solid fa-plus"></i></span>
+                                            <span class="add-btn-icon" aria-hidden="true"><i class="fa-solid fa-plus"></i></span>
                                         </div>
                                     </div>
                                 </div>
                             </asp:LinkButton>
                         </ItemTemplate>
                     </asp:Repeater>
-                    <asp:Panel ID="Panel_NoResults" runat="server" Visible="false" Style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--text-light-secondary);">
-                        <i class="fa-solid fa-box-open" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i>
-                        <div style="font-weight: 600;">No items found</div>
-                        <div style="font-size: 12px; margin-top: 4px;">Try clearing your search or changing the category filter.</div>
+
+                    <asp:Panel ID="Panel_NoResults" runat="server" Visible="false" CssClass="pos-no-results">
+                        <span class="pos-empty-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <div class="pos-empty-title">No products found</div>
+                        <div class="pos-empty-text">Clear the search or pick a different category.</div>
                     </asp:Panel>
                 </div>
-            </div>
+            </section>
 
-            <!-- Right Panel: Order Cart (Maximum space for item list) -->
-            <div class="pos-checkout-panel" style="display: flex; flex-direction: column; height: 100%; overflow: hidden;">
-<%--                <div class="pos-toolbar" style="flex-shrink: 0; padding: 12px 16px;">
-                    <div class="pos-title" style="font-size: 15px;">
-                        <i class="fa-solid fa-cart-shopping"></i>Current Order
+            <!-- ============ Order / Checkout ============ -->
+            <aside class="pos-checkout-panel" aria-label="Current order">
+
+                <div class="pos-cart-head">
+                    <div class="pos-cart-title">
+                        <i class="fa-solid fa-receipt" aria-hidden="true"></i>
+                        <span>Current order</span>
+                        <span class="pos-cart-count is-empty" aria-live="polite">No items</span>
                     </div>
-                </div>--%>
-                <!-- Flexible Scrollable Cart Table Container (Gets maximum height) -->
-                <div class="cart-table-wrapper" style="flex: 1; overflow-y: auto; max-height: none;">
+                    <button type="button" class="pos-sheet-toggle" aria-expanded="false" aria-label="Show or hide order details" onclick="return togglePOSCart();">
+                        <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <div class="cart-table-wrapper">
                     <asp:GridView ID="GridView_Cart" runat="server" AutoGenerateColumns="False"
                         CssClass="cart-table" OnRowCommand="GridView_Cart_RowCommand" GridLines="None">
+                        <HeaderStyle CssClass="cart-head" />
+                        <RowStyle CssClass="cart-row" />
                         <Columns>
-                            <asp:BoundField DataField="ItemName" HeaderText="Item" />
-                            <asp:TemplateField HeaderText="Qty">
+                            <asp:TemplateField HeaderText="Item" ItemStyle-CssClass="cell-name">
+                                <ItemTemplate>
+                                    <div class="cart-item-name"><%# HttpUtility.HtmlEncode(Convert.ToString(Eval("ItemName"))) %></div>
+                                    <div class="cart-item-unit">₱<%# Convert.ToDouble(Eval("UnitPrice")).ToString("N2") %> each</div>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+
+                            <asp:TemplateField HeaderText="Qty" ItemStyle-CssClass="cell-qty">
                                 <ItemTemplate>
                                     <div class="qty-controls">
-                                        <asp:LinkButton ID="btnDecrease" runat="server" CommandName="DecreaseQty" CommandArgument='<%# Eval("ItemId") %>' CssClass="qty-btn">-</asp:LinkButton>
-                                        <span style="font-weight: 600; min-width: 18px; text-align: center;"><%# Eval("Quantity") %></span>
-                                        <asp:LinkButton ID="btnIncrease" runat="server" CommandName="IncreaseQty" CommandArgument='<%# Eval("ItemId") %>' CssClass="qty-btn">+</asp:LinkButton>
+                                        <asp:LinkButton ID="btnDecrease" runat="server" CommandName="DecreaseQty" CommandArgument='<%# Eval("ItemId") %>' CssClass="qty-btn" ToolTip="Decrease quantity" aria-label="Decrease quantity"><i class="fa-solid fa-minus"></i></asp:LinkButton>
+                                        <span class="qty-value"><%# Eval("Quantity") %></span>
+                                        <asp:LinkButton ID="btnIncrease" runat="server" CommandName="IncreaseQty" CommandArgument='<%# Eval("ItemId") %>' CssClass="qty-btn" ToolTip="Increase quantity" aria-label="Increase quantity"><i class="fa-solid fa-plus"></i></asp:LinkButton>
                                     </div>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Subtotal">
+
+                            <asp:TemplateField HeaderText="Subtotal" ItemStyle-CssClass="cell-sub">
                                 <ItemTemplate>
-                                    ₱<%# Convert.ToDouble(Eval("Subtotal")).ToString("N2") %>
+                                    <span class="cart-item-sub">₱<%# Convert.ToDouble(Eval("Subtotal")).ToString("N2") %></span>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="">
+
+                            <asp:TemplateField HeaderText="" ItemStyle-CssClass="cell-remove">
                                 <ItemTemplate>
-                                    <asp:LinkButton ID="btnRemove" runat="server" CommandName="RemoveItem" CommandArgument='<%# Eval("ItemId") %>' Style="color: #ef4444; padding: 6px;">
-                                        <i class="fa-solid fa-trash"></i>
+                                    <asp:LinkButton ID="btnRemove" runat="server" CommandName="RemoveItem" CommandArgument='<%# Eval("ItemId") %>' CssClass="cart-remove" ToolTip="Remove item" aria-label="Remove item">
+                                        <i class="fa-regular fa-trash-can"></i>
                                     </asp:LinkButton>
                                 </ItemTemplate>
                             </asp:TemplateField>
                         </Columns>
                         <EmptyDataTemplate>
-                            <div style="text-align: center; color: var(--text-light-secondary); padding: 30px 10px; font-size: 13px;">
-                                <i class="fa-solid fa-basket-shopping" style="font-size: 28px; margin-bottom: 6px; color: var(--border-light);"></i>
-                                <div>Cart is empty. Select products.</div>
+                            <div class="pos-empty">
+                                <span class="pos-empty-icon"><i class="fa-solid fa-basket-shopping"></i></span>
+                                <div class="pos-empty-title">Order is empty</div>
+                                <div class="pos-empty-text">Tap a product to add it here.</div>
                             </div>
                         </EmptyDataTemplate>
                     </asp:GridView>
                 </div>
 
-                <!-- Footer Summary & Customer/PC Selection Placed at the Bottom -->
-                <div class="cart-summary" style="flex-shrink: 0; padding: 12px 16px; border-top: 1px solid var(--border-light); background: rgba(0,0,0,0.01);">
+                <div class="cart-summary">
 
-                    <!-- PC Terminal & Customer Selection Moved Below -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed var(--border-light);">
-                        <div>
-                            <label style="font-size: 10px; font-weight: 600; display: block; margin-bottom: 2px;">PC Terminal</label>
-                            <asp:DropDownList ID="DropDownList_POSComputer" runat="server" CssClass="form-control bnet-select" Style="font-size: 11px; padding: 2px 6px; height: 28px;" AutoPostBack="true" OnSelectedIndexChanged="DropDownList_POSComputer_SelectedIndexChanged">
+                    <div class="pos-session">
+                        <div class="pos-field">
+                            <asp:Label runat="server" AssociatedControlID="DropDownList_POSComputer" CssClass="pos-field-label" Text="PC terminal" />
+                            <asp:DropDownList ID="DropDownList_POSComputer" runat="server" CssClass="form-control bnet-select pos-select" AutoPostBack="true" OnSelectedIndexChanged="DropDownList_POSComputer_SelectedIndexChanged">
                             </asp:DropDownList>
                         </div>
-                        <div>
-                            <label style="font-size: 10px; font-weight: 600; display: block; margin-bottom: 2px;">Customer</label>
-                            <asp:DropDownList ID="DropDownList_POSCustomer" runat="server" CssClass="form-control bnet-select" Style="font-size: 11px; padding: 2px 6px; height: 28px;" AutoPostBack="true" OnSelectedIndexChanged="DropDownList_POSCustomer_SelectedIndexChanged">
+                        <div class="pos-field">
+                            <asp:Label runat="server" AssociatedControlID="DropDownList_POSCustomer" CssClass="pos-field-label" Text="Customer" />
+                            <asp:DropDownList ID="DropDownList_POSCustomer" runat="server" CssClass="form-control bnet-select pos-select" AutoPostBack="true" OnSelectedIndexChanged="DropDownList_POSCustomer_SelectedIndexChanged">
                             </asp:DropDownList>
                         </div>
                     </div>
 
-                    <!-- Modern BNet Toggle Switch for Points -->
-                    <asp:Panel ID="Panel_Points" runat="server" Visible="false" Style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; margin-bottom: 8px; padding: 4px 6px; background: rgba(99, 102, 241, 0.05); border-radius: 6px;">
-                        <div>
-                            <span>Points: </span>
-                            <strong style="color: var(--primary);">
+                    <asp:Panel ID="Panel_Points" runat="server" Visible="false" CssClass="pos-points">
+                        <div class="pos-points-balance">
+                            <i class="fa-solid fa-coins" aria-hidden="true"></i>
+                            <span>Points</span>
+                            <strong>
                                 <asp:Literal ID="litAvailablePoints" runat="server">0</asp:Literal></strong>
                         </div>
                         <div>
                             <label class="bnet-toggle-wrapper">
                                 <asp:CheckBox ID="CheckBox_UsePoints" runat="server" AutoPostBack="true" OnCheckedChanged="CheckBox_UsePoints_CheckedChanged" />
                                 <span class="bnet-toggle-slider"></span>
-                                <span>Use Points</span>
+                                <span>Use points</span>
                             </label>
                         </div>
                     </asp:Panel>
 
-                    <div class="total-row" style="margin-bottom: 8px;">
-                        <span class="total-label" style="font-size: 13px;">Total Payable</span>
-                        <span class="total-amount" style="font-size: 18px;">₱<asp:Label ID="Label_Total" runat="server" Text="0.00"></asp:Label></span>
+                    <div class="total-row">
+                        <span class="total-label">Total payable</span>
+                        <span class="total-amount"><span class="pos-currency">₱</span><asp:Label ID="Label_Total" runat="server" Text="0.00"></asp:Label></span>
                     </div>
 
-                    <div class="cart-actions" style="display: flex; gap: 8px;">
-                        <asp:LinkButton ID="LinkButton_Clear" OnClick="LinkButton_Clear_Click" CssClass="btn btn-secondary" runat="server" Style="padding: 8px 12px; font-size: 12px;">
-                            Clear
+                    <div class="cart-actions">
+                        <asp:LinkButton ID="LinkButton_Clear" OnClick="LinkButton_Clear_Click" CssClass="btn btn-secondary pos-btn pos-btn-ghost" runat="server">
+                            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Clear
                         </asp:LinkButton>
-                        <asp:LinkButton ID="LinkButton_Submit" OnClick="LinkButton_Submit_Click" CssClass="btn btn-primary" Style="flex: 1; justify-content: center; padding: 8px 12px; font-size: 12px;" OnClientClick="return ValidatePOSCart();" runat="server">
-                            <i class="fa-solid fa-cart-shopping"></i> Complete Sale
+                        <asp:LinkButton ID="LinkButton_Submit" OnClick="LinkButton_Submit_Click" CssClass="btn btn-primary pos-btn pos-btn-primary" OnClientClick="return ValidatePOSCart();" runat="server">
+                            <i class="fa-solid fa-check" aria-hidden="true"></i> Complete sale
                         </asp:LinkButton>
                     </div>
                 </div>
-            </div>
+            </aside>
         </div>
         <uc1:POSReceipt runat="server" ID="POSReceipt" />
     </ContentTemplate>

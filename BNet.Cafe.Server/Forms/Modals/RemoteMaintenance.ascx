@@ -49,6 +49,11 @@
             msgEl.innerHTML = 'Are you sure you want to broadcast the <strong>Patch Update</strong> command to all registered client computers?';
             confirmBtn.className = 'btn btn-primary';
             confirmBtn.innerText = 'Run Global Patch';
+        } else if (actionType === 'GLOBAL_SHUTDOWN') {
+            titleEl.innerText = 'Confirm Global Shutdown';
+            msgEl.innerHTML = 'Are you sure you want to shut down <strong>' + targetName + '</strong>? Any unsaved work on client PCs may be lost.';
+            confirmBtn.className = 'btn btn-danger';
+            confirmBtn.innerText = 'Shut Down All';
         } else {
             titleEl.innerText = 'Confirm Wake On LAN';
             msgEl.innerHTML = 'Are you sure you want to broadcast Wake On LAN packets to <strong>' + targetName + '</strong>?';
