@@ -6,10 +6,9 @@
     <ContentTemplate>
         <asp:HiddenField ID="HiddenField_PriceId" runat="server" Value="0" />
         <asp:HiddenField ID="HiddenField_TotalMinutes" runat="server" Value="0" />
-
+        <asp:HiddenField ID="HiddenField_ActiveTab" runat="server" Value="Account" />
         <div class="pricing-settings-wrapper">
             <!-- Header Section -->
-            <!-- Quick Reference -->
             <div class="quick-reference">
                 <h3>💡 Quick Reference</h3>
                 <p>
@@ -30,6 +29,24 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Pricing Mode Tabs -->
+            <div class="pricing-tabs" role="tablist" aria-label="Pricing Mode">
+                <asp:LinkButton ID="LinkButton_TabAccount" runat="server"
+                    CssClass="pricing-tab-btn active"
+                    OnClick="LinkButton_TabAccount_Click">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Account Pricing</span>
+                </asp:LinkButton>
+
+                <asp:LinkButton ID="LinkButton_TabComputer" runat="server"
+                    CssClass="pricing-tab-btn"
+                    OnClick="LinkButton_TabComputer_Click">
+                    <i class="fa-solid fa-desktop"></i>
+                    <span>Computer Pricing</span>
+                </asp:LinkButton>
+            </div>
+
             <!-- Main Content Grid -->
             <div class="pricing-container">
                 <!-- Left: Form Panel -->
@@ -39,11 +56,11 @@
                             <i class="fa-solid fa-plus-circle"></i>Add/Edit Pricing Rule
                         </h2>
 
-                        <!-- Customer Type -->
+                        <!-- Customer Tier / Computer Name -->
                         <div class="form-group">
-                            <label for="DropDownList_CustomerType">
+                            <asp:Label ID="Label_CustomerType" runat="server" AssociatedControlID="DropDownList_CustomerType">
                                 Customer Tier <span class="required-badge">*</span>
-                            </label>
+                            </asp:Label>
                             <asp:DropDownList ID="DropDownList_CustomerType" AutoPostBack="true" runat="server" CssClass="form-control bnet-select">
                                 <asp:ListItem Text="Guest / Walk-In" Value="GUEST / WALK-IN"></asp:ListItem>
                                 <asp:ListItem Text="Member" Value="MEMBER"></asp:ListItem>
@@ -57,7 +74,6 @@
                                 Duration <span class="required-badge">*</span>
                             </label>
 
-                            <!-- Hours and Minutes Inputs -->
                             <div class="duration-input-group">
                                 <div class="duration-input-item">
                                     <label for="TextBox_Hours" class="duration-label">Hours</label>
@@ -80,8 +96,7 @@
 
                             <!-- Total Minutes Display -->
                             <div class="helper-text" style="margin-top: 12px;">
-                                <i class="fa fa-clock"></i>Total Duration: 
-                               
+                                <i class="fa fa-clock"></i>Total Duration:
                                 <span id="TotalDurationDisplay" class="value-highlight">0 mins</span>
                                 <span id="TotalMinutesValue" class="value-highlight" style="display: none;">0</span>
                             </div>
@@ -139,7 +154,6 @@
                             <asp:GridView ID="GridView_Pricing" runat="server" AutoGenerateColumns="False" GridLines="None"
                                 CssClass="bnet-table pricing-table">
                                 <Columns>
-
                                     <asp:TemplateField HeaderText="Tier">
                                         <HeaderStyle Width="20%" CssClass="header-cell" />
                                         <ItemStyle Width="20%" CssClass="cell-tier" />
@@ -149,7 +163,6 @@
                                             </span>
                                         </ItemTemplate>
                                     </asp:TemplateField>
-
 
                                     <asp:TemplateField HeaderText="Duration">
                                         <HeaderStyle Width="30%" CssClass="header-cell" />
@@ -171,12 +184,12 @@
                                             </span>
                                         </ItemTemplate>
                                     </asp:TemplateField>
+
                                     <asp:TemplateField HeaderText="Actions">
                                         <HeaderStyle Width="25%" CssClass="header-cell" />
                                         <ItemStyle Width="25%" CssClass="cell-actions" />
                                         <ItemTemplate>
                                             <div class="action-buttons">
-                                                <!-- Pure JS Edit Button -->
                                                 <button type="button"
                                                     class="btn-action btn-edit"
                                                     title="Edit this rule"
@@ -188,7 +201,6 @@
                                                     <i class="fa fa-edit"></i>
                                                 </button>
 
-                                                <!-- Pure JS Delete Button -->
                                                 <button type="button"
                                                     class="btn-action btn-delete"
                                                     title="Delete this rule"
