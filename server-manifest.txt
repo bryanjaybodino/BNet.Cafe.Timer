@@ -61,7 +61,7 @@ ac1a6c5d0e5280f419fcc4bd51eaaad08a6cd046	Assets/Pages/InventoryManage.css
 8050e854eff115003f94ec3ca5b0c60249660679	Assets/Pages/POS.css
 a1c06447ca34b430933bede3c85c3f532720d2c9	Assets/Pages/POS.js
 ab91d00cccfeec4d9a0600fa57ab1474885a3ce3	Assets/Pages/PointsSettings.js
-334b21ab3a6c210af720789e61ae238591f44667	Assets/Pages/PricingSettings.css
+22aff4020a277130821a43ead8bed943d05ddefa	Assets/Pages/PricingSettings.css
 72667e4d91fb5b995031be2941ac8c5175ef8584	Assets/Pages/PricingSettings.js
 976d68948571adfa2567b29b067852fd7bcabbb4	Assets/Pages/Remote.css
 4428ae61f00a126ddfc103f8f3e2e497df5595f3	Assets/Pages/Remote.js
@@ -243,7 +243,7 @@ ae7e2793b0897258c96743bffa01b12309fe82f6	Forms/Modals/UserDelete.ascx
 6a1ce41133d0d5581d836736a4a47ee9324eebb8	Forms/POS.ascx
 ca8e90d064ca93ef86d30cc6a486c96975f9d0af	Forms/Points.ascx
 c69f3e245c2f51a99e0c128f4ac2467dc39144e4	Forms/PointsSettings.ascx
-c287c1affdd8b9e72a21f00d029628ade68779a5	Forms/PricingSettings.ascx
+4f5d57623ad1502d9bedaec71b41c88d78d56c7a	Forms/PricingSettings.ascx
 bbcc564c9a452ef2dd4a6315700ecabb55db2b9f	Forms/Remote.ascx
 4ee7851323100aca3db3f774d73214506b261f10	Forms/RentalManage.ascx
 69ed0d7eff388806a1049dcc9de710b403b3e721	Forms/Rentals.ascx
@@ -290,8 +290,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-05ae9d296df292ce8808afc0383ccd8473bcbf96	bin/BNet.Cafe.Server.dll
-6bb3fda74ad661b7c6f5a5448de27e405177858f	bin/BNet.Cafe.Server.pdb
+ef728013878903d0739b6660bf8f909a410b854d	bin/BNet.Cafe.Server.dll
+88a4efd239993bd93b5fc2c545a7fcc06d3337e9	bin/BNet.Cafe.Server.pdb
 cdc4b348edb1d080e881fa98b7d7312497870f23	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 ffb774c655ce5a134fe9d82a1705b90dcd0f3d2c	bin/BNet.Cafe.Websocket.pdb
