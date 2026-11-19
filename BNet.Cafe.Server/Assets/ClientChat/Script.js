@@ -110,11 +110,6 @@ function connectAgent() {
 
     agentWs.onopen = () => {
         setStatus('Connected', true);
-
-        sendPayload(0x03, {
-            ClientName: clientName,
-            windowTitle: "Chat Client Online"
-        });
     };
 
     agentWs.onmessage = (event) => {

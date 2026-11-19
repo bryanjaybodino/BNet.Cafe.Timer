@@ -10,7 +10,7 @@
                     <h1 style="font-size: 20px; display: flex; align-items: center; gap: 8px;">
                         <i class="fa-solid fa-screwdriver-wrench" style="color: var(--primary);"></i>Client Maintenance
                     </h1>
-                    <p>Put all client PCs into maintenance mode or broadcast Wake on LAN globally</p>
+                    <p>Put all client PCs into maintenance mode, broadcast patch updates, or wake up clients globally</p>
                 </div>
             </div>
 
@@ -62,7 +62,7 @@
                 </div>
             </div>
 
-            <!-- Maintenance & Wake On LAN Controls -->
+            <!-- Maintenance, Patch & Wake On LAN Controls -->
             <div class="card" style="display: flex; flex-direction: column; gap: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); padding: 24px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--border-color, #eee); flex-wrap: wrap; gap: 12px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
@@ -79,21 +79,32 @@
                     <span id="StatusBadge" runat="server" class="bnet-badge-status gray">System Ready</span>
                 </div>
 
-                <!-- Global Maintenance Switch -->
+                <!-- Global Maintenance Command -->
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-radius: 8px; background-color: var(--bg-light-tertiary); flex-wrap: wrap; gap: 16px;">
                     <div>
-                        <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 4px;">Global Maintenance Switch</h3>
+                        <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 4px;">Global Maintenance Command</h3>
                         <span style="font-size: 13px; color: var(--text-light-secondary);">Broadcasts the MAINTENANCE command to all registered client computers instantly.</span>
                     </div>
                     <div>
-                        <span class="btn btn-danger" onclick="openMaintenanceModal('GLOBAL_MAINTENANCE', 'All Clients')">Send Maintenance to All</span>
+                        <span class="btn btn-danger" onclick="openMaintenanceModal('GLOBAL_MAINTENANCE', 'All Clients')">Global Maintenance</span>
                     </div>
                 </div>
 
-                <!-- Global Wake On LAN Switch -->
+                <!-- Global Patch Command -->
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-radius: 8px; background-color: var(--bg-light-tertiary); flex-wrap: wrap; gap: 16px;">
                     <div>
-                        <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 4px;">Global Wake On LAN Switch</h3>
+                        <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 4px;">Global Patch Command</h3>
+                        <span style="font-size: 13px; color: var(--text-light-secondary);">Broadcasts the PATCH command to update all registered client computers instantly.</span>
+                    </div>
+                    <div>
+                        <span class="btn btn-primary" onclick="openMaintenanceModal('GLOBAL_PATCH', 'All Clients')">Global Patch</span>
+                    </div>
+                </div>
+
+                <!-- Global Wake On LAN Command -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-radius: 8px; background-color: var(--bg-light-tertiary); flex-wrap: wrap; gap: 16px;">
+                    <div>
+                        <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 4px;">Global Wake On LAN Command</h3>
                         <span style="font-size: 13px; color: var(--text-light-secondary);">Broadcasts Wake-on-LAN packets to turn on all registered client computers.</span>
                     </div>
                     <div>
