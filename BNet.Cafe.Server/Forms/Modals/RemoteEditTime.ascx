@@ -71,7 +71,7 @@
             ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx')
             : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx');
 
-        fetch(endpoint + '?minutes=' + minutes + '&customerType=' + encodeURIComponent(customerType))
+        fetch(endpoint + '?minutes=' + minutes + '&customerType=' + encodeURIComponent(customerType) + '&clientName=' + encodeURIComponent((typeof getClientName === 'function') ? getClientName() : ''))
             .then(function (response) { return response.json(); })
             .then(function (data) {
                 if (data && data.totalAmount !== undefined) {
@@ -97,7 +97,7 @@
             ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx')
             : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx');
 
-        fetch(endpoint + '?amount=' + amount + '&customerType=' + encodeURIComponent(customerType))
+        fetch(endpoint + '?amount=' + amount + '&customerType=' + encodeURIComponent(customerType) + '&clientName=' + encodeURIComponent((typeof getClientName === 'function') ? getClientName() : ''))
             .then(function (response) { return response.json(); })
             .then(function (data) {
                 if (data && data.totalMinutes !== undefined) {

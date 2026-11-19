@@ -24,7 +24,7 @@ function CalculateDurationFromAmountHandlerBackend(amount, baseMinutes) {
         ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx')
         : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx');
 
-    fetch(endpoint + '?amount=' + amount + '&customerType=' + encodeURIComponent(customerType))
+    fetch(endpoint + '?amount=' + amount + '&customerType=' + encodeURIComponent(customerType) + '&clientName=' + encodeURIComponent(getClientName()))
         .then(function (response) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -104,7 +104,7 @@ function calculateTimeFromAmount() {
             ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx')
             : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateDurationFromAmountHandler.ashx');
 
-        fetch(endpoint + '?amount=' + extraAmount + '&customerType=' + encodeURIComponent(customerType))
+        fetch(endpoint + '?amount=' + extraAmount + '&customerType=' + encodeURIComponent(customerType) + '&clientName=' + encodeURIComponent(getClientName()))
             .then(function (response) {
                 if (!response.ok) throw new Error('Network response was not ok');
                 return response.json();
@@ -191,7 +191,7 @@ function calculateRentalPriceBackend(totalMinutes) {
         ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx')
         : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx');
 
-    fetch(endpoint + '?minutes=' + extraMinutes + '&customerType=' + encodeURIComponent(customerType))
+    fetch(endpoint + '?minutes=' + extraMinutes + '&customerType=' + encodeURIComponent(customerType) + '&clientName=' + encodeURIComponent(getClientName()))
         .then(function (response) {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -280,7 +280,7 @@ function calculateAmount() {
         ? window.location.pathname.replace(/[^\/]+\.aspx$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx')
         : window.location.pathname.replace(/[^\/]+$/i, 'Ashx/CalculateAmountFromDurationHandler.ashx');
 
-    fetch(endpoint + '?minutes=' + extraMinutes + '&customerType=' + encodeURIComponent(customerType))
+    fetch(endpoint + '?minutes=' + extraMinutes + '&customerType=' + encodeURIComponent(customerType) + '&clientName=' + encodeURIComponent(getClientName()))
         .then(function (response) { return response.json(); })
         .then(function (data) {
             if (data) {
@@ -381,6 +381,11 @@ function Validate() {
     }
     disableSubmitButton();
     return true;
+}
+
+function getClientName() {
+    var clientName = document.querySelector('[id$="TextBox_ComputerName"]');
+    return clientName ? clientName.value.trim() : '';
 }
 
 function getCustomerType() {
