@@ -290,8 +290,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-f785c6628cc745e86eda42b82724009f901bf5ee	bin/BNet.Cafe.Server.dll
-56d86ab97b6e41d236849d0cca3a9dabb0208ad0	bin/BNet.Cafe.Server.pdb
+05ae9d296df292ce8808afc0383ccd8473bcbf96	bin/BNet.Cafe.Server.dll
+6bb3fda74ad661b7c6f5a5448de27e405177858f	bin/BNet.Cafe.Server.pdb
 cdc4b348edb1d080e881fa98b7d7312497870f23	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 ffb774c655ce5a134fe9d82a1705b90dcd0f3d2c	bin/BNet.Cafe.Websocket.pdb
