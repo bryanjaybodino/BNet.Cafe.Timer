@@ -209,7 +209,7 @@
                     </button>
                     <div class="user-menu">
                         <div class="bnet-dropdown" tabindex="0">
-                            <div class="user-menu" style="cursor: pointer;">
+                            <div class="user-menu bnet-dropdown-toggle" style="cursor: pointer;">
                                 <div class="user-avatar">
                                     <asp:Label ID="Label_InitialName" runat="server" Text=""></asp:Label>
                                 </div>
@@ -222,7 +222,7 @@
                                 <i class="fas fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
                             </div>
 
-                            <div class="bnet-dropdown-menu" style="right: 0; left: auto;">
+                            <div class="bnet-dropdown-menu">
                                 <a href="BNetPage.aspx?Logout=true" class="bnet-dropdown-item">
                                     <i class="fas fa-right-from-bracket"></i>
                                     <span>Logout</span>
