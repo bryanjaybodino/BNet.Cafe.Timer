@@ -75,25 +75,23 @@
 
                 <!-- Footer Layout: Active Session Note & Action Buttons -->
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; border-top: 1px solid var(--border-light); padding-top: 20px; flex-wrap: wrap;">
-                    
+
                     <!-- Notice regarding currently logged-in users -->
                     <div style="font-size: 12px; color: #f59e0b; display: flex; align-items: center; gap: 6px; background: rgba(245, 158, 11, 0.1); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.2);">
                         <i class="fa-solid fa-circle-info"></i>
                         <span><strong>Note:</strong> If the user is currently logged in, the added bonus time will not automatically reflect on their active session.</span>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div style="display: flex; gap: 12px; margin-left: auto;">
-                        <span onclick="navigateTo('BNetPage.aspx?Form=Users')" class="btn btn-secondary" style="cursor: pointer; display: inline-flex; align-items: center;">
-                            <i class="fa-solid fa-arrow-left"></i>Back
-                        </span>
-                        <asp:LinkButton ID="LinkButton_Submit" OnClick="LinkButton_Submit_Click" CssClass="btn btn-primary" OnClientClick="return ValidateTopUp();" runat="server" Style="display: inline-flex; align-items: center;">
-                            <i class="fa-solid fa-circle-check"></i> Process Top-Up
-                        </asp:LinkButton>
-                    </div>
 
                 </div>
 
+                <!-- Action Buttons -->
+                <div class="form-grid-action">
+                    <span onclick="navigateTo('BNetPage.aspx?Form=Users')" class="btn btn-secondary">Back</span>
+                    <asp:LinkButton ID="LinkButton_Submit" OnClick="LinkButton_Submit_Click" CssClass="btn btn-primary" OnClientClick="return Validate();" runat="server">
+                    <i class="fa fa-save"></i> Save Changes
+                    </asp:LinkButton>
+                </div>
             </div>
         </asp:Panel>
     </ContentTemplate>

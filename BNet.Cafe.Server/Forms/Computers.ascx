@@ -105,15 +105,15 @@
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 8px;">
+                <div class="toolbar-actions">
                     <a class="btn btn-secondary" onclick="openRemoteAnnouncementsModal()">
                         <i class="fa-solid fa-bullhorn"></i>Announcement
-                    </a>
+                        </a>
                     <a class="btn btn-secondary" onclick="openPauseModal('')">
                         <i class="fa-solid fa-circle-pause"></i>Pause / Resume Time
                     </a>
                     <asp:HyperLink ID="HyperLink_Add" NavigateUrl="~/BNetPage.aspx?Form=ComputerCreate" CssClass="btn btn-primary" runat="server">
-                        + Add Computer 
+                        + Add Computer
                     </asp:HyperLink>
                 </div>
             </div>
@@ -258,6 +258,6 @@
         <uc1:RemoteShutdown runat="server" ID="RemoteShutdown" />
         <uc1:RemoteRestart runat="server" ID="RemoteRestart" />
         <uc1:RemoteWakeUp runat="server" ID="RemoteWakeUp" />
-        <uc1:RemoteAnnouncements runat="server" id="RemoteAnnouncements" />
+        <uc1:RemoteAnnouncements runat="server" ID="RemoteAnnouncements" />
     </ContentTemplate>
 </asp:UpdatePanel>

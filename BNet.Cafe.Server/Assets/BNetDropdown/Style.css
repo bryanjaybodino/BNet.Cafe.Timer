@@ -43,7 +43,6 @@
 }
 
 /* Open state via CSS focus-within or JS active class */
-.bnet-dropdown:focus-within .bnet-dropdown-menu,
 .bnet-dropdown.open .bnet-dropdown-menu {
     display: block;
 }

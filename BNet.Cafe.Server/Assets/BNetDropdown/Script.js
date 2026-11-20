@@ -92,9 +92,9 @@
     static closeAll(except = null) {
         document.querySelectorAll('.bnet-dropdown.open').forEach((el) => {
             if (except && el === except.dropdown) return;
-            new BNetDropdown(el).close();
+            el.classList.remove('open');
         });
-        if (!except) BNetDropdown.current = null;
+        BNetDropdown.current = except || null;
     }
 
     // Static initializer: ONE delegated handler for every .bnet-dropdown,

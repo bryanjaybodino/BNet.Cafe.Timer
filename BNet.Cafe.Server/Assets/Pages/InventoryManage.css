@@ -12,8 +12,32 @@
     .inventory-form-layout {
         grid-template-columns: 1fr;
     }
+
+    .inventory-upload-box {
+        max-width: 240px;
+        margin: 0 auto;
+    }
+
+    .image-upload-col .form-label {
+        text-align: center;
+    }
 }
 
+@media (max-width: 576px) {
+    .form-row-2col {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid-action {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+        .form-grid-action .btn {
+            width: 100%;
+            justify-content: center;
+        }
+}
 /* Form Helper Utilities */
 .required {
     color: #ef4444;

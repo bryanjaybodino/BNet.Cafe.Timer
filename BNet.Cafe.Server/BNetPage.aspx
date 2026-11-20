@@ -171,6 +171,9 @@
                 <asp:HyperLink ID="HyperLink_Commits" runat="server" ToolTip="GitHubCommitsFeed" onclick="navigateTo('?Form=GitHubCommitsFeed'); return false;">
                             <i class="fab fa-github"></i><span>Latest Updates</span>
                 </asp:HyperLink>
+                <asp:HyperLink ID="HyperLink_HowToUse" runat="server" ToolTip="HowToUse" onclick="navigateTo('?Form=HowToUse'); return false;">
+                    <i class="fas fa-book-open"></i><span>How To Use</span>
+                </asp:HyperLink>
             </div>
         </div>
 

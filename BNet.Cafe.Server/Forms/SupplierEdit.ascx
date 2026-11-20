@@ -35,7 +35,7 @@
                 </div>
 
                 <!-- Address -->
-                <div class="form-group" style="grid-column: span 2;">
+                <div class="form-group form-group-span-2">
                     <label for="<%= TextBox_Address.ClientID %>">Address</label>
                     <asp:TextBox ID="TextBox_Address" runat="server" TextMode="MultiLine" Rows="2" CssClass="form-control" placeholder="Enter physical address" MaxLength="250"></asp:TextBox>
                 </div>

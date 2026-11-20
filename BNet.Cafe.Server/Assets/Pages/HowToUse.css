@@ -1,0 +1,158 @@
+﻿/* ==========================================
+   HOW TO USE - BNET TUTORIAL THEME
+   ========================================== */
+.htu-wrapper {
+    padding: 20px;
+}
+
+.htu-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.htu-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.htu-yt-icon {
+    color: #ef4444;
+    font-size: 22px;
+}
+
+.htu-subtitle {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-light-secondary);
+}
+
+/* Override white-space: nowrap from base .bnet-table for multi-line notes */
+.htu-table {
+    white-space: normal;
+}
+
+    .htu-table td {
+        white-space: normal;
+        vertical-align: middle;
+    }
+
+.htu-topic-title {
+    font-weight: 600;
+    color: var(--text-light);
+    font-size: 14px;
+    display: block;
+}
+
+.htu-notes-text {
+    color: var(--text-light-secondary);
+    font-size: 13px;
+    line-height: 1.5;
+    display: block;
+}
+
+/* YouTube Link & Watch Pill */
+.htu-yt-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background-color: var(--bg-light-tertiary);
+    border: 1px solid var(--border-light);
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+    .htu-yt-link i {
+        color: #ef4444;
+        font-size: 15px;
+    }
+
+    .htu-yt-link:hover {
+        background-color: rgba(239, 68, 68, 0.1);
+        border-color: #ef4444;
+        color: var(--text-light);
+    }
+
+.htu-yt-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background-color: rgba(239, 68, 68, 0.14);
+    color: #ef4444;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.htu-yt-url-sub {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--text-light-secondary);
+    word-break: break-all;
+}
+
+.htu-empty-cell {
+    text-align: center !important;
+    padding: 32px 16px !important;
+    color: var(--text-light-secondary);
+    font-size: 14px;
+}
+
+/* Match .bnet-table-pagination-container with <button> & <span> elements */
+.htu-wrapper .bnet-table-pagination-container .page-link.pointer {
+    border: 1px solid var(--primary, #3b82f6);
+}
+
+.htu-wrapper .bnet-table-pagination-container .page-item:not(.disabled) .page-link.pointer:hover {
+    background-color: var(--border-light, #e2e8f0);
+    color: var(--primary, #3b82f6);
+    border-color: var(--primary-dark, #1e40af);
+}
+
+.htu-wrapper .bnet-table-pagination-container .page-item.active .page-link {
+    background-color: var(--primary, #3b82f6);
+    color: var(--btn-primary-text, #ffffff);
+    border-color: var(--primary, #3b82f6);
+}
+
+.htu-wrapper .bnet-table-pagination-container .page-item.disabled .page-link {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+    background-color: var(--bg-light-secondary);
+}
+/* Facebook link & badge styling */
+.htu-link--facebook i {
+    color: #1877f2;
+}
+
+.htu-link--facebook:hover {
+    background-color: rgba(24, 119, 242, 0.1);
+    border-color: #1877f2;
+}
+
+.htu-badge--facebook {
+    background-color: rgba(24, 119, 242, 0.14);
+    color: #1877f2;
+}
+@media (max-width: 768px) {
+    .htu-wrapper {
+        padding: 14px;
+    }
+
+    .htu-yt-link {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

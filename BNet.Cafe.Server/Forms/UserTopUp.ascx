@@ -81,36 +81,29 @@
                     <asp:TextBox ID="TextBox_Description" runat="server" Enabled="false" CssClass="form-control" Text="Top-Up Load Credit" Style="width: 100%;"></asp:TextBox>
                 </div>
 
-                <!-- Footer Layout: Critical Red Warning Panel with Button beside action buttons -->
-                <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; border-top: 1px solid var(--border-light); padding-top: 20px; flex-wrap: wrap;">
-
-                    <!-- Active Session Warning Panel (Critical Red Theme with Button) -->
-                    <asp:Panel ID="Panel_ActiveSessionWarning" runat="server" Visible="false" CssClass="card" Style="background-color: rgba(239, 68, 68, 0.08); border: 1px solid #f87171; border-left: 4px solid #ef4444; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 300px; margin-bottom: 0;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.2rem; color: #ef4444;"></i>
-                                <div style="font-size: 13px; color: #991b1b;">
-                                    <strong style="font-weight: 600; display: block; color: #7f1d1d;">User Already Logged In</strong>
-                                    Active session detected.
-                                </div>
+                <!-- Active Session Warning Panel (Critical Red Theme with Button) -->
+                <asp:Panel ID="Panel_ActiveSessionWarning" runat="server" Visible="false" CssClass="card" Style="background-color: rgba(239, 68, 68, 0.08); border: 1px solid #f87171; border-left: 4px solid #ef4444; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 300px; margin-bottom: 0;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.2rem; color: #ef4444;"></i>
+                            <div style="font-size: 13px; color: #991b1b;">
+                                <strong style="font-weight: 600; display: block; color: #7f1d1d;">User Already Logged In</strong>
+                                Active session detected.
                             </div>
-                            <asp:HyperLink ID="HyperLink_ViewRental" runat="server" CssClass="btn btn-danger" Style="padding: 6px 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
-                                <i class="fa-solid fa-desktop"></i>Manage
-                                <asp:Label ID="Label_LoggedInClientName" runat="server" Text="PC-01"></asp:Label>
-                            </asp:HyperLink>
                         </div>
-                    </asp:Panel>
-
-                    <!-- Action Buttons -->
-                    <div class="form-grid-action" style="display: flex; gap: 12px; margin-top: 0; padding-top: 0; border-top: none; margin-left: auto;">
-                        <span onclick="navigateTo('BNetPage.aspx?Form=Users')" class="btn btn-secondary" style="cursor: pointer; display: inline-flex; align-items: center;">
-                            <i class="fa-solid fa-arrow-left"></i>Back
-                        </span>
-                        <asp:LinkButton ID="LinkButton_Submit" OnClick="LinkButton_Submit_Click" CssClass="btn btn-primary" OnClientClick="return ValidateTopUp();" runat="server" Style="display: inline-flex; align-items: center;">
-                            <i class="fa-solid fa-circle-check"></i> Process Transaction
-                        </asp:LinkButton>
+                        <asp:HyperLink ID="HyperLink_ViewRental" runat="server" CssClass="btn btn-danger" Style="padding: 6px 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+                            <i class="fa-solid fa-desktop"></i>Manage
+                                <asp:Label ID="Label_LoggedInClientName" runat="server" Text="PC-01"></asp:Label>
+                        </asp:HyperLink>
                     </div>
+                </asp:Panel>
 
+                <!-- Action Buttons -->
+                <div class="form-grid-action">
+                    <span onclick="navigateTo('BNetPage.aspx?Form=Users')" class="btn btn-secondary">Back</span>
+                    <asp:LinkButton ID="LinkButton_Submit" OnClick="LinkButton_Submit_Click" CssClass="btn btn-primary" OnClientClick="return Validate();" runat="server">
+                    <i class="fa fa-save"></i> Save Changes
+                    </asp:LinkButton>
                 </div>
 
             </div>
