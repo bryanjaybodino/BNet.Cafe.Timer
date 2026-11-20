@@ -102,7 +102,7 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Assets/fontawesome/font-awesome.min.css
 7f021680b9f71711d5029c2199c42b131bb2cc5c	Assets/fontawesome/webfonts/fa-regular-400.woff2
 5c16cd3e8a008bdcbed97022c005278971f810c2	Assets/fontawesome/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Assets/fontawesome/webfonts/fa-v4compatibility.woff2
-82fc090fdf22f9979265bfad1ed79a015ab12ed6	BNetPage.aspx
+f18c6280ac1fcf1e9a1da529370a388ea21b2625	BNetPage.aspx
 156fc2235fbe90f71a8f45d9a623952e95943827	BNetVendoMachine.aspx
 c3ad12cbe8acb53d0f9a119992b9dc8a8cd7d9b9	Callback.aspx
 a36265a53ad2aea11d908e57935a33b54735d402	ClientChat.aspx
@@ -293,8 +293,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-d440c0b3263b5430792d29f34825aa649a4a86e3	bin/BNet.Cafe.Server.dll
-f3bf8548262e04a681230ceb3c8fa3074544fbf4	bin/BNet.Cafe.Server.pdb
+8d52899004211ad39dcf3ace6445444092b27a0f	bin/BNet.Cafe.Server.dll
+f10a145b9fdbeb60ba808ffecbf02808be6b7086	bin/BNet.Cafe.Server.pdb
 cdc4b348edb1d080e881fa98b7d7312497870f23	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 ffb774c655ce5a134fe9d82a1705b90dcd0f3d2c	bin/BNet.Cafe.Websocket.pdb
