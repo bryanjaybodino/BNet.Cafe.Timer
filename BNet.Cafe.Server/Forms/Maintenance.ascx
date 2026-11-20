@@ -10,7 +10,7 @@
                     <h1 style="font-size: 20px; display: flex; align-items: center; gap: 8px;">
                         <i class="fa-solid fa-screwdriver-wrench" style="color: var(--primary);"></i>Client Maintenance
                     </h1>
-                    <p>Put all client PCs into maintenance mode, broadcast patch updates, shut down, or wake up clients globally</p>
+                    <p>Put all client PCs into maintenance mode, broadcast patch updates, clean up, shut down, or wake up clients globally</p>
                 </div>
             </div>
 
@@ -62,7 +62,7 @@
                 </div>
             </div>
 
-            <!-- Maintenance, Patch & Wake On LAN Controls -->
+            <!-- Maintenance, Clean Up, Patch & Wake On LAN Controls -->
             <div class="card" style="display: flex; flex-direction: column; gap: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); padding: 24px;">
 
                 <!-- Global Maintenance Command -->
@@ -73,6 +73,17 @@
                     </div>
                     <div>
                         <span class="btn btn-danger" onclick="openMaintenanceModal('GLOBAL_MAINTENANCE', 'All Clients')">Global Maintenance</span>
+                    </div>
+                </div>
+
+                <!-- Global Clean Up Command -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-radius: 8px; background-color: var(--bg-light-tertiary); flex-wrap: wrap; gap: 16px;">
+                    <div>
+                        <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 4px;">Global Clean Up Command</h3>
+                        <span style="font-size: 13px; color: var(--text-light-secondary);">Broadcasts the CLEAN UP command to clean up all registered client computers instantly.</span>
+                    </div>
+                    <div>
+                        <span class="btn btn-warning" onclick="openMaintenanceModal('GLOBAL_CLEAN_UP', 'All Clients')">Global Clean Up</span>
                     </div>
                 </div>
 

@@ -12,6 +12,7 @@
         </div>
         <div class="bnet-modal-body">
             <p id="maintenanceModalMessage">Are you sure you want to perform this action?</p>
+            <div id="maintenanceModalDetails" style="display: none; margin-top: 10px; font-size: 13px; text-align: left;"></div>
             <p style="color: var(--text-light-secondary); font-size: 13px; margin-top: 6px;">This action cannot be undone.</p>
         </div>
         <div class="bnet-modal-footer">
@@ -38,12 +39,36 @@
         var titleEl = document.getElementById('maintenanceModalTitle');
         var msgEl = document.getElementById('maintenanceModalMessage');
         var confirmBtn = document.querySelector('[id$="LinkButton_ConfirmMaintenance"]');
+        var detailsEl = document.getElementById('maintenanceModalDetails');
+
+        // Reset details panel; only Clean Up fills it
+        detailsEl.style.display = 'none';
+        detailsEl.innerHTML = '';
 
         if (actionType.includes('MAINTENANCE')) {
             titleEl.innerText = 'Confirm Maintenance Mode';
             msgEl.innerHTML = 'Are you sure you want to put <strong>' + targetName + '</strong> into Maintenance mode?';
             confirmBtn.className = 'btn btn-danger';
             confirmBtn.innerText = 'Set Maintenance';
+        } else if (actionType === 'GLOBAL_CLEAN_UP') {
+            titleEl.innerText = 'Confirm Global Clean Up';
+            msgEl.innerHTML = 'Are you sure you want to broadcast the <strong>Clean Up</strong> command to <strong>' + targetName + '</strong>?';
+            confirmBtn.className = 'btn btn-warning';
+            confirmBtn.innerText = 'Run Clean Up';
+
+            detailsEl.innerHTML =
+                '<p style="margin: 0 0 4px 0;"><strong>The following will be cleaned on each client PC:</strong></p>' +
+                '<ul style="margin: 0 0 8px 18px; padding: 0;">' +
+                '<li><strong>Running applications</strong> &ndash; all open apps are force-closed (unsaved work is lost)</li>' +
+                '<li><strong>Browser data</strong> &ndash; history, cookies, saved logins and passwords, bookmarks and extensions for Chrome, Edge, Brave, Vivaldi and Firefox</li>' +
+                '<li><strong>Downloads folder</strong> &ndash; all files and folders are permanently deleted</li>' +
+                '</ul>' +
+                '<p style="margin: 0 0 4px 0;"><strong>Not affected:</strong></p>' +
+                '<ul style="margin: 0 0 0 18px; padding: 0;">' +
+                '<li>BNet applications (BNet, BNet.App1, BNet.App2, ...) are not closed</li>' +
+                '<li>Windows system processes and Explorer stay running</li>' +
+                '</ul>';
+            detailsEl.style.display = 'block';
         } else if (actionType === 'GLOBAL_PATCH') {
             titleEl.innerText = 'Confirm Global Patch Update';
             msgEl.innerHTML = 'Are you sure you want to broadcast the <strong>Patch Update</strong> command to all registered client computers?';
