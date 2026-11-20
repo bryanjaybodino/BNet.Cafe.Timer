@@ -11,8 +11,26 @@
 
 <div class="computers-app" id="app">
     <main class="main">
+        <!-- Toolbar: count, search, sort -->
+        <div class="toolbar">
+            <div class="toolbar-title">
+                <h2>Stations</h2>
+                <span class="count-pill" id="deviceCount">0 online</span>
+            </div>
+            <div class="toolbar-tools">
+                <label class="search-box">
+                    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg>
+                    <input type="search" class="search-input" id="deviceSearch" placeholder="Search PC…" autocomplete="off" />
+                </label>
+                <button type="button" class="sort-btn" id="sortBtn" title="Toggle sort order">
+                    <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" /></svg>
+                    <span id="sortLabel">A → Z</span>
+                </button>
+            </div>
+        </div>
+
         <div class="device-list" id="deviceList">
-            <div id="noDevices" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 20px; color: var(--text-light-secondary); text-align: center;">
+            <div class="no-devices" id="noDevices">
                 <svg style="width: 36px; height: 36px; margin-bottom: 10px; opacity: 0.4; fill: currentColor;" viewBox="0 0 24 24">
                     <path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z" />
                 </svg>
@@ -22,10 +40,14 @@
         </div>
     </main>
 
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
     <aside class="details-sidebar" id="detailsSidebar">
-        <br />
+        <div class="sidebar-head">
+            <div class="sec-label">Station Hardware &amp; System</div>
+            <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Close" onclick="deselectDevice()">&#10005;</button>
+        </div>
         <div class="info-panel" id="infoPanel">
-            <div class="sec-label">Station Hardware & System</div>
             <div class="info-scroll">
                 <div class="info-row">
                     <div class="info-key">Account Name</div>
