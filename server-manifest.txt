@@ -102,7 +102,7 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Assets/fontawesome/font-awesome.min.css
 7f021680b9f71711d5029c2199c42b131bb2cc5c	Assets/fontawesome/webfonts/fa-regular-400.woff2
 5c16cd3e8a008bdcbed97022c005278971f810c2	Assets/fontawesome/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Assets/fontawesome/webfonts/fa-v4compatibility.woff2
-f18c6280ac1fcf1e9a1da529370a388ea21b2625	BNetPage.aspx
+b248b1a89ec7f8b5a42783ed4111dcf091711ca8	BNetPage.aspx
 156fc2235fbe90f71a8f45d9a623952e95943827	BNetVendoMachine.aspx
 c3ad12cbe8acb53d0f9a119992b9dc8a8cd7d9b9	Callback.aspx
 a36265a53ad2aea11d908e57935a33b54735d402	ClientChat.aspx
@@ -293,11 +293,11 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-2aace3836685f9fb8d1872f2b5ab6b3c420d91d3	bin/BNet.Cafe.Server.dll
-28bc1cd71aaa8b5580637b60b4642b028a874c33	bin/BNet.Cafe.Server.pdb
-d615dbf469b1057b01eeffb5b22bf189f02ca79d	bin/BNet.Cafe.Websocket.exe
+7c317330403c2fa4ed5bd404b86fd4c0783bcef4	bin/BNet.Cafe.Server.dll
+e0f2ba5088dbbe558e18a74a75c797fe861f103d	bin/BNet.Cafe.Server.pdb
+9e03de625edcd14bf9ab5d7c39c024411429e32c	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
-e94494026dadb921495fbb10c5e9535057979947	bin/BNet.Cafe.Websocket.pdb
+7ce5656d20ee851a5bafefad9d8a9c3b896a5d1a	bin/BNet.Cafe.Websocket.pdb
 0fd4bf6141810a8c3dd2fc76e2be94fdd572e82e	bin/BNet.FTPServer.dll
 1b1f204165327bd0fbd04378350e87e793645b59	bin/Microsoft.Extensions.Logging.Abstractions.dll
 1acaf092a11563a6ad8608e898a6761e9a14afa4	bin/MySqlConnector.dll
