@@ -209,7 +209,7 @@
                     </button>
                     <div class="user-menu">
                         <div class="bnet-dropdown" tabindex="0">
-                            <div class="user-menu bnet-dropdown-toggle" style="cursor: pointer;">
+                            <div class="user-menu bnet-dropdown-toggle" style="background-color: var(--bg-light-secondary)!important; color: var(--text-light)!important; border: none!important; cursor: pointer">
                                 <div class="user-avatar">
                                     <asp:Label ID="Label_InitialName" runat="server" Text=""></asp:Label>
                                 </div>
