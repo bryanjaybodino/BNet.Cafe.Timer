@@ -46,6 +46,33 @@ public class WinApi {
     [DllImport("kernel32.dll")]
     public static extern uint GetCurrentThreadId();
 }
+
+// Watches Alt+Tab on its own thread every 15 ms, so a quick press is never missed
+// while the main loop is busy scanning processes.
+public static class AltTabWatcher {
+    private static long last = 0;
+    private static System.Threading.Thread t;
+
+    public static void Start() {
+        if (t != null) return;
+        t = new System.Threading.Thread(Loop);
+        t.IsBackground = true;
+        t.Start();
+    }
+
+    private static void Loop() {
+        while (true) {
+            if ((WinApi.GetAsyncKeyState(0x12) & 0x8000) != 0 &&
+                (WinApi.GetAsyncKeyState(0x09) & 0x8000) != 0)
+                System.Threading.Interlocked.Exchange(ref last, DateTime.UtcNow.Ticks);
+            System.Threading.Thread.Sleep(15);
+        }
+    }
+
+    public static DateTime LastPress {
+        get { return new DateTime(System.Threading.Interlocked.Read(ref last), DateTimeKind.Utc); }
+    }
+}
 "@
 
 $HWND_TOPMOST   = [IntPtr](-1)
@@ -96,18 +123,31 @@ $browserNames = @('chrome', 'msedge', 'brave', 'vivaldi', 'firefox', 'opera', 'i
 # Kiosk is identified by its profile folder, or by BNetBrowser.exe itself
 $kioskPattern = 'BNet\w*Kiosk|BNetBrowser'
 
-$seen       = $false
-$pauseUntil = [datetime]::MinValue
-$tick       = 0
+$seen          = $false
+$tick          = 0
+$cachedHandles = @()     # kiosk window handles from the last full scan
+
+[AltTabWatcher]::Start()
 
 while ($true) {
-    # Check the keyboard every 100 ms so a quick Alt+Tab is never missed
-    if (Test-AltTab) { $pauseUntil = (Get-Date).AddSeconds($PauseSeconds) }
+    # Alt+Tab is detected by the background thread (never missed). Pause window:
+    $pauseUntil = [AltTabWatcher]::LastPress.AddSeconds($PauseSeconds)
+    $paused     = [datetime]::UtcNow -lt $pauseUntil
 
     $tick++
-    if ($tick % 5 -ne 0) { Start-Sleep -Milliseconds 100; continue }
-
-    $paused = (Get-Date) -lt $pauseUntil
+    if ($tick % 5 -ne 0) {
+        # Fast path: drop TOPMOST right away so the window you Alt+Tab to is visible
+        if ($paused) {
+            foreach ($h in $cachedHandles) {
+                $ex = [WinApi]::GetWindowLong($h, $GWL_EXSTYLE)
+                if (($ex -band $WS_EX_TOPMOST) -ne 0) {
+                    [WinApi]::SetWindowPos($h, $HWND_NOTOPMOST, 0, 0, 0, 0, $flags) | Out-Null
+                }
+            }
+        }
+        Start-Sleep -Milliseconds 100
+        continue
+    }
 
     $allProcs = @(Get-CimInstance Win32_Process -ErrorAction SilentlyContinue)
 
@@ -142,6 +182,9 @@ while ($true) {
     # 1. Close any browser that is not the kiosk
     if ($kiosk.Count -gt 0) {
         foreach ($p in $other) {
+            # child processes of the kiosk browser (e.g. Firefox content processes do not
+            # carry the profile path in their command line) must be left alone
+            if ($kioskTree.Contains([uint32]$p.ProcessId)) { continue }
             Stop-Process -Id $p.ProcessId -Force -ErrorAction SilentlyContinue
         }
     }
@@ -152,6 +195,8 @@ while ($true) {
         $proc = Get-Process -Id $k.ProcessId -ErrorAction SilentlyContinue
         if ($proc -and $proc.MainWindowHandle -ne 0) { $kioskWindows += $proc }
     }
+
+    $cachedHandles = @($kioskWindows | ForEach-Object { $_.MainWindowHandle })
 
     if ($kioskWindows.Count -gt 0) {
         $seen = $true

@@ -61,26 +61,6 @@ set "RELAUNCH_WAIT=10"
 :: Process names (no .exe, comma separated, no spaces) that must NEVER be closed.
 set "PROTECT_APPS=explorer,cmd,conhost,WindowsTerminal,powershell,pwsh,iisexpress,w3wp,dotnet,BNet.Cafe.Server,BNetBrowser,msedgewebview2"
 
-:: Extra command-line arguments passed to BNetBrowser.exe (leave empty if not needed).
-:: Only use this if your browser accepts Chromium switches on its command line.
-set "EXTRA_ARGS="
-
-:: ============================================================
-:: SECURE-CONTEXT FIX (Web Serial / USB / etc. over plain http://)
-:: Web Serial only works on https:// or localhost. This tells the
-:: Chromium engine to treat your server's origin as secure.
-:: The origin (scheme://host:port) is taken automatically from URL.
-:: ============================================================
-set "ORIGIN="
-for /f "tokens=1,2 delims=/" %%a in ("%URL%") do set "ORIGIN=%%a//%%b"
-echo Secure origin: !ORIGIN!
-
-:: Picked up by any WebView2-based app (BNetBrowser.exe) at startup.
-set "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--unsafely-treat-insecure-origin-as-secure=!ORIGIN! --enable-features=SerialPortProtocolDeviceAccess"
-
-:: Same flag for Chromium/Electron/CEF-based wrappers (some read this env var too).
-set "CHROMIUM_FLAGS=--unsafely-treat-insecure-origin-as-secure=!ORIGIN!"
-
 :: ============================================================
 :: Close existing browsers (they use a lot of RAM)
 :: ============================================================
@@ -127,7 +107,7 @@ if exist "%~dp0kiosk-mode.ps1" (
 )
 
 echo Launching BNetBrowser in kiosk mode...
-start "" /wait "!APP!" --kiosk "%URL%" %EXTRA_ARGS%
+start "" /wait "!APP!" --kiosk "%URL%"
 
 :: Browser closed (crash, Alt+F4, ...). Relaunch unless X is pressed.
 cls
