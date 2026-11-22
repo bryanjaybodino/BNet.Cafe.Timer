@@ -161,7 +161,7 @@
                 </div>
                 <!-- KIOSK MODE -->
                 <div class="menu-item">
-                    <asp:HyperLink ID="HyperLink_KioskMode" runat="server" ToolTip="KioskMode" NavigateUrl="~/BNetVendoMachine.aspx">
+                    <asp:HyperLink ID="HyperLink_KioskMode" runat="server" ToolTip="KioskMode"  onclick="navigateTo('?Form=KioskMode'); return false;">
                     <i class="fas fa-expand"></i><span>Kiosk Mode</span>
                     </asp:HyperLink>
                 </div>

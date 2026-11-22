@@ -178,6 +178,9 @@ document.addEventListener('keydown', (e) => {
         }
         e.preventDefault();
         const selectedClient = filteredClientData[selectedIndex];
+        if (typeof canAcceptCreditForClient === 'function' && !canAcceptCreditForClient(selectedClient)) {
+            return;
+        }
         let currentPcName = selectedClient?.clientName || selectedClient?.ClientName || "PC-01";
         handleNumberInput(e.key, currentPcName);
         return;

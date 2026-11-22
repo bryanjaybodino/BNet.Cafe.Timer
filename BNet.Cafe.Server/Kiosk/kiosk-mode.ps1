@@ -91,10 +91,10 @@ function Set-KioskForeground([IntPtr]$h) {
     }
 }
 
-$browserNames = @('chrome', 'msedge', 'brave', 'vivaldi', 'firefox', 'opera', 'iexplore')
+$browserNames = @('chrome', 'msedge', 'brave', 'vivaldi', 'firefox', 'opera', 'iexplore', 'bnetbrowser')
 
-# Kiosk browser is identified by its profile folder (see kiosk-mode.bat)
-$kioskPattern = 'BNet\w*Kiosk'
+# Kiosk is identified by its profile folder, or by BNetBrowser.exe itself
+$kioskPattern = 'BNet\w*Kiosk|BNetBrowser'
 
 $seen       = $false
 $pauseUntil = [datetime]::MinValue
@@ -109,11 +109,35 @@ while ($true) {
 
     $paused = (Get-Date) -lt $pauseUntil
 
-    $all = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue |
+    $allProcs = @(Get-CimInstance Win32_Process -ErrorAction SilentlyContinue)
+
+    $all = $allProcs |
            Where-Object { $browserNames -contains ($_.Name -replace '\.exe$', '').ToLower() }
 
     $kiosk = @($all | Where-Object { $_.CommandLine -match $kioskPattern })
     $other = @($all | Where-Object { $_.CommandLine -notmatch $kioskPattern })
+
+    # Kiosk process TREE: BNetBrowser.exe + every child it started
+    # (msedgewebview2.exe, and the popups it owns such as the serial-port
+    # chooser, permission prompts, file dialogs). These must never be treated
+    # as "foreign" windows, otherwise stealing focus closes the popup.
+    $kioskTree = New-Object 'System.Collections.Generic.HashSet[uint32]'
+    foreach ($k in $kiosk) { [void]$kioskTree.Add([uint32]$k.ProcessId) }
+    foreach ($p in $allProcs) {
+        if ($p.Name -like 'msedgewebview2*' -and $p.CommandLine -match $kioskPattern) {
+            [void]$kioskTree.Add([uint32]$p.ProcessId)
+        }
+    }
+    do {
+        $added = $false
+        foreach ($p in $allProcs) {
+            if ($kioskTree.Contains([uint32]$p.ParentProcessId) -and
+                -not $kioskTree.Contains([uint32]$p.ProcessId)) {
+                [void]$kioskTree.Add([uint32]$p.ProcessId)
+                $added = $true
+            }
+        }
+    } while ($added)
 
     # 1. Close any browser that is not the kiosk
     if ($kiosk.Count -gt 0) {
@@ -151,8 +175,7 @@ while ($true) {
             if ($fg -ne [IntPtr]::Zero) {
                 $fgPid = [uint32]0
                 [WinApi]::GetWindowThreadProcessId($fg, [ref]$fgPid) | Out-Null
-                $kioskPids = @($kiosk | ForEach-Object { [uint32]$_.ProcessId })
-                if ($kioskPids -notcontains $fgPid) {
+                if (-not $kioskTree.Contains([uint32]$fgPid)) {
                     Set-KioskForeground $kioskWindows[0].MainWindowHandle
                 }
             }

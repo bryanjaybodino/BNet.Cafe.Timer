@@ -143,8 +143,42 @@ function resetModalCloseTimer(syncArduinoStateCb) {
     }, closeSeconds * 1000);
 }
 
+function hasInfiniteDateTime(client) {
+    if (!client) return false;
+    const rawValues = [
+        client.timeStart,
+        client.TimeStart,
+        client.timeEnd,
+        client.TimeEnd
+    ];
+    if (rawValues.some(v => v && String(v).includes("9999-12-31"))) {
+        return true;
+    }
+    if (typeof formatDateTimeString === 'function') {
+        return rawValues.some(v => v && formatDateTimeString(String(v)) === "∞");
+    }
+    return false;
+}
+
+function canAcceptCreditForClient(client) {
+    if (!client) return false;
+    if (client.isCoinChanger) return true;
+    if (hasInfiniteDateTime(client)) return false;
+    const status = getClientStatus(client);
+    return status === "Available" || status === "Occupied";
+}
+
 function handleNumberInput(amount, currentPcName) {
     if (changerDispensing) return;
+
+    const selectedClient = (typeof filteredClientData !== 'undefined' && Array.isArray(filteredClientData))
+        ? filteredClientData[selectedIndex]
+        : null;
+
+    if (selectedClient && !canAcceptCreditForClient(selectedClient)) {
+        return;
+    }
+
     playCoinSound();
     totalAmount += parseInt(amount, 10) || 0;
     modalNumberDisplay.innerText = totalAmount;

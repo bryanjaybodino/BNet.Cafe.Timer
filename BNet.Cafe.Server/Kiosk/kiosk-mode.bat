@@ -51,10 +51,6 @@ exit /b
 :: ============================================================
 set "URL=http://localhost:2000/BNet.Cafe.Server/BNetVendoMachine.aspx"
 
-:: Origin (scheme + host + port) is extracted automatically from URL.
-:: Needed so Web Serial works over plain HTTP.
-for /f "tokens=1,2 delims=/" %%a in ("%URL%") do set "ORIGIN=%%a//%%b"
-
 :: Force-close every other application before the kiosk starts (1 = yes, 0 = no)
 set "CLOSE_APPS=1"
 
@@ -63,33 +59,30 @@ set "CLOSE_APPS=1"
 set "RELAUNCH_WAIT=10"
 
 :: Process names (no .exe, comma separated, no spaces) that must NEVER be closed.
-set "PROTECT_APPS=explorer,cmd,conhost,WindowsTerminal,powershell,pwsh,iisexpress,w3wp,dotnet,BNet.Cafe.Server"
+set "PROTECT_APPS=explorer,cmd,conhost,WindowsTerminal,powershell,pwsh,iisexpress,w3wp,dotnet,BNet.Cafe.Server,BNetBrowser,msedgewebview2"
 
-:: Fresh-PC friendly flags
-set "KIOSK_FLAGS=--no-first-run --no-default-browser-check --disable-session-crashed-bubble --disable-infobars --autoplay-policy=no-user-gesture-required --overscroll-history-navigation=0 --disable-pinch"
-
-set "PERF_FLAGS=--disable-extensions --disable-background-networking --disable-sync --disable-translate --disable-features=Translate,OptimizationHints --renderer-process-limit=1 --disk-cache-size=52428800 --js-flags=--max-old-space-size=256"
-
-:: ============================================================
-:: Auto-detect kiosk-loader.html (same folder as this .bat first)
-:: ============================================================
-set "LOADING_FILE="
-if exist "%~dp0kiosk-loader.html" set "LOADING_FILE=%~dp0kiosk-loader.html"
-if not defined LOADING_FILE if exist "%cd%\kiosk-loader.html" set "LOADING_FILE=%cd%\kiosk-loader.html"
-if not defined LOADING_FILE if exist "C:\Kiosk\kiosk-loader.html" set "LOADING_FILE=C:\Kiosk\kiosk-loader.html"
-
-if defined LOADING_FILE (
-    echo Found loading page: !LOADING_FILE!
-    set "LP=!LOADING_FILE:\=/!"
-    set "LP=!LP: =%%20!"
-    set "START_URL=file:///!LP!#%URL%"
-) else (
-    echo WARNING: kiosk-loader.html not found. Opening the server URL directly.
-    set "START_URL=%URL%"
-)
+:: Extra command-line arguments passed to BNetBrowser.exe (leave empty if not needed).
+:: Only use this if your browser accepts Chromium switches on its command line.
+set "EXTRA_ARGS="
 
 :: ============================================================
-:: Close existing browsers
+:: SECURE-CONTEXT FIX (Web Serial / USB / etc. over plain http://)
+:: Web Serial only works on https:// or localhost. This tells the
+:: Chromium engine to treat your server's origin as secure.
+:: The origin (scheme://host:port) is taken automatically from URL.
+:: ============================================================
+set "ORIGIN="
+for /f "tokens=1,2 delims=/" %%a in ("%URL%") do set "ORIGIN=%%a//%%b"
+echo Secure origin: !ORIGIN!
+
+:: Picked up by any WebView2-based app (BNetBrowser.exe) at startup.
+set "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--unsafely-treat-insecure-origin-as-secure=!ORIGIN! --enable-features=SerialPortProtocolDeviceAccess"
+
+:: Same flag for Chromium/Electron/CEF-based wrappers (some read this env var too).
+set "CHROMIUM_FLAGS=--unsafely-treat-insecure-origin-as-secure=!ORIGIN!"
+
+:: ============================================================
+:: Close existing browsers (they use a lot of RAM)
 :: ============================================================
 echo Closing existing browser background tasks...
 taskkill /F /IM chrome.exe /T >nul 2>&1
@@ -111,58 +104,17 @@ if "%CLOSE_APPS%"=="1" (
 timeout /t 1 /nobreak >nul
 
 :: ============================================================
-:: Pick a browser
-:: NOTE: Profiles live in %LOCALAPPDATA% so the Web Serial COM port
-:: permission survives reboots. Folder names must keep the BNet...Kiosk
-:: pattern used by kiosk-mode.ps1.
+:: Find BNetBrowser.exe (same folder as this .bat, then C:\Kiosk)
 :: ============================================================
-set "BROWSER="
-set "FIREFOX="
+set "APP="
+if exist "%~dp0BNetBrowser.exe" set "APP=%~dp0BNetBrowser.exe"
+if not defined APP if exist "C:\Kiosk\BNetBrowser.exe" set "APP=C:\Kiosk\BNetBrowser.exe"
 
-if exist "C:\Program Files\Google\Chrome\Application\chrome.exe" (
-    set "BROWSER=C:\Program Files\Google\Chrome\Application\chrome.exe"
-    set "PROFILE_DIR=%LOCALAPPDATA%\BNetKiosk"
-    goto RUN
+if not defined APP (
+    echo BNetBrowser.exe not found. Put it next to this .bat or in C:\Kiosk
+    pause
+    exit /b
 )
-if exist "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" (
-    set "BROWSER=C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-    set "PROFILE_DIR=%LOCALAPPDATA%\BNetKiosk"
-    goto RUN
-)
-if exist "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" (
-    set "BROWSER=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-    set "PROFILE_DIR=%LOCALAPPDATA%\BNetEdgeKiosk"
-    goto RUN
-)
-if exist "C:\Program Files\Microsoft\Edge\Application\msedge.exe" (
-    set "BROWSER=C:\Program Files\Microsoft\Edge\Application\msedge.exe"
-    set "PROFILE_DIR=%LOCALAPPDATA%\BNetEdgeKiosk"
-    goto RUN
-)
-if exist "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe" (
-    set "BROWSER=C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
-    set "PROFILE_DIR=%LOCALAPPDATA%\BNetBraveKiosk"
-    goto RUN
-)
-if exist "%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe" (
-    set "BROWSER=%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe"
-    set "PROFILE_DIR=%LOCALAPPDATA%\BNetBraveKiosk"
-    goto RUN
-)
-if exist "%LOCALAPPDATA%\Vivaldi\Application\vivaldi.exe" (
-    set "BROWSER=%LOCALAPPDATA%\Vivaldi\Application\vivaldi.exe"
-    set "PROFILE_DIR=%LOCALAPPDATA%\BNetVivaldiKiosk"
-    goto RUN
-)
-
-:: Firefox = last fallback (Web Serial NOT supported)
-if exist "C:\Program Files\Mozilla Firefox\firefox.exe" set "FIREFOX=C:\Program Files\Mozilla Firefox\firefox.exe"
-if not defined FIREFOX if exist "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" set "FIREFOX=C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
-if defined FIREFOX goto RUN
-
-echo No supported browser found.
-pause
-exit /b
 
 :: ============================================================
 :: Main loop: helper + browser. Never exits on its own, because
@@ -174,12 +126,8 @@ if exist "%~dp0kiosk-mode.ps1" (
     start "" /min powershell -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "%~dp0kiosk-mode.ps1"
 )
 
-echo Launching True Full Screen Mode...
-if defined FIREFOX (
-    start "" /wait "!FIREFOX!" -kiosk "!START_URL!" -no-remote -profile "%LOCALAPPDATA%\BNetFirefoxKiosk"
-) else (
-    start "" /wait "!BROWSER!" --app="!START_URL!" --kiosk --user-data-dir="!PROFILE_DIR!" --allow-file-access-from-files --unsafely-treat-insecure-origin-as-secure="%ORIGIN%" !PERF_FLAGS! !KIOSK_FLAGS!
-)
+echo Launching BNetBrowser in kiosk mode...
+start "" /wait "!APP!" --kiosk "%URL%" %EXTRA_ARGS%
 
 :: Browser closed (crash, Alt+F4, ...). Relaunch unless X is pressed.
 cls
