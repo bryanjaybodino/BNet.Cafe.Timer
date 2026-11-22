@@ -2,51 +2,6 @@
 setlocal EnableDelayedExpansion
 
 :: ============================================================
-:: One-time: disable edge-swipe (Task View) and Widgets/News.
-:: Asks for administrator ONLY if the policies are missing.
-:: ============================================================
-if /i "%~1"=="regonly" goto APPLY_POLICY
-
-set "NEED_REG=0"
-reg query "HKLM\SOFTWARE\Policies\Microsoft\Windows\EdgeUI" /v AllowEdgeSwipe 2>nul | find "0x0" >nul || set "NEED_REG=1"
-reg query "HKLM\SOFTWARE\Policies\Microsoft\Dsh" /v AllowNewsAndInterests 2>nul | find "0x0" >nul || set "NEED_REG=1"
-
-if "!NEED_REG!"=="1" (
-    echo Edge-swipe policy missing. Requesting administrator permission once...
-    powershell -NoProfile -Command "Start-Process -FilePath '%~f0' -ArgumentList 'regonly' -Verb RunAs -Wait" >nul 2>&1
-)
-
-:: The policy is only read when explorer.exe STARTS. If it was written while
-:: Explorer was already running (first run on a new PC), the swipe still works
-:: until a reboot. So restart Explorer ONCE per user to make it apply now.
-reg query "HKLM\SOFTWARE\Policies\Microsoft\Windows\EdgeUI" /v AllowEdgeSwipe 2>nul | find "0x0" >nul
-if not errorlevel 1 (
-    reg query "HKCU\Software\BNetKiosk" /v ExplorerRestarted >nul 2>&1
-    if errorlevel 1 (
-        tasklist /fi "imagename eq explorer.exe" 2>nul | find /i "explorer.exe" >nul
-        if not errorlevel 1 (
-            echo Applying edge-swipe policy: restarting Windows Explorer once...
-            taskkill /f /im explorer.exe >nul 2>&1
-            timeout /t 2 /nobreak >nul
-            start "" explorer.exe
-            timeout /t 3 /nobreak >nul
-        )
-        reg add "HKCU\Software\BNetKiosk" /v ExplorerRestarted /t REG_DWORD /d 1 /f >nul
-    )
-) else (
-    echo WARNING: edge-swipe policy was NOT applied - administrator permission was refused.
-    timeout /t 5 /nobreak >nul
-)
-goto POLICY_DONE
-
-:APPLY_POLICY
-reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\EdgeUI" /v AllowEdgeSwipe /t REG_DWORD /d 0 /f >nul
-reg add "HKLM\SOFTWARE\Policies\Microsoft\Dsh" /v AllowNewsAndInterests /t REG_DWORD /d 0 /f >nul
-exit /b
-
-:POLICY_DONE
-
-:: ============================================================
 :: CONFIG - the only lines you need to edit
 :: ============================================================
 set "URL=http://localhost:2000/BNet.Cafe.Server/BNetVendoMachine.aspx"
@@ -54,12 +9,38 @@ set "URL=http://localhost:2000/BNet.Cafe.Server/BNetVendoMachine.aspx"
 :: Force-close every other application before the kiosk starts (1 = yes, 0 = no)
 set "CLOSE_APPS=1"
 
-:: Seconds the kiosk waits after the browser closes before relaunching it.
-:: During this time you can press X to enter maintenance mode.
-set "RELAUNCH_WAIT=10"
-
 :: Process names (no .exe, comma separated, no spaces) that must NEVER be closed.
 set "PROTECT_APPS=explorer,cmd,conhost,WindowsTerminal,powershell,pwsh,iisexpress,w3wp,dotnet,BNet.Cafe.Server,BNetBrowser,msedgewebview2"
+
+:: ============================================================
+:: Register this .bat in Task Scheduler as "BNetKiosk"
+:: (runs at logon with highest privileges)
+:: ============================================================
+set "TASK_NAME=BNetKiosk"
+
+:: When started by the scheduled task, skip registration and run the kiosk
+if /i "%~1"=="/fromtask" goto TASK_DONE
+
+:: Not admin? Relaunch this .bat elevated (UAC prompt)
+net session >nul 2>&1
+if errorlevel 1 (
+    echo Requesting administrator rights...
+    powershell -NoProfile -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
+    exit /b
+)
+
+echo Saving task "%TASK_NAME%" to Task Scheduler...
+schtasks /create /tn "%TASK_NAME%" /tr "powershell -NoProfile -WindowStyle Hidden -Command \"Start-Process -WindowStyle Hidden -FilePath '%~f0' -ArgumentList '/fromtask'\"" /sc onlogon /rl highest /f >nul 2>&1
+if errorlevel 1 (
+    echo Failed to create the scheduled task.
+    pause
+    exit /b 1
+)
+echo Task created. Starting it with highest privileges...
+schtasks /run /tn "%TASK_NAME%" >nul 2>&1
+exit /b
+
+:TASK_DONE
 
 :: ============================================================
 :: Close existing browsers (they use a lot of RAM)
@@ -109,13 +90,8 @@ if exist "%~dp0kiosk-mode.ps1" (
 echo Launching BNetBrowser in kiosk mode...
 start "" /wait "!APP!" --kiosk "%URL%"
 
-:: Browser closed (crash, Alt+F4, ...). Relaunch unless X is pressed.
-cls
-echo Kiosk closed. Restarting in %RELAUNCH_WAIT% seconds...
-echo Press X to stop the kiosk and enter maintenance mode.
-choice /c RX /t %RELAUNCH_WAIT% /d R /n >nul
-if errorlevel 2 goto MAINT
-goto RUN
+:: Browser closed: do NOT relaunch, just close this window.
+exit /b
 
 :: ============================================================
 :: Maintenance mode: brings back the normal Windows desktop

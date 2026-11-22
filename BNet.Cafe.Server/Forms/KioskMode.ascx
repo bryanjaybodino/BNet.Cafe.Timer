@@ -122,44 +122,22 @@
                     </div>
                 </div>
 
-                <!-- Step 3: Run on Startup -->
-                <div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 8px; background-color: var(--bg-light-tertiary);">
-                    <div>
-                        <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 6px;">3. Run on Startup
-                        </h3>
-                        <p style="font-size: 13px; color: var(--text-light-secondary); margin-bottom: 8px;">
-                            Configure Kiosk Mode to launch automatically when Windows starts up:
-                        </p>
-                        <ul style="font-size: 13px; color: var(--text-light-secondary); margin: 0 0 0 18px; line-height: 1.7;">
-                            <li>Right-click <code>kiosk-mode.bat</code> and select <strong>Create shortcut</strong>.</li>
-                            <li>Press <strong>Win + R</strong> to open the Run dialog, type <code>shell:startup</code>, and press <strong>Enter</strong> to open the Startup folder.</li>
-                            <li>Copy or move the <code>kiosk-mode.bat</code> shortcut into the <code>shell:startup</code> folder so it runs automatically on startup.</li>
-                        </ul>
-                    </div>
-                    <!-- Screenshot: Step 3 -->
-                    <div style="border: 1px dashed var(--border-color, #cbd5e1); border-radius: 8px; padding: 16px; text-align: center; background: rgba(0,0,0,0.02);">
-                        <p style="font-size: 12px; color: var(--text-light-secondary); margin-bottom: 8px;">
-                            <strong>Screenshot 3:</strong> Shortcut of <code>kiosk-mode.bat</code> placed inside the <code>shell:startup</code> folder.
-                        </p>
-                        <asp:Image ID="Image3" ImageUrl="~/Uploads/Kiosk/Step3.jpg" runat="server" alt="Kiosk Mode Startup Shortcut" Style="max-width: 100%; border-radius: 6px;" />
-                    </div>
-                </div>
-
-                <!-- Step 4: Exit Kiosk -->
+                <!-- Step 3: Exit Kiosk -->
                 <div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 8px; background-color: var(--bg-light-tertiary);">
                     <div>
                         <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 6px;">4. Exit Kiosk
                         </h3>
                         <p style="font-size: 13px; color: var(--text-light-secondary); margin-bottom: 8px;">
                             To exit Kiosk Mode when the desktop is shown:
+                       
                         </p>
                         <ul style="font-size: 13px; color: var(--text-light-secondary); margin: 0 0 0 18px; line-height: 1.7;">
                             <li>When the desktop is shown, press <strong>Alt + Tab</strong> to switch windows.</li>
                             <li>Use the mouse and click the <strong>X</strong> (close) button on the kiosk window to exit.</li>
+                            <li>If you no longer want kiosk mode to run on startup, do not run it at startup—just right-click <strong>kiosk-uninstall.bat</strong> and select <strong>Run as administrator</strong>.</li>
                         </ul>
                     </div>
                 </div>
-
             </div>
         </div>
     </ContentTemplate>
