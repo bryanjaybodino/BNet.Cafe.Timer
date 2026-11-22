@@ -90,8 +90,8 @@ af67fcd6463863c4d443d1ef1079e21aa2c119a1	Assets/Shop/Style.css
 c0a0fa65cb1c1b1758837b3387698fe929d224ae	Assets/Vendo/Carousel.js
 b29764681b4f71a54c44504aaa026a4605764695	Assets/Vendo/Clients.js
 9a0ebc8681c4b3275c3a51db025910f320f6d60a	Assets/Vendo/Idle.js
-fd3ee8f6bcc5c6a0b5200c694cea837d12be421d	Assets/Vendo/Main.js
-c790d75b8996a744c4af51a729c2662c65f8768c	Assets/Vendo/Modals.js
+4de6cd0c0349319f6abe53f4d92812108807c0a4	Assets/Vendo/Main.js
+f0ee4736c63ca9a948ac0f5bc10e3037fcd19a48	Assets/Vendo/Modals.js
 7e64f3e184570c72484289db7e5630c75479882a	Assets/Vendo/Serial.js
 c04416b2fd031a2adc7aea45d42c00e31f122f67	Assets/Vendo/Style.css
 8efd2040e3615ef13c7ec66110256bdee3f78e62	Assets/Vendo/Utils.js
@@ -102,7 +102,7 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Assets/fontawesome/font-awesome.min.css
 7f021680b9f71711d5029c2199c42b131bb2cc5c	Assets/fontawesome/webfonts/fa-regular-400.woff2
 5c16cd3e8a008bdcbed97022c005278971f810c2	Assets/fontawesome/webfonts/fa-solid-900.woff2
 9027e38bcd1a01fe6207346ad5d1d9473f1ac5f0	Assets/fontawesome/webfonts/fa-v4compatibility.woff2
-b248b1a89ec7f8b5a42783ed4111dcf091711ca8	BNetPage.aspx
+17380d4d26ea3d4f91f5859c225d9a0b1561b8c6	BNetPage.aspx
 156fc2235fbe90f71a8f45d9a623952e95943827	BNetVendoMachine.aspx
 c3ad12cbe8acb53d0f9a119992b9dc8a8cd7d9b9	Callback.aspx
 a36265a53ad2aea11d908e57935a33b54735d402	ClientChat.aspx
@@ -214,6 +214,7 @@ f444daf95ce160b77243402eb7a2782546092be1	Forms/HowToUse.ascx
 0f1a42076f606a0ce39609519a47b2f5cea15150	Forms/InventoryCreate.ascx
 1c0179c9a2c7ab4e09984be1a929341bc0a5123c	Forms/InventoryEdit.ascx
 18c3037faf6c6ab262d93f7a4b81b374986169bc	Forms/KioskLogs.ascx
+883b7bd096d0aa9ce4bdc15cad7e8b40131d9cb2	Forms/KioskMode.ascx
 893dd072b60419ef033836b1cf52f716f8ee2a6f	Forms/Maintenance.ascx
 6da6a3ec5fcc4d1e5e51d12954682a9c938c8ac5	Forms/Modals/AutoCreditSettingDelete.ascx
 cc2a9f7f39aa0fd73828c5d940b2595ba2c006f1	Forms/Modals/ChatMessage.ascx
@@ -266,6 +267,18 @@ caa26fe52bbbcc9289f074e7925df2c4574b11d7	Forms/UserTopUp.ascx
 045ce2d4df2183139e3b3ab42abc941241984143	Forms/Users.ascx
 0dba21775cc1079f5be61f640378576d61a47e08	Forms/Wallpaper.ascx
 876028b73c489292bbcb2db6c2366f10f7a65661	Global.asax
+4fb09977cf4082ff1ca9ec77064d57f29c3dbe6f	Kiosk/BNetBrowser.exe
+193aecc675e7d4600fde2d37cf350bce7a056948	Kiosk/BNetBrowser.exe.config
+8d4c593f9df7cdf8c94e04683eb9516c28e3af20	Kiosk/BNetBrowser.pdb
+0201cc61ae1f031e996a439613274a38e4375da1	Kiosk/Microsoft.Web.WebView2.Core.dll
+6b2300a2eba77e976e6b5b5177af7c98a7fb743a	Kiosk/Microsoft.Web.WebView2.WinForms.dll
+76e0a8381f801a8c1bf132ce55dc94df7f12154f	Kiosk/Microsoft.Web.WebView2.Wpf.dll
+9af4faf82b124ebd84430b355b7a6a7d93b723de	Kiosk/kiosk-loader.html
+15a728fee14b5f887c09ebbabc491436e7ebeeff	Kiosk/kiosk-mode.bat
+625d36b33d45800195e1048973b7eb5d9b1622cb	Kiosk/kiosk-mode.ps1
+4ef00f3008abd4a9b4563609e3ec2ae44fb68a23	Kiosk/runtimes/win-arm64/native/WebView2Loader.dll
+28f7ab0e8a34d62944063add68685addd4beff2d	Kiosk/runtimes/win-x64/native/WebView2Loader.dll
+0388b953d743b5e3e39a195e40a12679993d48c9	Kiosk/runtimes/win-x86/native/WebView2Loader.dll
 f076ad8ed5abb8fdc7924b57a0bad1dd3b2a80af	Login.aspx
 253230fcbe9e7923b913711766fdacd130051ce5	Mailer/Template.html
 77a5d89e605cf08d4826b1ba7580a582736acd7f	Offline Packages/Newtonsoft.Json/Newtonsoft.Json.dll
@@ -279,6 +292,9 @@ d05b48efaba44c7230a04707964e353235a0915f	Remote.html
 e5948e14374bc30dd7370fe041148e1aee443a51	ResetPassword.aspx
 c4de12e93ee321ab4507003ee471d85f5c84e1eb	ServerChat.html
 1ff0845314f81235bd0f6205667c55863bb242f2	Shop.aspx
+9bcc6bde6dbe0dc79f4b7767188f65f5a9781c14	Uploads/Kiosk/Step1.jpg
+84535680798da87acd5ad04db0b80c67b2c5992c	Uploads/Kiosk/Step2.jpg
+a9b69375252570f4fc27c4ed696951caab8d96c5	Uploads/Kiosk/Step3.jpg
 db15667f9a6089b6f72ae576e5b07703ec8df2bb	Uploads/default.png
 73cb0b9a769cd3ffd12b8d36013f1055f96ea081	Web.config
 dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
@@ -293,8 +309,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-1f6af54d5c67fdd6ddf575f5c67f9256a50aa19f	bin/BNet.Cafe.Server.dll
-c09ee73970d05032a6aa27ece60fb8de00e11a3c	bin/BNet.Cafe.Server.pdb
+c167cc14666effccca44abb0fd96cb9952e2c705	bin/BNet.Cafe.Server.dll
+3a8fba000f806e13c0d6cdaec40ab283abd19a75	bin/BNet.Cafe.Server.pdb
 7caad2d5917469cd3d0152f21d1b8725e66766af	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 c8b6f8ffc8113cd4ee47f39b6054c392ed7f0439	bin/BNet.Cafe.Websocket.pdb
@@ -311,9 +327,6 @@ f2d83c51416e90dbc31154545b16df3b3f7a7909	bin/System.Buffers.dll
 c5ba4e4047a15b3adc61340c781307d9c6e89413	bin/System.Runtime.CompilerServices.Unsafe.dll
 eeec92852705946904d0e2fa0443d454075781f5	bin/System.Threading.Tasks.Extensions.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	bin/zxing.dll
-9af4faf82b124ebd84430b355b7a6a7d93b723de	kiosk-loader.html
-a396650b41c4b9c984c298463a9656013e2e817f	kiosk-mode.bat
-b7a8206a587b47576caa2c6c35515780651e9394	kiosk-mode.ps1
 c9869f8686fb6fea3be99d09f67568a5bd3eae4c	patcher.bat
 e91827174c587f4cb5b3c3fadc097e4de9880b56	patcher.ps1
 b4558b5a6c91859aa7fccc8356b03617aa7b43ae	tailscale-runner.bat
