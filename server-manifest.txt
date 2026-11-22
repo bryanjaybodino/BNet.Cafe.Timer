@@ -267,9 +267,9 @@ caa26fe52bbbcc9289f074e7925df2c4574b11d7	Forms/UserTopUp.ascx
 045ce2d4df2183139e3b3ab42abc941241984143	Forms/Users.ascx
 0dba21775cc1079f5be61f640378576d61a47e08	Forms/Wallpaper.ascx
 876028b73c489292bbcb2db6c2366f10f7a65661	Global.asax
-4fb09977cf4082ff1ca9ec77064d57f29c3dbe6f	Kiosk/BNetBrowser.exe
+d657c3a1f48564149a8b39484034e577fab85593	Kiosk/BNetBrowser.exe
 193aecc675e7d4600fde2d37cf350bce7a056948	Kiosk/BNetBrowser.exe.config
-8d4c593f9df7cdf8c94e04683eb9516c28e3af20	Kiosk/BNetBrowser.pdb
+c467eb9ff4c6d008946f4d9a6c8c20c1cc43bbeb	Kiosk/BNetBrowser.pdb
 0201cc61ae1f031e996a439613274a38e4375da1	Kiosk/Microsoft.Web.WebView2.Core.dll
 6b2300a2eba77e976e6b5b5177af7c98a7fb743a	Kiosk/Microsoft.Web.WebView2.WinForms.dll
 76e0a8381f801a8c1bf132ce55dc94df7f12154f	Kiosk/Microsoft.Web.WebView2.Wpf.dll
@@ -309,8 +309,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-c167cc14666effccca44abb0fd96cb9952e2c705	bin/BNet.Cafe.Server.dll
-3a8fba000f806e13c0d6cdaec40ab283abd19a75	bin/BNet.Cafe.Server.pdb
+aee2037b799136de362da51a1e664515455d1e2d	bin/BNet.Cafe.Server.dll
+2d0bcc710452c49f592e927e5c6d958b1b436d21	bin/BNet.Cafe.Server.pdb
 7caad2d5917469cd3d0152f21d1b8725e66766af	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 c8b6f8ffc8113cd4ee47f39b6054c392ed7f0439	bin/BNet.Cafe.Websocket.pdb
