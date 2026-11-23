@@ -1,5 +1,5 @@
 ﻿// =============================================================================
-// BNet Bar Chart Component
+// BNet Bar Chart Component (same options as before)
 // =============================================================================
 class BNetBarChart extends BNetBaseChart {
     constructor(options) {
@@ -16,70 +16,78 @@ class BNetBarChart extends BNetBaseChart {
 
     render() {
         this.initSVG();
-        const totalCount = this.data.reduce((acc, item) => acc + (item[this.valueKey] || 0), 0);
+        const vk = this.valueKey, lk = this.labelKey;
+        const totalCount = this.data.reduce((acc, item) => acc + (item[vk] || 0), 0);
         if (!this.data.length || totalCount <= 0) {
             this.renderEmpty(this.width, this.height);
             return;
         }
 
-        const maxVal = Math.max(...this.data.map(d => d[this.valueKey])) * 1.15 || 1;
-        const availableWidth = this.width - this.padding * 2;
-        const gap = availableWidth / this.data.length;
-        const barWidth = Math.min(60, gap * 0.6);
+        const p = this.pad;
+        const n = this.data.length;
+        const innerW = this.width - p.left - p.right;
+        const innerH = this.height - p.top - p.bottom;
+        const baseY = p.top + innerH;
+        const scale = this.niceScale(Math.max(...this.data.map(d => d[vk] || 0)));
+        const band = innerW / n;
+        const barW = Math.max(4, Math.min(48, band * 0.62));
+        const animate = !this._rendered;
 
-        // Render Axis & Gridlines
-        for (let i = 0; i <= 4; i++) {
-            const y = this.height - this.padding - (i / 4) * (this.height - this.padding * 2);
-            const val = (maxVal * (i / 4)).toFixed(0);
-
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", this.padding); line.setAttribute("y1", y);
-            line.setAttribute("x2", this.width - this.padding); line.setAttribute("y2", y);
-            line.setAttribute("stroke", "var(--border-light)");
-            line.setAttribute("stroke-dasharray", "4");
-            this.svg.appendChild(line);
-
-            const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            label.setAttribute("x", this.padding - 10); label.setAttribute("y", y + 4);
-            label.setAttribute("text-anchor", "end");
-            label.setAttribute("fill", "var(--text-light-secondary)");
-            label.setAttribute("font-size", "10");
-            label.textContent = val;
-            this.svg.appendChild(label);
+        // Gridlines + Y labels
+        for (let i = 0; i <= scale.count; i++) {
+            const y = baseY - (i / scale.count) * innerH;
+            this.el("line", {
+                x1: p.left, y1: y, x2: this.width - p.right, y2: y,
+                stroke: "var(--border-light)",
+                "stroke-dasharray": i === 0 ? "0" : "3 4",
+                "stroke-width": "1"
+            });
+            this.text(p.left - 8, y + 3.5, this.formatCompact(scale.step * i), {
+                "text-anchor": "end", "font-size": "10"
+            });
         }
 
-        // Render Bars
+        // Show every Nth x label so they never overlap
+        const labelStep = Math.max(1, Math.ceil(n / Math.max(1, Math.floor(innerW / 46))));
+        const maxChars = Math.max(3, Math.floor(band * labelStep / 6.5));
+        const showValues = barW >= 20 && band >= 30;
+
         this.data.forEach((item, i) => {
-            const x = this.padding + i * gap + (gap - barWidth) / 2;
-            const barHeight = (item[this.valueKey] / maxVal) * (this.height - this.padding * 2);
-            const y = this.height - this.padding - barHeight;
+            const val = item[vk] || 0;
+            const x = p.left + i * band + (band - barW) / 2;
+            const barH = Math.max(0, (val / scale.max) * innerH);
+            const y = baseY - barH;
 
-            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            rect.setAttribute("x", x); rect.setAttribute("y", y);
-            rect.setAttribute("width", barWidth); rect.setAttribute("height", barHeight);
-            rect.setAttribute("fill", this.barColor);
-            rect.setAttribute("rx", "4");
-            rect.style.cursor = "pointer";
-            rect.addEventListener("mousemove", (e) => this.showTooltip(e, `${item[this.labelKey]}: ${item[this.valueKey]} ${this.unitLabel}`));
-            rect.addEventListener("mouseleave", () => this.hideTooltip());
-            this.svg.appendChild(rect);
+            const rect = this.el("rect", {
+                x, y, width: barW, height: barH, rx: Math.min(5, barW / 2),
+                fill: this.barColor,
+                class: "bnet-bar" + (animate ? " bnet-animate" : "")
+            });
+            rect.style.setProperty("--i", i);
 
-            const xLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            xLabel.setAttribute("x", x + barWidth / 2); xLabel.setAttribute("y", this.height - 12);
-            xLabel.setAttribute("text-anchor", "middle");
-            xLabel.setAttribute("fill", "var(--text-light-secondary)");
-            xLabel.setAttribute("font-size", "12");
-            xLabel.textContent = item[this.labelKey];
-            this.svg.appendChild(xLabel);
+            if (i % labelStep === 0) {
+                let label = String(item[lk] ?? '');
+                if (label.length > maxChars) label = label.slice(0, maxChars - 1) + "…";
+                this.text(x + barW / 2, this.height - p.bottom + 18, label, { "font-size": "11" });
+            }
 
-            const valLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            valLabel.setAttribute("x", x + barWidth / 2); valLabel.setAttribute("y", y - 8);
-            valLabel.setAttribute("text-anchor", "middle");
-            valLabel.setAttribute("fill", "var(--text-light)");
-            valLabel.setAttribute("font-size", "11");
-            valLabel.setAttribute("font-weight", "bold");
-            valLabel.textContent = item[this.valueKey];
-            this.svg.appendChild(valLabel);
+            if (showValues && val > 0) {
+                this.text(x + barW / 2, y - 6, this.formatCompact(val), {
+                    fill: "var(--text-light)", "font-size": "11", "font-weight": "600"
+                });
+            }
+
+            // Full-height transparent hit area: easy to hover and tap
+            const hit = this.el("rect", {
+                x: p.left + i * band, y: p.top, width: band, height: innerH,
+                fill: "transparent", class: "bnet-hit"
+            });
+            this.bindTooltip(hit, `${item[lk]}: ${val} ${this.unitLabel}`, {
+                enter: () => rect.classList.add("is-active"),
+                leave: () => rect.classList.remove("is-active")
+            });
         });
+
+        this._rendered = true;
     }
 }

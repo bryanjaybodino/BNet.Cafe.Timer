@@ -1,22 +1,101 @@
 ﻿/* =============================================================================
+   BNet Dashboard Styles (modern, mobile-first responsive)
+   Works with: BNetBaseChart / BarChart / LineChart / DonutChart
+   ============================================================================= */
+
+/* =============================================================================
+   0. Design tokens (fallbacks only)
+   :where() has zero specificity, so your app's own :root variables always win.
+   ============================================================================= */
+:where(:root) {
+    --primary: #6366f1;
+    --secondary: #22d3ee;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --text-light: #f8fafc;
+    --text-light-secondary: #94a3b8;
+    --bg-light-secondary: #1e293b;
+    --bg-light-tertiary: #0f172a;
+    --border-light: #334155;
+    --dash-radius: 16px;
+    --dash-radius-sm: 10px;
+    --dash-shadow: 0 1px 2px rgba(0, 0, 0, .18), 0 8px 24px rgba(0, 0, 0, .14);
+    --dash-shadow-hover: 0 2px 4px rgba(0, 0, 0, .2), 0 14px 32px rgba(0, 0, 0, .22);
+    --dash-ease: cubic-bezier(.22, .61, .36, 1);
+}
+
+/* =============================================================================
    1. Dashboard Page & Grid Layout
    ============================================================================= */
 .dashboard-toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    flex-wrap: wrap;
     gap: 12px;
+    margin-bottom: 20px;
 }
 
 .dashboard-heading {
-    font-size: 20px;
+    font-size: clamp(1.15rem, 1rem + 1vw, 1.5rem);
     font-weight: 700;
-    color: var(--text-light, #ffffff);
+    letter-spacing: -.01em;
+    color: var(--text-light);
     margin: 0;
 }
 
-/* KPI Responsive Grid */
+.dashboard-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Toolbar controls (selects, date inputs, buttons) */
+.dashboard-toolbar select,
+.dashboard-toolbar input[type="date"],
+.dashboard-toolbar input[type="month"],
+.dashboard-toolbar .dash-btn {
+    min-height: 40px; /* comfortable touch target */
+    padding: 0 14px;
+    font: inherit;
+    font-size: .875rem;
+    color: var(--text-light);
+    background: var(--bg-light-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--dash-radius-sm);
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+    .dashboard-toolbar select:focus-visible,
+    .dashboard-toolbar input:focus-visible,
+    .dashboard-toolbar .dash-btn:focus-visible {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 30%, transparent);
+    }
+
+.dash-btn {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+    .dash-btn:hover {
+        border-color: var(--primary);
+    }
+
+    .dash-btn.is-primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+    }
+
+        .dash-btn.is-primary:hover {
+            filter: brightness(1.1);
+        }
+
+/* ---------- KPI cards ---------- */
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -24,64 +103,183 @@
     margin-bottom: 24px;
 }
 
+.card-kpi {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+    background: var(--bg-light-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--dash-radius);
+    box-shadow: var(--dash-shadow);
+    transition: transform .2s var(--dash-ease), box-shadow .2s var(--dash-ease), border-color .2s ease;
+}
+
+    /* Accent bar on top of each KPI card */
+    .card-kpi::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        opacity: .85;
+    }
+
+    .card-kpi:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--dash-shadow-hover);
+        border-color: color-mix(in srgb, var(--primary) 45%, var(--border-light));
+    }
+
+.kpi-label {
+    font-size: .78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-light-secondary);
+}
+
+.kpi-value {
+    font-size: clamp(1.35rem, 1.1rem + 1vw, 1.85rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text-light);
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.kpi-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+    padding: 2px 8px;
+    font-size: .75rem;
+    font-weight: 600;
+    border-radius: 999px;
+    color: var(--text-light-secondary);
+    background: color-mix(in srgb, var(--text-light-secondary) 14%, transparent);
+}
+
+    .kpi-trend.is-up {
+        color: var(--success);
+        background: color-mix(in srgb, var(--success) 15%, transparent);
+    }
+
+    .kpi-trend.is-down {
+        color: var(--danger);
+        background: color-mix(in srgb, var(--danger) 15%, transparent);
+    }
+
+/* ---------- Chart cards ---------- */
 .charts-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 20px;
     margin-top: 20px;
 }
 
 .card-chart {
-    background-color: var(--bg-light-secondary, #1e293b);
-    border: 1px solid var(--border-light, #334155);
-    border-radius: 12px;
-    padding: 20px;
     display: flex;
     flex-direction: column;
-    min-width: 0; /* Keeps grid items from breaking layout bounds */
+    min-width: 0; /* keeps grid items inside their column */
+    padding: 20px;
+    background: var(--bg-light-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--dash-radius);
+    box-shadow: var(--dash-shadow);
+    transition: box-shadow .2s var(--dash-ease), border-color .2s ease;
 }
+
+    .card-chart:hover {
+        box-shadow: var(--dash-shadow-hover);
+        border-color: color-mix(in srgb, var(--primary) 30%, var(--border-light));
+    }
 
     .card-chart.span-2 {
         grid-column: span 2;
+    }
+
+    .card-chart.span-3 {
+        grid-column: 1 / -1;
     }
 
 .chart-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-bottom: 16px;
 }
 
 .chart-title {
-    font-size: 1.05rem;
+    margin: 0;
+    font-size: 1.02rem;
     font-weight: 600;
-    color: var(--text-light, #ffffff);
+    letter-spacing: -.005em;
+    color: var(--text-light);
+}
+
+.chart-subtitle {
+    font-size: .8rem;
+    color: var(--text-light-secondary);
+}
+
+/* Small pill / badge, handy in chart headers */
+.chart-badge {
+    padding: 3px 10px;
+    font-size: .72rem;
+    font-weight: 600;
+    border-radius: 999px;
+    color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 14%, transparent);
 }
 
 /* =============================================================================
    2. Responsive Chart Wrappers
+   The JS measures the container width and re-renders, so the SVG must simply
+   fill the container (no forced min-width, which would cause sideways scroll).
    ============================================================================= */
 .chart-container {
     position: relative;
-    flex-grow: 1;
-    min-height: 220px;
+    flex: 1 1 auto;
     width: 100%;
+    min-height: 220px;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow-x: auto; /* Allows smooth horizontal scrolling on mobile if data points are tight */
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
     .chart-container svg {
+        display: block;
         width: 100%;
         height: 100%;
-        min-width: 300px; /* Ensures chart elements stay large enough to read */
         min-height: 200px;
-        display: block;
+        overflow: visible; /* lets hover circles / labels breathe */
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+        -webkit-user-select: none;
     }
 
-/* Donut specific adjustment so it doesn't get unnaturally stretched */
+    /* Wide, dense charts can opt into horizontal scrolling */
+    .chart-container.is-scrollable {
+        overflow-x: auto;
+        overflow-y: hidden;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+        .chart-container.is-scrollable svg {
+            min-width: 520px;
+        }
+
+/* Donut: keep it round and centred, never stretched */
 #ChartContainerDonut svg {
     max-width: 240px;
     max-height: 240px;
@@ -89,130 +287,335 @@
 }
 
 /* =============================================================================
-   3. Responsive Breakpoints
+   3. Chart Elements (classes emitted by the JS)
    ============================================================================= */
-@media (max-width: 1024px) {
-    .charts-grid {
-        grid-template-columns: 1fr;
-    }
 
-    .card-chart.span-2 {
-        grid-column: span 1;
-    }
+/* ---------- Text inside SVG ---------- */
+.chart-container svg text {
+    font-variant-numeric: tabular-nums;
+    pointer-events: none; /* never block hover/tap on bars */
 }
 
-@media (max-width: 600px) {
-    .dashboard-toolbar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .cards-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 KPI cards per line on phones */
-    }
-
-    .card-chart {
-        padding: 14px;
-    }
-
-    .chart-container {
-        min-height: 180px;
-    }
-}
-
-/* =============================================================================
-   4. Component Elements & Tooltips
-   ============================================================================= */
-.donut-segment {
-    transition: stroke-width 0.2s ease, opacity 0.2s ease;
+/* ---------- Hit areas (invisible, easy to tap) ---------- */
+.bnet-hit {
     cursor: pointer;
+    touch-action: manipulation;
+}
+
+/* ---------- Bars ---------- */
+.bnet-bar {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    transition: filter .15s ease, opacity .15s ease;
+}
+
+    .bnet-bar.is-active {
+        filter: brightness(1.2) drop-shadow(0 4px 8px rgba(0, 0, 0, .25));
+    }
+
+/* ---------- Line chart ---------- */
+.bnet-line {
+    stroke-dasharray: 1; /* works with pathLength="1" from the JS */
+    stroke-dashoffset: 0;
+    filter: drop-shadow(0 4px 6px color-mix(in srgb, var(--primary) 35%, transparent));
+}
+
+.bnet-dot {
+    transition: r .15s ease, opacity .15s ease;
+}
+
+.bnet-guide {
+    transition: opacity .15s ease;
+    pointer-events: none;
+}
+
+/* ---------- Donut ---------- */
+.donut-segment {
+    cursor: pointer;
+    transition: stroke-width .2s ease, opacity .2s ease, filter .2s ease;
 }
 
     .donut-segment:hover {
         stroke-width: 26;
-        opacity: 0.9;
+        opacity: .92;
+        filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .3));
     }
 
+/* ---------- Entrance animations (first render only) ---------- */
+@keyframes bnet-grow-y {
+    from {
+        transform: scaleY(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+@keyframes bnet-draw {
+    from {
+        stroke-dashoffset: 1;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes bnet-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bnet-pop {
+    from {
+        opacity: 0;
+        transform: scale(.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.bnet-bar.bnet-animate {
+    animation: bnet-grow-y .6s var(--dash-ease) both;
+    animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+.bnet-line.bnet-animate {
+    animation: bnet-draw 1s var(--dash-ease) both;
+}
+
+.bnet-area.bnet-animate {
+    animation: bnet-fade-in .9s ease .25s both;
+}
+
+.donut-segment.bnet-animate {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: bnet-pop .55s var(--dash-ease) both;
+    animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+/* =============================================================================
+   4. Legend & Tooltip
+   ============================================================================= */
 .legend-container {
     display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 16px;
     flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 16px;
+    margin-top: 16px;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.85rem;
-    color: var(--text-light-secondary, #94a3b8);
+    padding: 4px 10px;
+    font-size: .85rem;
+    color: var(--text-light-secondary);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--text-light-secondary) 8%, transparent);
 }
 
+    .legend-item strong {
+        color: var(--text-light);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+
 .legend-color {
+    flex: none;
     width: 10px;
     height: 10px;
     border-radius: 50%;
 }
 
-.chart-tooltip, #BNetChartTooltip {
+.chart-tooltip,
+#BNetChartTooltip {
     position: fixed;
-    background: var(--bg-light-tertiary, #0f172a);
-    border: 1px solid var(--border-light, #334155);
-    color: var(--text-light, #f8fafc);
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 0.8rem;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    max-width: min(280px, calc(100vw - 16px));
+    padding: 7px 12px;
+    font-size: .8rem;
     font-weight: 500;
+    line-height: 1.35;
+    color: var(--text-light);
+    background: color-mix(in srgb, var(--bg-light-tertiary) 92%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.15s ease;
-    z-index: 9999;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transition: opacity .15s ease;
+    overflow-wrap: anywhere;
 }
 
-
-/* Ensure span-3 takes up full grid row */
-.card-chart.span-3 {
-    grid-column: 1 / -1;
-    width: 100%;
+/* ---------- Empty / loading helpers ---------- */
+.chart-loading {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--dash-radius-sm);
+    background: linear-gradient(100deg, transparent 20%, color-mix(in srgb, var(--text-light-secondary) 14%, transparent) 50%, transparent 80%);
+    background-size: 200% 100%;
+    animation: bnet-shimmer 1.4s linear infinite;
 }
 
-/* Smooth Hover & Interactive Styling for Bar & Line Charts */
-#DashboardSalesVsCostChart rect,
-.chart-container svg rect {
-    transition: transform 0.15s ease, opacity 0.15s ease, fill 0.15s ease;
-    transform-origin: bottom;
-    cursor: pointer;
+@keyframes bnet-shimmer {
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -200% 0;
+    }
 }
 
-#DashboardSalesVsCostChart rect:hover,
-.chart-container svg rect:hover {
-    opacity: 0.85;
-    filter: brightness(1.15);
+/* =============================================================================
+   5. Responsive Breakpoints
+   ============================================================================= */
+
+/* Tablet & small laptop */
+@media (max-width: 1024px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card-chart.span-2,
+    .card-chart.span-3 {
+        grid-column: span 1;
+    }
+
+    #ChartContainerDonut svg {
+        max-width: 260px;
+        max-height: 260px;
+    }
 }
 
-/* Tooltip Fixed Positioning */
-#BNetChartTooltip, .chart-tooltip {
-    position: fixed;
-    background: #0f172a;
-    border: 1px solid #334155;
-    color: #f8fafc;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-    z-index: 9999;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+/* Phones */
+@media (max-width: 600px) {
+    .dashboard-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-actions {
+        width: 100%;
+    }
+
+        .dashboard-actions > * {
+            flex: 1 1 140px; /* controls share the row, then wrap */
+        }
+
+    .cards-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .card-kpi {
+        padding: 14px;
+    }
+
+    .charts-grid {
+        gap: 14px;
+        margin-top: 14px;
+    }
+
+    .card-chart {
+        padding: 14px;
+        border-radius: 14px;
+    }
+
+    .chart-header {
+        margin-bottom: 10px;
+    }
+
+    .chart-container {
+        min-height: 180px;
+    }
+
+        .chart-container svg {
+            min-height: 180px;
+        }
+
+    .legend-container {
+        justify-content: flex-start;
+        gap: 6px 10px;
+    }
+
+    .legend-item {
+        font-size: .8rem;
+    }
 }
 
-/* Responsive SVG Scaling */
-.chart-container svg {
-    width: 100%;
-    height: 100%;
-    min-height: 220px;
-    display: block;
+/* Very small phones: single column KPIs */
+@media (max-width: 360px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Touch devices: hover effects must not "stick" after a tap */
+@media (hover: none) {
+    .card-kpi:hover,
+    .card-chart:hover {
+        transform: none;
+        box-shadow: var(--dash-shadow);
+        border-color: var(--border-light);
+    }
+
+    .donut-segment:hover {
+        stroke-width: 20;
+        filter: none;
+    }
+}
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+    .bnet-animate,
+    .chart-loading {
+        animation: none !important;
+    }
+
+    .card-kpi,
+    .card-chart,
+    .donut-segment,
+    .bnet-bar,
+    .bnet-dot,
+    .chart-tooltip,
+    #BNetChartTooltip {
+        transition: none;
+    }
+}
+
+/* Print: flat, one column, no effects */
+@media print {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card-chart,
+    .card-kpi {
+        box-shadow: none;
+        break-inside: avoid;
+    }
+
+    .bnet-animate {
+        animation: none !important;
+    }
 }

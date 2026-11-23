@@ -5,6 +5,8 @@
         <asp:LinkButton ID="LinkButton_Refresh" runat="server"></asp:LinkButton>
         <asp:HiddenField ID="HiddenField_ChartData" runat="server" />
 
+        <div class="dash-page">
+
         <div class="bnet-table-toolbar dashboard-toolbar">
             <h2 class="dashboard-heading">Dashboard</h2>
             <div class="toolbar-filters">
@@ -259,12 +261,13 @@
         <!-- Leaderboards Row: Top Member Spenders & Top Games -->
         <div class="charts-grid">
             <!-- Top 10 Member Spenders Leaderboard -->
-            <div class="card-chart">
+            <div class="card-chart leaderboard-card">
                 <div class="chart-header">
                     <span class="chart-title">Top 10 Member Top-Up Spenders</span>
                 </div>
-                <div class="bnet-table-container">
-                    <table class="bnet-table" id="TableTopUsers">
+                <div class="bnet-table-container leaderboard-container">
+                    <table class="bnet-table bnet-leaderboard leaderboard-users" id="TableTopUsers">
+                        <colgroup><col class="col-rank" /><col class="col-name" /><col class="col-num" /><col class="col-num" /></colgroup>
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -280,12 +283,13 @@
             </div>
 
             <!-- Top 10 Games Leaderboard -->
-            <div class="card-chart span-2">
+            <div class="card-chart span-2 leaderboard-card">
                 <div class="chart-header">
                     <span class="chart-title">Top 10 Popular Games</span>
                 </div>
-                <div class="bnet-table-container">
-                    <table class="bnet-table" id="TableTopGames">
+                <div class="bnet-table-container leaderboard-container">
+                    <table class="bnet-table bnet-leaderboard leaderboard-games" id="TableTopGames">
+                        <colgroup><col class="col-rank" /><col class="col-name" /><col class="col-cat" /><col class="col-num" /></colgroup>
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -299,6 +303,7 @@
                     </table>
                 </div>
             </div>
+        </div>
         </div>
     </ContentTemplate>
 </asp:UpdatePanel>

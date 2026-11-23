@@ -1,10 +1,9 @@
 ﻿// =============================================================================
-// BNet Donut Chart Component (FIXED)
+// BNet Donut Chart Component (same options as before)
 // =============================================================================
 class BNetDonutChart extends BNetBaseChart {
     constructor(options) {
         super(options);
-        // Set chart-specific properties
         this.viewBox = options.viewBox || "0 0 200 200";
         this.radius = options.radius || 65;
         this.cx = options.cx || 100;
@@ -13,68 +12,73 @@ class BNetDonutChart extends BNetBaseChart {
         this.valueKey = options.valueKey || 'value';
         this.colorKey = options.colorKey || 'color';
         this.onLegendUpdate = options.onLegendUpdate || null;
-
-        // NOW initialize and render
-        this.initSVG();
         this.render();
     }
 
     render() {
         this.initSVG();
-        const total = this.data.reduce((acc, item) => acc + (item[this.valueKey] || 0), 0);
+        const vk = this.valueKey, lk = this.labelKey;
+        const total = this.data.reduce((acc, item) => acc + (item[vk] || 0), 0);
 
         if (total <= 0) {
             this.renderEmpty(200, 200);
             return;
         }
 
-        let accumulatedAngle = 0;
+        const animate = !this._rendered;
+        const visible = this.data.filter(d => (d[vk] || 0) > 0);
+        const gap = visible.length > 1 ? 2 : 0;        // small gap (degrees) between segments
 
-        this.data.forEach(item => {
-            const val = item[this.valueKey] || 0;
-            if (val <= 0) return;
-
-            const angle = (val / total) * 360;
-            const startAngle = accumulatedAngle;
-            const endAngle = accumulatedAngle + angle;
-            accumulatedAngle += angle;
-
-            const effectiveEndAngle = angle >= 360 ? startAngle + 359.999 : endAngle;
-
-            const x1 = this.cx + this.radius * Math.cos(Math.PI * (startAngle - 90) / 180);
-            const y1 = this.cy + this.radius * Math.sin(Math.PI * (startAngle - 90) / 180);
-            const x2 = this.cx + this.radius * Math.cos(Math.PI * (effectiveEndAngle - 90) / 180);
-            const y2 = this.cy + this.radius * Math.sin(Math.PI * (effectiveEndAngle - 90) / 180);
-
-            const largeArcFlag = angle > 180 ? 1 : 0;
-            const pathData = `M ${x1} ${y1} A ${this.radius} ${this.radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`;
-
-            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path.setAttribute("d", pathData);
-            path.setAttribute("fill", "none");
-            path.setAttribute("stroke", item[this.colorKey] || "#3b82f6");
-            path.setAttribute("stroke-width", "20");
-            path.setAttribute("stroke-linecap", "butt");
-            path.setAttribute("class", "donut-segment");
-
-            path.addEventListener("mousemove", (e) => {
-                this.showTooltip(e, `${item[this.labelKey]}: ${val} (${((val / total) * 100).toFixed(1)}%)`);
-            });
-            path.addEventListener("mouseleave", () => this.hideTooltip());
-
-            this.svg.appendChild(path);
+        // Background ring
+        this.el("circle", {
+            cx: this.cx, cy: this.cy, r: this.radius, fill: "none",
+            stroke: "var(--bg-light-tertiary, #e5e7eb)", "stroke-width": "20"
         });
 
-        // Center Total Indicator
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("x", this.cx);
-        text.setAttribute("y", this.cy + 5);
-        text.setAttribute("text-anchor", "middle");
-        text.setAttribute("fill", "var(--text-light, #333)");
-        text.setAttribute("font-size", "18");
-        text.setAttribute("font-weight", "bold");
-        text.textContent = total;
-        this.svg.appendChild(text);
+        let accumulated = 0;
+        visible.forEach((item, idx) => {
+            const val = item[vk];
+            const angle = (val / total) * 360;
+            let start = accumulated;
+            let end = accumulated + angle;
+            accumulated += angle;
+
+            if (gap && angle > gap * 2) {
+                start += gap / 2;
+                end -= gap / 2;
+            }
+            const effectiveEnd = end - start >= 360 ? start + 359.999 : end;
+
+            const rad = a => Math.PI * (a - 90) / 180;
+            const x1 = this.cx + this.radius * Math.cos(rad(start));
+            const y1 = this.cy + this.radius * Math.sin(rad(start));
+            const x2 = this.cx + this.radius * Math.cos(rad(effectiveEnd));
+            const y2 = this.cy + this.radius * Math.sin(rad(effectiveEnd));
+            const large = (effectiveEnd - start) > 180 ? 1 : 0;
+
+            const path = this.el("path", {
+                d: `M ${x1} ${y1} A ${this.radius} ${this.radius} 0 ${large} 1 ${x2} ${y2}`,
+                fill: "none",
+                stroke: item[this.colorKey] || "#3b82f6",
+                "stroke-width": "20",
+                "stroke-linecap": "butt",
+                class: "donut-segment" + (animate ? " bnet-animate" : "")
+            });
+            path.style.setProperty("--i", idx);
+
+            this.bindTooltip(path, `${item[lk]}: ${val} (${((val / total) * 100).toFixed(1)}%)`);
+        });
+
+        // Center total
+        const label = String(total);
+        this.text(this.cx, this.cy + 3, label, {
+            fill: "var(--text-light, #333)",
+            "font-size": label.length > 7 ? "15" : label.length > 5 ? "18" : "22",
+            "font-weight": "700"
+        });
+        this.text(this.cx, this.cy + 17, "Total", { "font-size": "9" });
+
+        this._rendered = true;
 
         if (typeof this.onLegendUpdate === 'function') {
             this.onLegendUpdate(this.data, total);

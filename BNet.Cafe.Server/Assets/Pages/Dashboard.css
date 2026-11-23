@@ -1,0 +1,547 @@
+﻿/* =============================================================================
+   DASHBOARD PAGE - modern, responsive design
+   Design only. Everything is scoped to .dash-page (wrapper added in
+   Dashboard.ascx) so no other page is affected. Uses the theme variables from
+   Style_1.css, so light and dark mode both work. Chart internals (bars, lines,
+   donut, tooltip) live in Style.css.
+   Load order: Style_1.css -> Style.css -> Dashboard.css
+   ============================================================================= */
+
+.dash-page {
+    --dp-radius: 14px;
+    --dp-radius-sm: 10px;
+    --dp-shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 6px 18px rgba(15, 23, 42, .06);
+    --dp-shadow-hover: 0 2px 4px rgba(15, 23, 42, .08), 0 12px 28px rgba(15, 23, 42, .12);
+    --dp-ease: cubic-bezier(.22, .61, .36, 1);
+    --dp-green: var(--accent-pickleball, #10b981);
+    --dp-amber: var(--accent-billiard, #f59e0b);
+    --dp-red: var(--accent-pingpong, #ef4444);
+    --dp-blue: var(--primary, #3b82f6);
+    padding: 6px 4px 28px;
+}
+
+[data-theme="dark"] .dash-page {
+    --dp-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 6px 18px rgba(0, 0, 0, .35);
+    --dp-shadow-hover: 0 2px 4px rgba(0, 0, 0, .5), 0 12px 28px rgba(0, 0, 0, .5);
+}
+
+/* =============================================================================
+   1. Toolbar
+   ============================================================================= */
+.dash-page .dashboard-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.dash-page .dashboard-heading {
+    margin: 0;
+    font-size: clamp(1.25rem, 1.05rem + 1vw, 1.65rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    color: var(--text-light);
+}
+
+    /* small accent tick before the heading */
+    .dash-page .dashboard-heading::before {
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 1em;
+        margin-right: 10px;
+        vertical-align: -.12em;
+        border-radius: 4px;
+        background: linear-gradient(180deg, var(--dp-blue), var(--secondary, #8b5cf6));
+    }
+
+.dash-page .toolbar-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+    .dash-page .toolbar-filters .search-box {
+        min-width: 200px;
+    }
+
+    .dash-page .toolbar-filters .bnet-select,
+    .dash-page .toolbar-filters .bnet-datepicker,
+    .dash-page .toolbar-filters input[type="text"] {
+        height: 42px;
+        padding: 0 14px;
+        font: inherit;
+        font-size: .875rem;
+        font-weight: 500;
+        color: var(--text-light);
+        background-color: var(--bg-light-secondary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--dp-radius-sm);
+        box-shadow: var(--dp-shadow);
+        outline: none;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .dash-page .toolbar-filters .bnet-select {
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .dash-page .toolbar-filters .bnet-datepicker {
+        min-width: 230px;
+        cursor: pointer;
+    }
+
+        .dash-page .toolbar-filters .bnet-select:hover,
+        .dash-page .toolbar-filters .bnet-datepicker:hover {
+            border-color: color-mix(in srgb, var(--dp-blue) 55%, var(--border-light));
+        }
+
+        .dash-page .toolbar-filters .bnet-select:focus,
+        .dash-page .toolbar-filters .bnet-datepicker:focus {
+            border-color: var(--dp-blue);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--dp-blue) 25%, transparent);
+        }
+
+
+/* =============================================================================
+   2. Status badges (pills)
+   ============================================================================= */
+.dash-page .bnet-badge-status {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    white-space: nowrap;
+    border-radius: 999px;
+    color: var(--text-light-secondary);
+    background: color-mix(in srgb, var(--text-light-secondary) 14%, transparent);
+}
+
+    .dash-page .bnet-badge-status.blue {
+        color: var(--dp-blue);
+        background: color-mix(in srgb, var(--dp-blue) 14%, transparent);
+    }
+
+    .dash-page .bnet-badge-status.green {
+        color: var(--dp-green);
+        background: color-mix(in srgb, var(--dp-green) 16%, transparent);
+    }
+
+    .dash-page .bnet-badge-status.yellow {
+        color: var(--dp-amber);
+        background: color-mix(in srgb, var(--dp-amber) 16%, transparent);
+    }
+
+    .dash-page .bnet-badge-status.red {
+        color: var(--dp-red);
+        background: color-mix(in srgb, var(--dp-red) 15%, transparent);
+    }
+
+    .dash-page .bnet-badge-status.gray {
+        color: var(--text-light-secondary);
+    }
+
+/* =============================================================================
+   4. Chart cards
+   ============================================================================= */
+.dash-page .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.dash-page .card-chart {
+    min-width: 0;
+    padding: 18px 20px 20px;
+    border-radius: var(--dp-radius);
+    border: 1px solid var(--border-light);
+    background-color: var(--bg-light-secondary);
+    box-shadow: var(--dp-shadow);
+    transition: box-shadow .2s var(--dp-ease), border-color .2s ease;
+}
+
+    .dash-page .card-chart:hover {
+        border-color: color-mix(in srgb, var(--dp-blue) 35%, var(--border-light));
+        box-shadow: var(--dp-shadow-hover);
+    }
+
+    .dash-page .card-chart.span-2 {
+        grid-column: span 2;
+    }
+
+    .dash-page .card-chart.span-3 {
+        grid-column: 1 / -1;
+    }
+
+.dash-page .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.dash-page .chart-title {
+    font-size: .98rem;
+    font-weight: 700;
+    letter-spacing: -.005em;
+    color: var(--text-light);
+}
+
+/* Legends */
+.dash-page .legend-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 10px;
+    margin-top: 14px;
+}
+
+.dash-page .chart-header .legend-container {
+    justify-content: flex-end;
+    margin-top: 0;
+}
+
+.dash-page .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    font-size: .82rem;
+    font-weight: 500;
+    color: var(--text-light-secondary);
+    background: var(--bg-light-tertiary);
+    border-radius: 999px;
+}
+
+    .dash-page .legend-item span {
+        font-weight: 700;
+        color: var(--text-light);
+        font-variant-numeric: tabular-nums;
+    }
+
+.dash-page .legend-color {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/* Sales vs Cost is drawn at a fixed 900px design width by Dashboard.js:
+   keep it readable on phones by letting it scroll sideways inside the card. */
+.dash-page #ChartContainerSalesVsCost {
+    overflow-x: auto;
+    overflow-y: hidden;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+}
+
+    .dash-page #ChartContainerSalesVsCost svg {
+        min-width: 640px;
+    }
+
+/* =============================================================================
+   5. Leaderboards (Top Spenders / Top Games)
+   ============================================================================= */
+.dash-page .leaderboard-card {
+    --lb-head-h: 40px;
+    --lb-row-h: 40px;
+    --lb-rows: 10;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+}
+
+    .dash-page .leaderboard-card .leaderboard-container {
+        flex: 0 0 auto;
+        min-height: calc(var(--lb-head-h) + var(--lb-rows) * var(--lb-row-h) + 2px);
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        border-radius: var(--dp-radius-sm);
+        background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--lb-row-h) - 1px), var(--border-light) calc(var(--lb-row-h) - 1px), var(--border-light) var(--lb-row-h));
+        background-position: 0 var(--lb-head-h);
+        background-repeat: repeat-y;
+    }
+
+.dash-page .bnet-table.bnet-leaderboard {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    background: transparent;
+}
+
+.dash-page .bnet-leaderboard th,
+.dash-page .bnet-leaderboard td {
+    height: var(--lb-row-h);
+    padding: 0 10px;
+    box-sizing: border-box;
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border: 0;
+}
+
+.dash-page .bnet-leaderboard thead th {
+    height: var(--lb-head-h);
+    overflow: visible;
+    text-overflow: clip;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--text-light-secondary);
+    background: var(--bg-light-tertiary);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.dash-page .bnet-leaderboard tbody tr,
+.dash-page .bnet-leaderboard tbody tr:nth-child(even) {
+    background-color: transparent;
+    transition: background-color .15s ease;
+}
+
+    .dash-page .bnet-leaderboard tbody tr:hover {
+        background-color: color-mix(in srgb, var(--dp-blue) 8%, transparent);
+    }
+
+.dash-page .bnet-leaderboard tbody td {
+    font-size: 13px;
+    line-height: 1.2;
+}
+
+    /* rank */
+    .dash-page .bnet-leaderboard tbody td:nth-child(1) {
+        text-align: center;
+        padding: 0 6px;
+        color: var(--text-light-secondary);
+    }
+
+        .dash-page .bnet-leaderboard tbody td:nth-child(1) b {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 24px;
+            padding: 0 6px;
+            font-size: 12px;
+            font-weight: 800;
+            border-radius: 8px;
+            background: var(--bg-light-tertiary);
+        }
+
+/* podium: gold, silver, bronze */
+.dash-page .bnet-leaderboard tbody tr:nth-child(1) td:nth-child(1) b {
+    color: #fff;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+}
+
+.dash-page .bnet-leaderboard tbody tr:nth-child(2) td:nth-child(1) b {
+    color: #fff;
+    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+}
+
+.dash-page .bnet-leaderboard tbody tr:nth-child(3) td:nth-child(1) b {
+    color: #fff;
+    background: linear-gradient(135deg, #f0a56b, #c2763a);
+}
+
+/* name */
+.dash-page .bnet-leaderboard tbody td:nth-child(2) {
+    text-align: left;
+    padding-left: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-light);
+}
+
+.dash-page .bnet-leaderboard th:nth-child(1) {
+    text-align: center;
+}
+
+.dash-page .bnet-leaderboard th:nth-child(2) {
+    text-align: left;
+    padding-left: 10px;
+}
+
+/* columns */
+.dash-page .bnet-leaderboard col.col-rank {
+    width: 56px;
+}
+
+.dash-page .leaderboard-users col.col-num:nth-of-type(3) {
+    width: 70px;
+}
+
+.dash-page .leaderboard-users col.col-num:nth-of-type(4) {
+    width: 110px;
+}
+
+.dash-page .leaderboard-games col.col-cat {
+    width: 190px;
+}
+
+.dash-page .leaderboard-games col.col-num {
+    width: 120px;
+}
+
+.dash-page .leaderboard-games th:nth-child(3),
+.dash-page .leaderboard-games td:nth-child(3) {
+    text-align: left;
+}
+
+.dash-page .leaderboard-users th:nth-child(n+3),
+.dash-page .leaderboard-users td:nth-child(n+3),
+.dash-page .leaderboard-games th:nth-child(4),
+.dash-page .leaderboard-games td:nth-child(4) {
+    text-align: right;
+    padding-right: 14px;
+    font-variant-numeric: tabular-nums;
+}
+
+.dash-page .leaderboard-users td:nth-child(n+3),
+.dash-page .leaderboard-games td:nth-child(4) {
+    font-weight: 700;
+}
+
+/* empty-state row */
+.dash-page .bnet-leaderboard td[colspan] {
+    text-align: center !important;
+    text-transform: none;
+    font-weight: 400;
+    color: var(--text-light-secondary);
+}
+
+/* =============================================================================
+   6. Responsive
+   ============================================================================= */
+@media (max-width: 1100px) {
+    .dash-page .leaderboard-games col.col-cat {
+        width: 150px;
+    }
+
+    .dash-page .leaderboard-games col.col-num {
+        width: 100px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .dash-page .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dash-page .card-chart.span-2,
+    .dash-page .card-chart.span-3 {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .dash-page {
+        padding: 2px 0 20px;
+    }
+
+        .dash-page .toolbar-filters {
+            width: 100%;
+        }
+
+            .dash-page .toolbar-filters .search-box,
+            .dash-page .toolbar-filters .bnet-datepicker {
+                flex: 1 1 100%;
+                min-width: 0 !important;
+                width: 100%;
+            }
+
+        /* two KPI cards per row on tablets/phones; badge drops under the value */
+        .dash-page .cards-grid.cards-grid-compact {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .dash-page .card.card-compact {
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding: 14px;
+        }
+
+        .dash-page .card-icon-sm {
+            width: 38px;
+            height: 38px;
+            font-size: 16px;
+        }
+
+        .dash-page .leaderboard-container {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .dash-page .bnet-leaderboard {
+            min-width: 360px;
+        }
+
+            .dash-page .bnet-leaderboard col.col-rank {
+                width: 46px;
+            }
+
+        .dash-page .leaderboard-games col.col-cat {
+            width: 120px;
+        }
+
+        .dash-page .leaderboard-games col.col-num {
+            width: 84px;
+        }
+}
+
+@media (max-width: 600px) {
+    .dash-page .charts-grid {
+        gap: 12px;
+        margin-top: 12px;
+    }
+
+    .dash-page .card-chart {
+        padding: 14px;
+        border-radius: 12px;
+    }
+
+    .dash-page .chart-header {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+
+        .dash-page .chart-header .legend-container {
+            justify-content: flex-start;
+        }
+}
+
+@media (max-width: 360px) {
+    .dash-page .cards-grid.cards-grid-compact {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* no sticky hover on touch screens */
+@media (hover: none) {
+    .dash-page .card.card-compact:hover {
+        transform: none;
+        box-shadow: var(--dp-shadow);
+        border-color: var(--border-light);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dash-page * {
+        transition: none !important;
+    }
+}
