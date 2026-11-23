@@ -26,7 +26,7 @@ c693ad0b4c7ad8e5c448070a4f5ea321efadd5d6	Ashx/GetWallpaperCountHandler.ashx
 2386b7451f85b951554324abacb547b0c29e89ee	Ashx/SaveChatMessageHandler.ashx
 13af14db285546340b62364fd3af5c39053a1bdc	Assets/BNetAlert/Script.js
 8c9fc58438bc64759309f54b3436a2864f2de099	Assets/BNetAlert/Style.css
-a0ab824a81b988aab678a9610c1804243beb0b27	Assets/BNetBadge/Style.css
+4b4270ef405cb1b97894dc30eb62ccd9f10fb8bb	Assets/BNetBadge/Style.css
 22f93fe56129ff78a841b5bdc674028ec54914d8	Assets/BNetChart/BNetBarChart.js
 140ec4bd2be26e4ea60fdbe58df7a778fd673b6c	Assets/BNetChart/BNetBaseChart.js
 961a7c32ce11d1703735555cc6fcd1b99649b2bb	Assets/BNetChart/BNetDonutChart.js
@@ -43,7 +43,7 @@ d17ccaebe0bd5d9d55252d78e357ed5961744e0d	Assets/BNetCheckbox/Style.css
 48a13f7bb90aa49f76a5b7bab1191cdcf85a866d	Assets/BNetPageLoader/Style.css
 c54f00188a2c643942ea661a8ea55a9f1e4733c7	Assets/BNetSelect/Script.js
 15278fe3b61baa0e06a9256977a1ad9cfed9d139	Assets/BNetSelect/Style.css
-1e423c9da8aff65903039c3be784d38945c95180	Assets/BNetTable/Style.css
+b8dd5e4f8c75094eb405ec8c0ee9f0693005586a	Assets/BNetTable/Style.css
 a4016ee606ac72d3225a1619388f0f7898de0b21	Assets/ClientChat/Script.js
 39e57e309abbd7e24f5aff4cea10f5d49201a9f2	Assets/ClientChat/Style.css
 3ed5945743f70e703d9c1280d34d869ef148dc95	Assets/Login/Script.js
@@ -308,8 +308,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-ffbbdf6b7d479b221da255c70988e1e962af9f2a	bin/BNet.Cafe.Server.dll
-5c84f7eb4c35c252da7d51818254b6ccf3290681	bin/BNet.Cafe.Server.pdb
+bda734aa7b7e3b86037cd5af0d8e88bcc6b45969	bin/BNet.Cafe.Server.dll
+8c867d834a1def7cc5e4838ab6dc07dd32c5fd4b	bin/BNet.Cafe.Server.pdb
 7caad2d5917469cd3d0152f21d1b8725e66766af	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 c8b6f8ffc8113cd4ee47f39b6054c392ed7f0439	bin/BNet.Cafe.Websocket.pdb
