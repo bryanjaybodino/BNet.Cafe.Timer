@@ -52,7 +52,7 @@ d56366f74c372ca9e0799462fa052b266399bf1a	Assets/Pages/AutoCreditSettings.js
 fd4a9191a29dbd2409a301575121242805b3fcd0	Assets/Pages/ComputerManage.js
 5e4f0c9ed21c5e41a27241b0323f3ef7baf5b4dc	Assets/Pages/Computers.js
 d9216c288bfa7442a1bc3755a78997a23e4eac7b	Assets/Pages/Config.css
-7a0900d5aae8d4b48682e6e85bd5cef35aa6ca47	Assets/Pages/Config.js
+34378f7743a7c1eba2337d1e3d4d23e29f89058e	Assets/Pages/Config.js
 80df8d474fcd4b00c1c605e259492c54b38ea3a9	Assets/Pages/Dashboard.js
 7f95570971559e2a12abc068a2a0269d665a5266	Assets/Pages/DownloadApp.css
 a0847ba35bd6914501dc0f8413da4d32bb1a0005	Assets/Pages/DownloadApp.js
@@ -93,7 +93,7 @@ b29764681b4f71a54c44504aaa026a4605764695	Assets/Vendo/Clients.js
 4de6cd0c0349319f6abe53f4d92812108807c0a4	Assets/Vendo/Main.js
 f0ee4736c63ca9a948ac0f5bc10e3037fcd19a48	Assets/Vendo/Modals.js
 7e64f3e184570c72484289db7e5630c75479882a	Assets/Vendo/Serial.js
-c04416b2fd031a2adc7aea45d42c00e31f122f67	Assets/Vendo/Style.css
+040b6aba75e5cb096fa8c776f35d3d252a6eb436	Assets/Vendo/Style.css
 8efd2040e3615ef13c7ec66110256bdee3f78e62	Assets/Vendo/Utils.js
 7a4d96f20d4148d7120156eece51f9eb1b0db0e9	Assets/Vendo/Wallpapers.js
 4e2a0e473e908c0c198e86d5973af61dc3088e22	Assets/XamppGuide/Style.css
@@ -204,7 +204,7 @@ d62d813b8f6fe2e67d338be2612aa199ebf82777	Forms/ComputerCreate.ascx
 72e0e840bb048e2ed08625df0f0ca2af6b06d663	Forms/ComputerEarnings.ascx
 2a2bcfc0562cebcdbdbe47068fdf064c6bcf9d1e	Forms/ComputerEdit.ascx
 5c1b5a1645bd8718adb09014180f93966214bebd	Forms/Computers.ascx
-9884db0ff30c0bdafa02c6d4010a0ac7001532f0	Forms/Config.ascx
+076210a900d8718de23c1542a6016bdc53643a46	Forms/Config.ascx
 568634ad657de6ba2bdec86abc241ce2b926f1fb	Forms/Dashboard.ascx
 3833ff73ef3993f95d0b947e9e1353d885551095	Forms/DownloadApp.ascx
 907682833a311ef46542074a5d9ea822c0b36344	Forms/GameMonitoring.ascx
@@ -214,7 +214,7 @@ f444daf95ce160b77243402eb7a2782546092be1	Forms/HowToUse.ascx
 0f1a42076f606a0ce39609519a47b2f5cea15150	Forms/InventoryCreate.ascx
 1c0179c9a2c7ab4e09984be1a929341bc0a5123c	Forms/InventoryEdit.ascx
 18c3037faf6c6ab262d93f7a4b81b374986169bc	Forms/KioskLogs.ascx
-04e64a496aea3552137ef3c054d95c1ebf71acc5	Forms/KioskMode.ascx
+f28759aee27da3822827cc492e092e5b35891029	Forms/KioskMode.ascx
 893dd072b60419ef033836b1cf52f716f8ee2a6f	Forms/Maintenance.ascx
 6da6a3ec5fcc4d1e5e51d12954682a9c938c8ac5	Forms/Modals/AutoCreditSettingDelete.ascx
 cc2a9f7f39aa0fd73828c5d940b2595ba2c006f1	Forms/Modals/ChatMessage.ascx
@@ -308,8 +308,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-2669601a951bbbf3ef59f43902af3ef270c9dbd5	bin/BNet.Cafe.Server.dll
-8cc3b5c2681fa23725fcbd48b1e9ec494977d7d7	bin/BNet.Cafe.Server.pdb
+d9d3ac5eaf3c0ccf1b8a32a694e08e0e53338d1f	bin/BNet.Cafe.Server.dll
+7383209c76ed68d856cfeda360e6fc2986fb371c	bin/BNet.Cafe.Server.pdb
 7caad2d5917469cd3d0152f21d1b8725e66766af	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 c8b6f8ffc8113cd4ee47f39b6054c392ed7f0439	bin/BNet.Cafe.Websocket.pdb
