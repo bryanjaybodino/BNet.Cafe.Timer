@@ -1,172 +1,132 @@
 ﻿/* ==========================================
-   BNet Badge Status
+   BNet Badge Status (Compact)
+   Same class names: .bnet-badge-status + red | green | blue | gray | yellow
+   Sized to sit cleanly inside .bnet-table rows (13px text, 8px cell padding).
    ========================================== */
+
 .bnet-badge-status {
+    /* Variant tokens (overridden per color below) */
+    --bs-rgb: 107, 114, 128; /* base color as r, g, b */
+    --bs-text: #4b5563; /* label color */
+    --bs-dot: #9ca3af; /* dot color */
+    --bs-speed: 1.6s;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
+    gap: 5px; /* was 6px */
+    padding: 2px 8px; /* was 4px 10px */
+    border-radius: 999px;
+    font-size: 11.5px; /* was 12px */
     font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.1px;
+    white-space: nowrap;
+    vertical-align: middle;
     text-transform: capitalize;
+    color: var(--bs-text);
+    background-color: rgba(var(--bs-rgb), 0.12);
+    border: 1px solid rgba(var(--bs-rgb), 0.25);
 }
 
+    /* Status dot */
     .bnet-badge-status::before {
         content: '';
-        display: inline-block;
-        width: 7px;
-        height: 7px;
+        flex: 0 0 auto;
+        width: 6px; /* was 7px */
+        height: 6px;
         border-radius: 50%;
+        background-color: var(--bs-dot);
+        box-shadow: 0 0 0 0 rgba(var(--bs-rgb), 0.7);
+        animation: bnet-status-pulse var(--bs-speed) infinite;
     }
 
-    /* Red Variant */
+    /* ---------- Variants ---------- */
     .bnet-badge-status.red {
-        background-color: rgba(239, 68, 68, 0.12);
-        color: #dc2626;
-        border: 1px solid rgba(239, 68, 68, 0.25);
+        --bs-rgb: 239, 68, 68;
+        --bs-text: #dc2626;
+        --bs-dot: #dc2626;
     }
 
-        .bnet-badge-status.red::before {
-            background-color: #dc2626;
-            box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
-            animation: bnet-status-pulse-red 1.6s infinite;
-        }
-
-    /* Green Variant */
     .bnet-badge-status.green {
-        background-color: rgba(34, 197, 94, 0.12);
-        color: #16a34a;
-        border: 1px solid rgba(34, 197, 94, 0.25);
+        --bs-rgb: 34, 197, 94;
+        --bs-text: #16a34a;
+        --bs-dot: #16a34a;
     }
 
-        .bnet-badge-status.green::before {
-            background-color: #16a34a;
-            box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
-            animation: bnet-status-pulse-green 1.6s infinite;
-        }
-
-    /* Blue Variant */
     .bnet-badge-status.blue {
-        background-color: rgba(59, 130, 246, 0.12);
-        color: #2563eb;
-        border: 1px solid rgba(59, 130, 246, 0.25);
+        --bs-rgb: 59, 130, 246;
+        --bs-text: #2563eb;
+        --bs-dot: #2563eb;
     }
 
-        .bnet-badge-status.blue::before {
-            background-color: #2563eb;
-            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
-            animation: bnet-status-pulse-blue 1.6s infinite;
-        }
-
-    /* Gray Variant */
-    .bnet-badge-status.gray {
-        background-color: rgba(107, 114, 128, 0.12);
-        color: #4b5563;
-        border: 1px solid rgba(107, 114, 128, 0.25);
-    }
-
-        .bnet-badge-status.gray::before {
-            background-color: #9ca3af;
-            box-shadow: 0 0 0 0 rgba(156, 163, 175, 0.7);
-            animation: bnet-status-pulse-gray 2s infinite;
-        }
-
-    /* Yellow Variant */
     .bnet-badge-status.yellow {
-        background-color: rgba(245, 158, 11, 0.12);
-        color: #d97706;
-        border: 1px solid rgba(245, 158, 11, 0.25);
+        --bs-rgb: 245, 158, 11;
+        --bs-text: #d97706;
+        --bs-dot: #d97706;
     }
 
-        .bnet-badge-status.yellow::before {
-            background-color: #d97706;
-            box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.7);
-            animation: bnet-status-pulse-yellow 1.6s infinite;
-        }
+    .bnet-badge-status.gray {
+        --bs-rgb: 107, 114, 128;
+        --bs-text: #4b5563;
+        --bs-dot: #9ca3af;
+        --bs-speed: 2s;
+    }
 
-/* Animations */
-@keyframes bnet-status-pulse-red {
+/* ---------- Dark theme (matches your data-theme switch) ---------- */
+[data-theme="dark"] .bnet-badge-status {
+    background-color: rgba(var(--bs-rgb), 0.18);
+    border-color: rgba(var(--bs-rgb), 0.35);
+}
+
+    [data-theme="dark"] .bnet-badge-status.red {
+        --bs-text: #f87171;
+        --bs-dot: #f87171;
+    }
+
+    [data-theme="dark"] .bnet-badge-status.green {
+        --bs-text: #4ade80;
+        --bs-dot: #4ade80;
+    }
+
+    [data-theme="dark"] .bnet-badge-status.blue {
+        --bs-text: #60a5fa;
+        --bs-dot: #60a5fa;
+    }
+
+    [data-theme="dark"] .bnet-badge-status.yellow {
+        --bs-text: #fbbf24;
+        --bs-dot: #fbbf24;
+    }
+
+    [data-theme="dark"] .bnet-badge-status.gray {
+        --bs-text: #9ca3af;
+        --bs-dot: #9ca3af;
+    }
+
+/* ---------- Inside the compact table ---------- */
+.bnet-table td .bnet-badge-status {
+    margin: 0;
+}
+
+/* ---------- Animation (one keyframe for all colors) ---------- */
+@keyframes bnet-status-pulse {
     0% {
         transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+        box-shadow: 0 0 0 0 rgba(var(--bs-rgb), 0.7);
     }
 
     70% {
         transform: scale(1);
-        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+        box-shadow: 0 0 0 5px rgba(var(--bs-rgb), 0);
     }
 
     100% {
         transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+        box-shadow: 0 0 0 0 rgba(var(--bs-rgb), 0);
     }
 }
 
-@keyframes bnet-status-pulse-green {
-    0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
-    }
-
-    70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
-    }
-
-    100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-    }
-}
-
-@keyframes bnet-status-pulse-blue {
-    0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
-    }
-
-    70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
-    }
-
-    100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-    }
-}
-
-@keyframes bnet-status-pulse-yellow {
-    0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.7);
-    }
-
-    70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
-    }
-
-    100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-    }
-}
-
-@keyframes bnet-status-pulse-gray {
-    0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(156, 163, 175, 0.7);
-    }
-
-    70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
-    }
-
-    100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+@media (prefers-reduced-motion: reduce) {
+    .bnet-badge-status::before {
+        animation: none;
     }
 }

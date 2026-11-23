@@ -1,27 +1,43 @@
 ﻿/* ==========================================
-   6. BNET TABLES, TOOLBARS & WRAPPERS
+   6. BNET TABLES, TOOLBARS & WRAPPERS (Compact)
+   Same class names and CSS variables as before.
    ========================================== */
+
+/* Optional local tokens: change these to tune density everywhere */
+.bnet-table-wrapper {
+    --bt-radius: 10px;
+    --bt-cell-y: 8px; /* vertical cell padding  (was 14px) */
+    --bt-cell-x: 12px; /* horizontal cell padding (was 16px) */
+    --bt-font: 13px; /* body font size          (was 14px) */
+    --bt-head-font: 11px; /* header font size        (was 12px) */
+    --bt-row-hover: color-mix(in srgb, var(--primary, #2563eb) 6%, transparent);
+    --bt-row-alt: color-mix(in srgb, var(--bg-light-tertiary, #f3f4f6) 45%, transparent);
+}
+
 .bnet-table-wrapper {
     background-color: var(--bg-light-secondary);
     border: 1px solid var(--border-light);
-    border-radius: 12px;
-    padding: 25px 15px;
+    border-radius: var(--bt-radius);
+    padding: 12px; /* was 25px 15px */
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
     display: block;
     overflow: visible !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
+/* ---------- Toolbar ---------- */
 .bnet-table-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    gap: 16px;
+    margin-bottom: 10px; /* was 20px */
+    gap: 10px;
     flex-wrap: wrap;
 }
 
+/* ---------- Scroll container ---------- */
 .bnet-table-container {
     width: 100%;
     max-width: 100%;
@@ -29,84 +45,150 @@
     overflow-y: visible !important;
     display: block;
     box-sizing: border-box;
-    padding-bottom: 8px;
-    padding-right: 1px;
-
+    padding-bottom: 2px;
+    border: 1px solid var(--border-light);
+    border-radius: calc(var(--bt-radius) - 2px);
+    background-color: var(--bg-light-secondary);
+    scrollbar-width: thin;
 }
 
+    .bnet-table-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .bnet-table-container::-webkit-scrollbar-thumb {
+        background: var(--border-light, #d1d5db);
+        border-radius: 8px;
+    }
+
+/* ---------- Table ---------- */
 .bnet-table {
     width: 100%;
     min-width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 14px;
+    font-size: var(--bt-font);
+    line-height: 1.35;
     text-align: left;
     white-space: nowrap;
+    color: var(--text-light, inherit);
 }
 
     .bnet-table th,
     .bnet-table td {
-        padding: 14px 16px;
+        padding: var(--bt-cell-y) var(--bt-cell-x);
         border-bottom: 1px solid var(--border-light);
         white-space: nowrap;
         box-sizing: border-box;
+        vertical-align: middle;
     }
 
         .bnet-table th:last-child,
         .bnet-table td:last-child {
-            padding-right: 20px;
+            padding-right: 16px;
         }
 
+    .bnet-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    /* Header */
     .bnet-table th {
         color: var(--text-light-secondary);
         font-weight: 600;
         text-transform: uppercase;
-        font-size: 12px;
-        letter-spacing: 0.5px;
+        font-size: var(--bt-head-font);
+        letter-spacing: 0.4px;
         background-color: var(--bg-light-tertiary);
+        border-bottom: 1px solid var(--border-light);
+        position: sticky;
+        top: 0;
+        z-index: 2;
     }
 
+    /* Rows */
     .bnet-table tr {
         position: relative;
     }
 
-        .bnet-table tr:hover {
-            background-color: var(--bg-light);
+    .bnet-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+
+        .bnet-table tbody tr:nth-child(even) {
+            background-color: var(--bt-row-alt);
+        }
+
+        .bnet-table tbody tr:hover {
+            background-color: var(--bt-row-hover);
             z-index: 10;
         }
 
-    /* Sortable Headers */
+    /* Compact controls inside cells (buttons, icons, badges) */
+    .bnet-table td .btn,
+    .bnet-table td button,
+    .bnet-table td .bnet-btn {
+        padding: 3px 8px;
+        font-size: 12px;
+        line-height: 1.3;
+        border-radius: 6px;
+    }
+
+    .bnet-table td i {
+        font-size: 13px;
+    }
+
+    /* Sortable headers */
     .bnet-table th.sortable {
         cursor: pointer;
         user-select: none;
+        transition: color 0.15s ease;
     }
 
         .bnet-table th.sortable:hover {
             color: var(--primary);
         }
 
+        .bnet-table th.sortable::after {
+            content: "\2195"; /* up-down arrow */
+            margin-left: 6px;
+            font-size: 10px;
+            opacity: 0.35;
+        }
+
+        .bnet-table th.sortable.asc::after {
+            content: "\2191";
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        .bnet-table th.sortable.desc::after {
+            content: "\2193";
+            opacity: 1;
+            color: var(--primary);
+        }
 
 /* ==========================================
    BNET GRIDVIEW TEMPLATE & PAGINATION
    ========================================== */
 
-/* External Pagination Container */
 .bnet-table-pagination-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 12px;
+    margin-top: 10px; /* was 12px */
     width: 100%;
 }
 
-    /* Pagination List Container */
     .bnet-table-pagination-container ul.bnet-pagination {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
         list-style: none;
         padding: 0;
         margin: 0;
-        gap: 6px;
+        gap: 4px; /* was 6px */
     }
 
     .bnet-table-pagination-container .page-item {
@@ -114,16 +196,16 @@
         margin: 0;
     }
 
-    /* Button Styles (.page-link) */
+    /* Page buttons */
     .bnet-table-pagination-container .page-link {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 34px;
-        height: 34px;
-        padding: 0 10px;
-        border-radius: 8px;
-        font-size: 13px;
+        min-width: 28px; /* was 34px */
+        height: 28px;
+        padding: 0 8px;
+        border-radius: 6px;
+        font-size: 12px;
         font-weight: 600;
         text-decoration: none;
         background-color: var(--bg-light-tertiary, #f3f4f6);
@@ -131,50 +213,84 @@
         border: 1px solid var(--border-light, #e5e7eb);
         cursor: pointer;
         user-select: none;
-        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
 
-    /* Hover State for Active Links */
     .bnet-table-pagination-container .page-item:not(.disabled):not(.active) .page-link:hover {
-        background-color: var(--border-light, #e5e7eb);
+        background-color: var(--bt-row-hover, #e5e7eb);
         color: var(--primary, #2563eb);
         border-color: var(--primary, #2563eb);
     }
 
-    /* Active Page State */
+    .bnet-table-pagination-container .page-link:focus-visible {
+        outline: 2px solid var(--primary, #2563eb);
+        outline-offset: 2px;
+    }
+
+    /* Active page */
     .bnet-table-pagination-container .page-item.active .page-link {
         background-color: var(--primary, #2563eb);
         color: #ffffff;
         border-color: var(--primary, #2563eb);
         cursor: default;
+        box-shadow: 0 1px 3px color-mix(in srgb, var(--primary, #2563eb) 35%, transparent);
     }
 
-    /* Disabled Prev/Next Buttons */
+    /* Disabled Prev/Next */
     .bnet-table-pagination-container .page-item.disabled .page-link {
-        opacity: 0.5;
+        opacity: 0.45;
         pointer-events: none;
         cursor: not-allowed;
         background-color: var(--bg-light-secondary, #f9fafb);
     }
 
-/* Empty State Panel Styling */
+    /* Arrow buttons (<a>) keep a primary border */
+    .bnet-table-pagination-container .page-item a.page-link.pointer {
+        border: 1px solid var(--primary, #3b82f6) !important;
+    }
+
+    .bnet-table-pagination-container .page-item:not(.disabled) a.page-link.pointer:hover {
+        border: 1px solid var(--primary-dark, #1e40af) !important;
+    }
+
+/* ---------- Empty state ---------- */
 .bnet-table-empty-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 200px;
+    gap: 6px;
+    min-height: 120px; /* was 200px */
     width: 100%;
     border-top: 1px solid var(--border-light, #e5e7eb);
-    margin-top: 12px;
+    margin-top: 10px;
+    color: var(--text-light-secondary, #6b7280);
+    font-size: 13px;
+    text-align: center;
 }
 
-/* Style ONLY the arrow buttons (<a> tags) with a clean 1px border */
-.bnet-table-pagination-container .page-item a.page-link.pointer {
-    border: 1px solid var(--primary, #3b82f6) !important;
+/* ---------- Small screens ---------- */
+@media (max-width: 768px) {
+    .bnet-table-wrapper {
+        padding: 8px;
+        --bt-cell-y: 7px;
+        --bt-cell-x: 10px;
+        --bt-font: 12.5px;
+    }
+
+    .bnet-table-toolbar {
+        gap: 8px;
+    }
+
+        .bnet-table-toolbar > * {
+            flex: 1 1 100%;
+        }
 }
 
-/* Hover effect specifically for the arrow buttons border */
-.bnet-table-pagination-container .page-item:not(.disabled) a.page-link.pointer:hover {
-    border: 1px solid var(--primary-dark, #1e40af) !important;
+@media (prefers-reduced-motion: reduce) {
+    .bnet-table tbody tr,
+    .bnet-table-pagination-container .page-link,
+    .bnet-table th.sortable {
+        transition: none;
+    }
 }
