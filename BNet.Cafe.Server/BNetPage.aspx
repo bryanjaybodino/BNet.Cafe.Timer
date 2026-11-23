@@ -37,6 +37,7 @@
             <div class="logo">
                 <i class="fas fa-cube"></i>
                 <span>BNet Cafe</span>
+                <asp:Label ID="lblServerIp" runat="server" Text="" />
             </div>
 
             <div class="sidebar-menu">
@@ -64,15 +65,20 @@
                         <asp:HyperLink ID="HyperLink_Remote" runat="server" ToolTip="Remote" onclick="navigateTo('?Form=Remote'); return false;">
                             <i class="fas fa-display"></i><span>Remote</span>
                         </asp:HyperLink>
-                        <asp:HyperLink ID="HyperLink_PricingSettings" runat="server" ToolTip="PricingSettings" onclick="navigateTo('?Form=PricingSettings'); return false;">
-                            <i class="fas fa-cash-register"></i><span>Pricing Setting</span>
+                        <asp:HyperLink ID="HyperLink_GameMonitoring" runat="server" ToolTip="GameMonitoring" onclick="navigateTo('?Form=GameMonitoring'); return false;">
+                            <i class="fas fa-gamepad"></i><span>Game Monitoring</span>
                         </asp:HyperLink>
-                        <asp:HyperLink ID="HyperLink_PointsSettings" runat="server" ToolTip="PointsSettings" onclick="navigateTo('?Form=PointsSettings'); return false;">
-                           <i class="fas fa-coins"></i><span>Points Setting</span>
-                        </asp:HyperLink>
-                        <asp:HyperLink ID="HyperLink_AutoCreditSettings" runat="server" ToolTip="AutoCreditSettings" onclick="navigateTo('?Form=AutoCreditSettings'); return false;">
-                            <i class="fas fa-credit-card"></i><span>Auto Credit Setting</span>
-                        </asp:HyperLink>
+                    </div>
+                </details>
+
+                <!-- SECTION: BILLING & POINTS -->
+                <details class="menu-group" id="group_Billing" runat="server">
+                    <summary class="menu-header" title="Billing & Points">
+                        <i class="fas fa-wallet"></i>
+                        <span>Billing & Points</span>
+                        <i class="fas fa-chevron-down arrow"></i>
+                    </summary>
+                    <div class="menu-sub-items">
                         <asp:HyperLink ID="HyperLink_Rentals" runat="server" ToolTip="Rental" onclick="navigateTo('?Form=Rentals'); return false;">
                             <i class="fa-solid fa-file-invoice-dollar"></i><span>Billings</span>
                         </asp:HyperLink>
@@ -82,8 +88,8 @@
                         <asp:HyperLink ID="HyperLink_Points" runat="server" ToolTip="Points" onclick="navigateTo('?Form=Points'); return false;">
                             <i class="fas fa-star"></i><span>Points</span>
                         </asp:HyperLink>
-                        <asp:HyperLink ID="HyperLink_GameMonitoring" runat="server" ToolTip="GameMonitoring" onclick="navigateTo('?Form=GameMonitoring'); return false;">
-                            <i class="fas fa-gamepad"></i><span>Game Monitoring</span>
+                        <asp:HyperLink ID="HyperLink_Transactions" runat="server" ToolTip="Transactions" onclick="navigateTo('?Form=Transactions'); return false;">
+                            <i class="fas fa-file-invoice"></i><span>Transactions</span>
                         </asp:HyperLink>
                     </div>
                 </details>
@@ -99,14 +105,14 @@
                         <asp:HyperLink ID="HyperLink_POS" runat="server" ToolTip="POS" onclick="navigateTo('?Form=POS'); return false;">
                             <i class="fas fa-cart-shopping"></i><span>Point of Sale</span>
                         </asp:HyperLink>
-                        <asp:HyperLink ID="HyperLink_StockIn" runat="server" ToolTip="StockIn" onclick="navigateTo('?Form=StockIn'); return false;">
-                            <i class="fas fa-boxes-packing"></i><span>Stock In</span>
+                        <asp:HyperLink ID="HyperLink_Sales" runat="server" ToolTip="Sales" NavigateUrl="?Form=Sales" onclick="navigateTo('?Form=Sales'); return false;">
+                            <i class="fas fa-chart-line"></i><span>Sales</span>
                         </asp:HyperLink>
                         <asp:HyperLink ID="HyperLink_Inventory" runat="server" ToolTip="Inventory" onclick="navigateTo('?Form=Inventory'); return false;">
                             <i class="fas fa-boxes-stacked"></i><span>Inventory</span>
                         </asp:HyperLink>
-                        <asp:HyperLink ID="HyperLink_Sales" runat="server" ToolTip="Sales" NavigateUrl="?Form=Sales" onclick="navigateTo('?Form=Sales'); return false;">
-                            <i class="fas fa-chart-line"></i><span>Sales</span>
+                        <asp:HyperLink ID="HyperLink_StockIn" runat="server" ToolTip="StockIn" onclick="navigateTo('?Form=StockIn'); return false;">
+                            <i class="fas fa-boxes-packing"></i><span>Stock In</span>
                         </asp:HyperLink>
                         <asp:HyperLink ID="HyperLink_Suppliers" runat="server" ToolTip="Suppliers" onclick="navigateTo('?Form=Suppliers'); return false;">
                             <i class="fas fa-truck-field"></i><span>Suppliers</span>
@@ -128,6 +134,26 @@
                     </div>
                 </details>
 
+                <!-- SECTION: KIOSK & APPS -->
+                <details class="menu-group" id="group_Kiosk" runat="server">
+                    <summary class="menu-header" title="Kiosk & Apps">
+                        <i class="fas fa-tv"></i>
+                        <span>Kiosk & Apps</span>
+                        <i class="fas fa-chevron-down arrow"></i>
+                    </summary>
+                    <div class="menu-sub-items">
+                        <asp:HyperLink ID="HyperLink_KioskMode" runat="server" ToolTip="KioskMode" onclick="navigateTo('?Form=KioskMode'); return false;">
+                            <i class="fas fa-expand"></i><span>Kiosk Mode</span>
+                        </asp:HyperLink>
+                        <asp:HyperLink ID="HyperLink_KioskLogs" runat="server" ToolTip="KioskLogs" onclick="navigateTo('?Form=KioskLogs'); return false;">
+                            <i class="fas fa-note-sticky"></i><span>Kiosk Logs</span>
+                        </asp:HyperLink>
+                        <asp:HyperLink ID="HyperLink_DownloadApp" runat="server" ToolTip="DownloadApp" onclick="navigateTo('?Form=DownloadApp'); return false;">
+                            <i class="fas fa-download"></i><span>Download App</span>
+                        </asp:HyperLink>
+                    </div>
+                </details>
+
                 <!-- SECTION: MANAGEMENT -->
                 <details class="menu-group" id="group_Management" runat="server">
                     <summary class="menu-header" title="Management">
@@ -139,41 +165,49 @@
                         <asp:HyperLink ID="HyperLink_Users" runat="server" ToolTip="User" onclick="navigateTo('?Form=Users'); return false;">
                             <i class="fas fa-users"></i><span>Users</span>
                         </asp:HyperLink>
+                        <asp:HyperLink ID="HyperLink_Maintenance" runat="server" ToolTip="Maintenance" onclick="navigateTo('?Form=Maintenance'); return false;">
+                            <i class="fas fa-screwdriver-wrench"></i><span>Maintenance</span>
+                        </asp:HyperLink>
+                    </div>
+                </details>
+
+                <!-- SECTION: SETTINGS -->
+                <details class="menu-group" id="group_Settings" runat="server">
+                    <summary class="menu-header" title="Settings">
+                        <i class="fas fa-gear"></i>
+                        <span>Settings</span>
+                        <i class="fas fa-chevron-down arrow"></i>
+                    </summary>
+                    <div class="menu-sub-items">
+                        <asp:HyperLink ID="HyperLink_PricingSettings" runat="server" ToolTip="PricingSettings" onclick="navigateTo('?Form=PricingSettings'); return false;">
+                            <i class="fas fa-cash-register"></i><span>Pricing Setting</span>
+                        </asp:HyperLink>
+                        <asp:HyperLink ID="HyperLink_PointsSettings" runat="server" ToolTip="PointsSettings" onclick="navigateTo('?Form=PointsSettings'); return false;">
+                            <i class="fas fa-coins"></i><span>Points Setting</span>
+                        </asp:HyperLink>
+                        <asp:HyperLink ID="HyperLink_AutoCreditSettings" runat="server" ToolTip="AutoCreditSettings" onclick="navigateTo('?Form=AutoCreditSettings'); return false;">
+                            <i class="fas fa-credit-card"></i><span>Auto Credit Setting</span>
+                        </asp:HyperLink>
                         <asp:HyperLink ID="HyperLink_WallPaper" runat="server" ToolTip="Wallpaper" onclick="navigateTo('?Form=Wallpaper'); return false;">
                             <i class="fas fa-image"></i><span>Wallpaper</span>
                         </asp:HyperLink>
                         <asp:HyperLink ID="HyperLink_Config" runat="server" ToolTip="Config" onclick="navigateTo('?Form=Config'); return false;">
                             <i class="fas fa-code"></i><span>Config</span>
                         </asp:HyperLink>
-                        <asp:HyperLink ID="HyperLink_Transactions" runat="server" ToolTip="Transactions" onclick="navigateTo('?Form=Transactions'); return false;">
-                            <i class="fas fa-file-invoice"></i><span>Transactions</span>
-                        </asp:HyperLink>
-                        <asp:HyperLink ID="HyperLink_Maintenance" runat="server" ToolTip="Maintenance" onclick="navigateTo('?Form=Maintenance'); return false;">
-                            <i class="fas fa-screwdriver-wrench"></i><span>Maintenance</span>
-                        </asp:HyperLink>
                     </div>
                 </details>
-                <!-- DOWNLOAD APP -->
+
+                <!-- HELP & UPDATES -->
                 <div class="menu-item">
-                    <asp:HyperLink ID="HyperLink_DownloadApp" runat="server" ToolTip="DownloadApp" onclick="navigateTo('?Form=DownloadApp'); return false;">
-                    <i class="fas fa-download"></i><span>Download App</span>
+                    <asp:HyperLink ID="HyperLink_Commits" runat="server" ToolTip="GitHubCommitsFeed" onclick="navigateTo('?Form=GitHubCommitsFeed'); return false;">
+                        <i class="fab fa-github"></i><span>Latest Updates</span>
                     </asp:HyperLink>
                 </div>
-                <!-- KIOSK MODE -->
                 <div class="menu-item">
-                    <asp:HyperLink ID="HyperLink_KioskMode" runat="server" ToolTip="KioskMode"  onclick="navigateTo('?Form=KioskMode'); return false;">
-                    <i class="fas fa-expand"></i><span>Kiosk Mode</span>
+                    <asp:HyperLink ID="HyperLink_HowToUse" runat="server" ToolTip="HowToUse" onclick="navigateTo('?Form=HowToUse'); return false;">
+                        <i class="fas fa-book-open"></i><span>How To Use</span>
                     </asp:HyperLink>
                 </div>
-                <asp:HyperLink ID="HyperLink_KioskLogs" runat="server" ToolTip="KioskLogs" onclick="navigateTo('?Form=KioskLogs'); return false;">
-                            <i class="fas fa-note-sticky"></i><span>Kiosk Logs</span>
-                </asp:HyperLink>
-                <asp:HyperLink ID="HyperLink_Commits" runat="server" ToolTip="GitHubCommitsFeed" onclick="navigateTo('?Form=GitHubCommitsFeed'); return false;">
-                            <i class="fab fa-github"></i><span>Latest Updates</span>
-                </asp:HyperLink>
-                <asp:HyperLink ID="HyperLink_HowToUse" runat="server" ToolTip="HowToUse" onclick="navigateTo('?Form=HowToUse'); return false;">
-                    <i class="fas fa-book-open"></i><span>How To Use</span>
-                </asp:HyperLink>
             </div>
         </div>
 

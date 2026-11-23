@@ -27,6 +27,8 @@ function initMapElements() {
         zoomLevel = 1.0;
     }
 
+    floorContainer.classList.toggle('edit-mode', isEditMode);
+
     // Apply visual edit mode styles if edit mode was active prior to postback
     if (isEditMode) {
         const seats = document.querySelectorAll('.seat-card');
@@ -158,6 +160,46 @@ function handleWheelZoom(e) {
     }
 }
 
+// Pinch-to-zoom (touch)
+let pinchStartDist = 0;
+let pinchStartZoom = 1;
+
+function getTouchDist(t) {
+    return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+}
+
+function handlePinchStart(e) {
+    if (e.touches.length === 2) {
+        pinchStartDist = getTouchDist(e.touches);
+        pinchStartZoom = zoomLevel;
+    }
+}
+
+function handlePinchMove(e) {
+    if (e.touches.length !== 2 || !pinchStartDist) return;
+    if (e.cancelable) e.preventDefault();
+
+    const rect = floorContainer.getBoundingClientRect();
+    const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+    const my = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+
+    // Canvas point currently under the fingers
+    const contentX = (floorContainer.scrollLeft + mx) / zoomLevel;
+    const contentY = (floorContainer.scrollTop + my) / zoomLevel;
+
+    const newZoom = pinchStartZoom * (getTouchDist(e.touches) / pinchStartDist);
+    zoomLevel = Math.min(Math.max(0.4, newZoom), 2.0);
+    applyZoom();
+
+    // Keep that point under the fingers
+    floorContainer.scrollLeft = contentX * zoomLevel - mx;
+    floorContainer.scrollTop = contentY * zoomLevel - my;
+}
+
+function handlePinchEnd(e) {
+    if (e.touches.length < 2) pinchStartDist = 0;
+}
+
 // ==========================================
 // 3. TOGGLE EDIT MODE
 // ==========================================
@@ -168,6 +210,7 @@ function toggleEditMode() {
     const seats = document.querySelectorAll('.seat-card');
 
     clearSelection();
+    if (floorContainer) floorContainer.classList.toggle('edit-mode', isEditMode);
 
     if (isEditMode) {
         if (btn) {
@@ -205,6 +248,14 @@ function bindEvents() {
     if (floorContainer) {
         floorContainer.removeEventListener('wheel', handleWheelZoom);
         floorContainer.addEventListener('wheel', handleWheelZoom, { passive: false });
+
+        // Pinch-to-zoom bindings for mobile
+        floorContainer.removeEventListener('touchstart', handlePinchStart);
+        floorContainer.removeEventListener('touchmove', handlePinchMove);
+        floorContainer.removeEventListener('touchend', handlePinchEnd);
+        floorContainer.addEventListener('touchstart', handlePinchStart, { passive: true });
+        floorContainer.addEventListener('touchmove', handlePinchMove, { passive: false });
+        floorContainer.addEventListener('touchend', handlePinchEnd, { passive: true });
     }
 
     if (viewport) {
@@ -219,19 +270,20 @@ function bindEvents() {
 function handleTouchStart(e) {
     if (!isEditMode) return;
 
-    // Prevent default scrolling and pull-to-refresh gestures
-    if (e.cancelable) e.preventDefault();
-
-    // Only handle single touch gestures for item dragging
+    // Multi-touch (pinch): let the browser / pinch handler deal with it
     if (e.touches.length !== 1) return;
 
     const touch = e.touches[0];
     const targetSeat = touch.target.closest('.seat-card');
 
+    // Empty space: let the browser pan/scroll the canvas natively
     if (!targetSeat) {
         clearSelection();
         return;
     }
+
+    // Only block scrolling when dragging a seat
+    if (e.cancelable) e.preventDefault();
 
     if (!selectedSeats.has(targetSeat)) {
         clearSelection();
@@ -344,10 +396,43 @@ function handleTouchStart(e) {
     document.addEventListener('touchcancel', onTouchEnd);
 }
 
-function handleMouseDown(e) {
-    if (!isEditMode) return;
+// Drag-to-pan with the mouse (scrollbars are hidden)
+function startMousePan(e) {
+    e.preventDefault(); // also blocks middle-click autoscroll
 
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startLeft = floorContainer.scrollLeft;
+    const startTop = floorContainer.scrollTop;
+
+    floorContainer.classList.add('panning');
+
+    function onPanMove(ev) {
+        floorContainer.scrollLeft = startLeft - (ev.clientX - startX);
+        floorContainer.scrollTop = startTop - (ev.clientY - startY);
+    }
+
+    function onPanEnd() {
+        floorContainer.classList.remove('panning');
+        document.removeEventListener('mousemove', onPanMove);
+        document.removeEventListener('mouseup', onPanEnd);
+    }
+
+    document.addEventListener('mousemove', onPanMove);
+    document.addEventListener('mouseup', onPanEnd);
+}
+
+function handleMouseDown(e) {
     const targetSeat = e.target.closest('.seat-card');
+
+    // Pan: left-drag on empty space (view mode) or middle mouse button (any mode)
+    if (e.button === 1 || (!isEditMode && !targetSeat && e.button === 0)) {
+        startMousePan(e);
+        return;
+    }
+
+    if (!isEditMode) return;
+    if (e.button !== 0) return; // edit mode: left button only
 
     // Clicked on empty space: Start Selection Box
     if (!targetSeat) {

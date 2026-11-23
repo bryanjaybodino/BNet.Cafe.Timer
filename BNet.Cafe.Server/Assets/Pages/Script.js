@@ -66,6 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const tooltipText = item.getAttribute('title') || (span ? span.textContent.trim() : '');
         if (tooltipText) {
             item.setAttribute('data-tooltip', tooltipText);
+            // Remove the native browser tooltip so only the custom one is shown
+            item.removeAttribute('title');
         }
     });
 });
@@ -88,6 +90,69 @@ function updateThemeIcon(theme) {
     }
 }
 
+
+
+// =============================================================================
+// Custom Sidebar Tooltip (shown only while the sidebar is collapsed)
+// =============================================================================
+(function () {
+    const SELECTOR = '.sidebar-menu a[data-tooltip], .sidebar-menu .menu-header[data-tooltip]';
+    let tip = null;
+    let activeEl = null;
+
+    function ensureTip() {
+        if (!tip) {
+            tip = document.createElement('div');
+            tip.className = 'sb-tooltip';
+            tip.setAttribute('role', 'tooltip');
+            document.body.appendChild(tip);
+        }
+        return tip;
+    }
+
+    function showTip(el) {
+        if (!sidebar || !sidebar.classList.contains('collapsed') || isMobile()) return;
+        const text = el.getAttribute('data-tooltip');
+        if (!text) return;
+
+        const t = ensureTip();
+        const itemRect = el.getBoundingClientRect();
+        const sidebarRect = sidebar.getBoundingClientRect();
+
+        t.textContent = text;
+        t.style.left = (sidebarRect.right + 12) + 'px';
+        t.style.top = (itemRect.top + itemRect.height / 2) + 'px';
+        t.classList.add('show');
+        activeEl = el;
+    }
+
+    function hideTip() {
+        if (tip) tip.classList.remove('show');
+        activeEl = null;
+    }
+
+    document.addEventListener('mouseover', (e) => {
+        const el = e.target.closest ? e.target.closest(SELECTOR) : null;
+        if (el) {
+            if (el !== activeEl) showTip(el);
+        } else if (activeEl) {
+            hideTip();
+        }
+    });
+
+    document.addEventListener('focusin', (e) => {
+        const el = e.target.closest ? e.target.closest(SELECTOR) : null;
+        if (el) showTip(el);
+    });
+    document.addEventListener('focusout', hideTip);
+    document.addEventListener('click', hideTip);
+
+    if (sidebar) {
+        sidebar.addEventListener('mouseleave', hideTip);
+        sidebar.addEventListener('scroll', hideTip);
+    }
+    window.addEventListener('resize', hideTip);
+})();
 
 
 // =============================================================================

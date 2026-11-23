@@ -99,10 +99,28 @@
     background-color: var(--bg-light-secondary);
     border: 1px solid var(--border-light);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: auto; /* still scrollable (wheel / drag / touch) ... */
     user-select: none;
-    touch-action: none;
+    touch-action: pan-x pan-y; /* allow native finger panning */
+    -webkit-overflow-scrolling: touch;
+    /* ... but with the scrollbars hidden */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* old Edge / IE */
 }
+
+    .floor-plan-container::-webkit-scrollbar {
+        display: none; /* Chrome, Edge, Safari */
+    }
+
+    /* Mouse drag-to-pan cursors */
+    .floor-plan-container:not(.edit-mode) {
+        cursor: grab;
+    }
+
+    .floor-plan-container.panning,
+    .floor-plan-container.panning * {
+        cursor: grabbing !important;
+    }
 
 .floor-plan-viewport {
     position: absolute;
@@ -253,8 +271,8 @@
 
     .floor-plan-container {
         height: 70vh; /* Scalable viewport height for mobile screens */
-        overflow: auto; /* Enables touch scrolling across canvas */
-        -webkit-overflow-scrolling: touch;
+        height: 70dvh; /* Accounts for mobile browser address bar */
+        overscroll-behavior: contain; /* no pull-to-refresh while panning the map */
     }
 }
 
@@ -263,15 +281,15 @@
         padding: 8px 12px; /* Bigger touch targets */
     }
 
-        .seat-card .seat-icon {
-            font-size: 18px;
-        }
+    .seat-card .seat-icon {
+        font-size: 18px;
+    }
 
-        .seat-card .seat-name {
-            font-size: 11px;
-        }
+    .seat-card .seat-name {
+        font-size: 11px;
+    }
 
-        .seat-card .seat-status {
-            font-size: 9px;
-        }
+    .seat-card .seat-status {
+        font-size: 9px;
+    }
 }
