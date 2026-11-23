@@ -125,7 +125,7 @@
                 <!-- Step 3: Exit Kiosk -->
                 <div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 8px; background-color: var(--bg-light-tertiary);">
                     <div>
-                        <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 6px;">4. Exit Kiosk
+                        <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 6px;">3. Exit Kiosk
                         </h3>
                         <p style="font-size: 13px; color: var(--text-light-secondary); margin-bottom: 8px;">
                             To exit Kiosk Mode when the desktop is shown:

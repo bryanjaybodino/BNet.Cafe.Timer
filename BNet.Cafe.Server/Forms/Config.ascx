@@ -302,7 +302,9 @@
                 <!-- ========================================== -->
 
                 <div class="form-grid-action" style="margin-top: 24px;">
-                    <span onclick="navigateTo('BNetPage.aspx?Form=Config')" class="btn btn-secondary">Reload</span>
+                    <asp:LinkButton ID="LinkButton_PatchDB" OnClick="LinkButton_PatchDB_Click" CssClass="btn btn-secondary" OnClientClick="return startPatchDatabase();" runat="server">
+                        <i class="fa fa-database"></i> Patch Database
+                    </asp:LinkButton>
                     <asp:LinkButton ID="LinkButton_Submit" OnClick="LinkButton_Submit_Click" CssClass="btn btn-primary" OnClientClick="return ValidateConfig();" runat="server">
                         <i class="fa fa-save"></i> Save Configuration
                     </asp:LinkButton>

@@ -83,39 +83,63 @@ function ValidateConfig() {
         birthdayCreditsInput.value = '0';
     }
 
-    disableSubmitButton();
+    disableActionButtons('submit');
     return true;
 }
 
-function disableSubmitButton() {
-    var btn = document.querySelector('[id$="LinkButton_Submit"]');
-    if (btn) {
-        btn.classList.add('disabled');
-        btn.style.pointerEvents = 'none';
-        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
+/**
+ * Disables action buttons and displays a loading state while patching the database
+ * @returns {boolean} True to allow ASP.NET postback
+ */
+function startPatchDatabase() {
+    disableActionButtons('patch');
+    return true;
+}
+
+function disableActionButtons(activeAction) {
+    var submitBtn = document.querySelector('[id$="LinkButton_Submit"]');
+    var patchBtn = document.querySelector('[id$="LinkButton_PatchDB"]');
+
+    if (submitBtn) {
+        submitBtn.classList.add('disabled');
+        submitBtn.style.pointerEvents = 'none';
+        if (activeAction === 'submit') {
+            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
+        }
+    }
+
+    if (patchBtn) {
+        patchBtn.classList.add('disabled');
+        patchBtn.style.pointerEvents = 'none';
+        if (activeAction === 'patch') {
+            patchBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Patching DB...';
+        }
+    }
+}
+
+function restoreActionButtons() {
+    var submitBtn = document.querySelector('[id$="LinkButton_Submit"]');
+    var patchBtn = document.querySelector('[id$="LinkButton_PatchDB"]');
+
+    if (submitBtn) {
+        submitBtn.classList.remove('disabled');
+        submitBtn.style.pointerEvents = 'auto';
+        submitBtn.innerHTML = '<i class="fa fa-save"></i> Save Configuration';
+    }
+
+    if (patchBtn) {
+        patchBtn.classList.remove('disabled');
+        patchBtn.style.pointerEvents = 'auto';
+        patchBtn.innerHTML = '<i class="fa fa-database"></i> Patch Database';
     }
 }
 
 if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager) {
     var prm = Sys.WebForms.PageRequestManager.getInstance();
 
-    // Triggered after UpdatePanel content updates
-    prm.add_pageLoaded(function (sender, args) {
-        var panelsUpdated = args.get_panelsUpdated();
-        if (panelsUpdated.length > 0) {
-            // Re-disable button during redirect window if needed
-            disableSubmitButton();
-        }
-    });
-
     // Triggered when an async postback finishes (success or error)
     prm.add_endRequest(function (sender, args) {
-        var btn = document.querySelector('[id$="LinkButton_Submit"]');
-        if (btn) {
-            btn.classList.remove('disabled');
-            btn.style.pointerEvents = 'auto';
-            btn.innerHTML = 'Submit'; // Restore original text/HTML
-        }
+        restoreActionButtons();
     });
 }
 
@@ -150,6 +174,8 @@ function switchConfigTab(evt, tabId) {
 // Re-bind tab functionality and restore active tab after ASP.NET AJAX UpdatePanel postbacks
 if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager) {
     Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(function () {
+        restoreActionButtons();
+
         var hf = document.querySelector('[id$="hfActiveTab"]');
         if (hf && hf.value) {
             var activeTabId = hf.value;

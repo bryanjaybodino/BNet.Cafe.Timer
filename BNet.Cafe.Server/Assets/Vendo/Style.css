@@ -418,13 +418,14 @@ textarea {
     left: 0;
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     z-index: 9999;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 12px;
-    gap: 10px;
+    padding: clamp(8px, 1.5vh, 16px) clamp(10px, 2vw, 20px);
+    gap: clamp(6px, 1.2vh, 12px);
     background: rgba(10, 12, 28, 0.2);
     color: #fff;
     cursor: pointer;
@@ -434,37 +435,37 @@ textarea {
 .attract-header {
     flex: 0 0 auto;
     text-align: center;
+    max-width: 100%;
 }
 
 .attract-brand {
-    font-size: clamp(2rem, 2.2vmin, 2rem);
+    font-size: clamp(1.15rem, 3.2vmin, 2rem);
     font-weight: 900;
-    letter-spacing: 4px;
+    letter-spacing: clamp(1.5px, 0.4vw, 4px);
     text-transform: uppercase;
     color: #fff;
     text-shadow: 0 0 10px rgba(0, 200, 255, 0.8), 0 0 22px rgba(255, 0, 200, 0.5);
 }
 
 .attract-grid {
-    flex: 1;
+    flex: 1 1 auto;
+    min-height: 0;
     width: 100%;
     max-width: 1920px;
-    height: 100%;
     display: grid;
     grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr));
     gap: clamp(4px, 0.6vw, 10px);
     pointer-events: none;
     justify-content: center;
     align-content: center;
-    overflow: hidden;
-    padding: 6px;
+    padding: 4px;
+    overflow-x: hidden;
     overflow-y: auto;
-    max-height: 85vh;
 }
 
 @media (max-width: 700px) {
     .attract-grid {
-        grid-template-columns: repeat(auto-fit, minmax(115px, 1fr)) !important;
+        grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)) !important;
     }
 }
 
@@ -666,23 +667,29 @@ textarea {
     flex: 0 0 auto;
     display: flex;
     justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .attract-banner {
     display: flex;
     align-items: center;
-    gap: clamp(8px, 1.5vmin, 20px);
-    padding: clamp(4px, 1vmin, 10px) clamp(20px, 5vmin, 60px);
-    font-size: clamp(0.9rem, 3.2vmin, 2.2rem);
+    justify-content: center;
+    gap: clamp(6px, 1.2vmin, 18px);
+    padding: clamp(6px, 1vh, 10px) clamp(14px, 4vw, 50px);
+    font-size: clamp(0.85rem, 2.8vmin, 2.1rem);
     font-weight: 900;
     font-style: italic;
-    letter-spacing: 2px;
+    letter-spacing: clamp(1px, 0.25vw, 2px);
     color: #fff;
     border: 2px solid #19b8ff;
     border-radius: 12px;
     background: rgba(8, 10, 30, 0.85);
     box-shadow: 0 0 14px rgba(25, 184, 255, 0.6), 0 0 14px rgba(255, 47, 208, 0.45), inset 0 0 10px rgba(255, 47, 208, 0.35);
     text-shadow: 0 0 10px #19b8ff, 0 0 20px #ff2fd0;
+    max-width: 96vw;
+    white-space: nowrap;
     animation: atcPulse 1.4s ease-in-out infinite;
 }
 
