@@ -214,7 +214,7 @@ f444daf95ce160b77243402eb7a2782546092be1	Forms/HowToUse.ascx
 0f1a42076f606a0ce39609519a47b2f5cea15150	Forms/InventoryCreate.ascx
 1c0179c9a2c7ab4e09984be1a929341bc0a5123c	Forms/InventoryEdit.ascx
 18c3037faf6c6ab262d93f7a4b81b374986169bc	Forms/KioskLogs.ascx
-883b7bd096d0aa9ce4bdc15cad7e8b40131d9cb2	Forms/KioskMode.ascx
+04e64a496aea3552137ef3c054d95c1ebf71acc5	Forms/KioskMode.ascx
 893dd072b60419ef033836b1cf52f716f8ee2a6f	Forms/Maintenance.ascx
 6da6a3ec5fcc4d1e5e51d12954682a9c938c8ac5	Forms/Modals/AutoCreditSettingDelete.ascx
 cc2a9f7f39aa0fd73828c5d940b2595ba2c006f1	Forms/Modals/ChatMessage.ascx
@@ -274,7 +274,7 @@ caa26fe52bbbcc9289f074e7925df2c4574b11d7	Forms/UserTopUp.ascx
 6b2300a2eba77e976e6b5b5177af7c98a7fb743a	Kiosk/Microsoft.Web.WebView2.WinForms.dll
 76e0a8381f801a8c1bf132ce55dc94df7f12154f	Kiosk/Microsoft.Web.WebView2.Wpf.dll
 9af4faf82b124ebd84430b355b7a6a7d93b723de	Kiosk/kiosk-loader.html
-fba4599211b34b3af35e47b47d68a2e95e28cbcc	Kiosk/kiosk-mode.bat
+c57faa710c1eff3d6419fb6a08d82c7caeefa497	Kiosk/kiosk-mode.bat
 9027170bfcadaaac704410cd2c866830a756ec4c	Kiosk/kiosk-mode.ps1
 4ef00f3008abd4a9b4563609e3ec2ae44fb68a23	Kiosk/runtimes/win-arm64/native/WebView2Loader.dll
 28f7ab0e8a34d62944063add68685addd4beff2d	Kiosk/runtimes/win-x64/native/WebView2Loader.dll
@@ -294,7 +294,6 @@ c4de12e93ee321ab4507003ee471d85f5c84e1eb	ServerChat.html
 1ff0845314f81235bd0f6205667c55863bb242f2	Shop.aspx
 9bcc6bde6dbe0dc79f4b7767188f65f5a9781c14	Uploads/Kiosk/Step1.jpg
 84535680798da87acd5ad04db0b80c67b2c5992c	Uploads/Kiosk/Step2.jpg
-a9b69375252570f4fc27c4ed696951caab8d96c5	Uploads/Kiosk/Step3.jpg
 db15667f9a6089b6f72ae576e5b07703ec8df2bb	Uploads/default.png
 73cb0b9a769cd3ffd12b8d36013f1055f96ea081	Web.config
 dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
@@ -309,8 +308,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-66ff2e3bba03aeb364f6558c8cdb936db8bec523	bin/BNet.Cafe.Server.dll
-ecd9094485092b4b7e201b33afb1215d5cd3d927	bin/BNet.Cafe.Server.pdb
+2669601a951bbbf3ef59f43902af3ef270c9dbd5	bin/BNet.Cafe.Server.dll
+8cc3b5c2681fa23725fcbd48b1e9ec494977d7d7	bin/BNet.Cafe.Server.pdb
 7caad2d5917469cd3d0152f21d1b8725e66766af	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 c8b6f8ffc8113cd4ee47f39b6054c392ed7f0439	bin/BNet.Cafe.Websocket.pdb
