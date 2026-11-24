@@ -1,0 +1,4 @@
+﻿SELECT * FROM vouchers 
+WHERE DBId = '{DBId}'
+ORDER BY DBId DESC 
+LIMIT 1

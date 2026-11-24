@@ -57,6 +57,19 @@
                     </div>
                 </div>
 
+                <!-- Voucher Row -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: 8px; border-bottom: 1px solid var(--border-light); background-color: var(--bg-light-tertiary);">
+                    <div>
+                        <h3 style="font-size: 15px; font-weight: 600; color: var(--text-light); margin-bottom: 2px;">Voucher</h3>
+                        <span style="font-size: 12px; color: var(--text-light-secondary);">Current collection</span>
+                    </div>
+                    <div style="text-align: right; display: flex; align-items: center; gap: 16px;">
+                        <span style="font-size: 18px; font-weight: 700; color: var(--text-light);">
+                            <asp:Label ID="Label_VoucherCollection" runat="server" Text="₱0.00"></asp:Label>
+                        </span>
+                    </div>
+                </div>
+
                 <!-- Collection Period Section -->
                 <div style="padding: 4px 8px;">
                     <h3 style="font-size: 14px; font-weight: 600; color: var(--text-light-secondary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Collection Period</h3>

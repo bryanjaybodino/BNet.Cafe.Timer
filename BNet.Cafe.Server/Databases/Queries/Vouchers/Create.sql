@@ -1,0 +1,28 @@
+﻿INSERT INTO `vouchers`
+(
+	DBCode,
+	DBDuration,
+	DBAmount,
+	DBCreatedById,
+	DBDateCreated,
+	DBTimeCreated,
+	DBDeletedById,
+	DBDateDeleted,
+	DBTimeDeleted,
+	DBIsCollected,
+	DBIsDeleted
+) 
+VALUES 
+(
+	'{DBCode}',
+	'{DBDuration}',
+	'{DBAmount}',
+	'{DBCreatedById}',
+	'{DBDateCreated}',
+	'{DBTimeCreated}',
+	'{DBDeletedById}',
+	'{DBDateDeleted}',
+	'{DBTimeDeleted}',
+	'{DBIsCollected}',
+	'{DBIsDeleted}'
+)

@@ -23,7 +23,7 @@
 
         </div>
 
-        <!-- KPI Cards Grid - Row 1 -->
+        <!-- KPI Cards Grid -->
         <div class="cards-grid cards-grid-compact">
             <!-- Transactions -->
             <div class="card card-compact">
@@ -85,6 +85,80 @@
                 <span class="bnet-badge-status yellow">Rentals</span>
             </div>
 
+            <!-- Voucher Income -->
+            <div class="card card-compact">
+                <div class="card-inline-content">
+                    <div class="card-icon-sm">
+                        <i class="fa-solid fa-ticket"></i>
+                    </div>
+                    <div class="card-details">
+                        <span class="card-title-sm">Voucher Income</span>
+                        <b>
+                            <asp:Label ID="Label_VoucherIncome" runat="server" Text="₱0.00"></asp:Label></b>
+                    </div>
+                </div>
+                <span class="bnet-badge-status yellow">Vouchers</span>
+            </div>
+
+            <!-- Total Vouchers -->
+            <div class="card card-compact">
+                <div class="card-inline-content">
+                    <div class="card-icon-sm">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
+                    <div class="card-details">
+                        <span class="card-title-sm">Voucher Count</span>
+                        <b>
+                            <asp:Label ID="Label_VoucherCount" runat="server" Text="0"></asp:Label></b>
+                    </div>
+                </div>
+                <span class="bnet-badge-status blue">Sold</span>
+            </div>
+
+            <!-- Voucher Duration -->
+            <div class="card card-compact">
+                <div class="card-inline-content">
+                    <div class="card-icon-sm">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                    </div>
+                    <div class="card-details">
+                        <span class="card-title-sm">Voucher Time</span>
+                        <b>
+                            <asp:Label ID="Label_VoucherDuration" runat="server" Text="0 mins"></asp:Label></b>
+                    </div>
+                </div>
+                <span class="bnet-badge-status blue">Duration</span>
+            </div>
+
+            <!-- Gross Collection -->
+            <div class="card card-compact">
+                <div class="card-inline-content">
+                    <div class="card-icon-sm">
+                        <i class="fa-solid fa-peso-sign"></i>
+                    </div>
+                    <div class="card-details">
+                        <span class="card-title-sm">Gross Collection</span>
+                        <b>
+                            <asp:Label ID="Label_GrossCollection" runat="server" Text="₱0.00"></asp:Label></b>
+                    </div>
+                </div>
+                <span class="bnet-badge-status green">Combined</span>
+            </div>
+
+            <!-- Collection Cycle (Static Info Card) -->
+            <div class="card card-compact">
+                <div class="card-inline-content">
+                    <div class="card-icon-sm">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    <div class="card-details">
+                        <span class="card-title-sm">Collection Cycle</span>
+                        <b>Monthly Reset</b>
+                    </div>
+                </div>
+                <span class="bnet-badge-status gray">Info</span>
+            </div>
+
             <!-- Top-Up Load -->
             <div class="card card-compact">
                 <div class="card-inline-content">
@@ -99,10 +173,7 @@
                 </div>
                 <span class="bnet-badge-status green">Credits</span>
             </div>
-        </div>
 
-        <!-- KPI Cards Grid - Row 2 -->
-        <div class="cards-grid cards-grid-compact">
             <!-- Product Sales Revenue -->
             <div class="card card-compact">
                 <div class="card-inline-content">

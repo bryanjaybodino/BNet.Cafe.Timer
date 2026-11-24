@@ -59,6 +59,9 @@
                         <asp:HyperLink ID="HyperLink_Computers" runat="server" ToolTip="Computers" onclick="navigateTo('?Form=Computers'); return false;">
                             <i class="fas fa-computer"></i><span>Computers</span>
                         </asp:HyperLink>
+                        <asp:HyperLink ID="HyperLink_VoucherManage" runat="server" ToolTip="VoucherManage" onclick="navigateTo('?Form=VoucherManage'); return false;">
+                            <i class="fa-solid fa-ticket"></i><span>Add Voucher</span>
+                        </asp:HyperLink>
                         <asp:HyperLink ID="HyperLink_SeatMap" runat="server" ToolTip="SeatMap" onclick="navigateTo('?Form=SeatMap'); return false;">
                             <i class="fas fa-map-location-dot"></i><span>Seat Map</span>
                         </asp:HyperLink>
@@ -81,6 +84,9 @@
                     <div class="menu-sub-items">
                         <asp:HyperLink ID="HyperLink_Rentals" runat="server" ToolTip="Rental" onclick="navigateTo('?Form=Rentals'); return false;">
                             <i class="fa-solid fa-file-invoice-dollar"></i><span>Billings</span>
+                        </asp:HyperLink>
+                        <asp:HyperLink ID="HyperLink_Vouchers" runat="server" ToolTip="Vouchers" onclick="navigateTo('?Form=Vouchers'); return false;">
+                            <i class="fa-solid fa-ticket"></i><span>Vouchers</span>
                         </asp:HyperLink>
                         <asp:HyperLink ID="HyperLink_TopUp" runat="server" ToolTip="TopUp" onclick="navigateTo('?Form=TopUp'); return false;">
                             <i class="fas fa-trophy"></i><span>Top-Up</span>
