@@ -1,3 +1,8 @@
+# Single instance: only one helper may run at a time
+$createdNew = $false
+$script:helperMutex = New-Object System.Threading.Mutex($true, 'Global\BNetKioskHelper', [ref]$createdNew)
+if (-not $createdNew) { exit }
+
 # ============================================================================
 # Kiosk helper
 #  - closes any browser that is not the kiosk instance

@@ -26,8 +26,10 @@ async function readSerialLoop(port) {
     serialReader = reader;
     try {
         while (true) {
+            if (window.BNetTabGuard && window.BNetTabGuard.isBlocked()) break;
             const { value, done } = await reader.read();
             if (done) break;
+            if (window.BNetTabGuard && window.BNetTabGuard.isBlocked()) break;
             buffer += decoder.decode(value, { stream: true });
             let idx;
             while ((idx = buffer.indexOf('\n')) >= 0) {
@@ -43,11 +45,15 @@ async function readSerialLoop(port) {
         console.warn('Serial read stopped:', e);
     } finally {
         try { reader.releaseLock(); } catch (e) { }
-        serialReader = null;
+        if (serialReader === reader) serialReader = null;
     }
 }
 
 async function openSerial(allowPrompt) {
+    if (window.BNetTabGuard && window.BNetTabGuard.isBlocked()) {
+        updateBoardStatus(false);
+        return false;
+    }
     if (!('serial' in navigator)) {
         console.error('Web Serial not available.');
         updateBoardStatus(false);
@@ -107,15 +113,44 @@ function serialTask(task) {
             serialWriter = null;
             serialPort = null;
             updateBoardStatus(false);
-            if (typeof showPressAnyKey === 'function') {
+            if (!(window.BNetTabGuard && window.BNetTabGuard.isBlocked()) && typeof showPressAnyKey === 'function') {
                 showPressAnyKey();
             }
         }
     });
 }
 
+async function releaseSerialPort() {
+    try {
+        if (serialWriter) {
+            try { await serialWriter.close(); } catch (e) { }
+            try { serialWriter.releaseLock(); } catch (e) { }
+            serialWriter = null;
+        }
+    } catch (e) { }
+
+    try {
+        if (serialReader) {
+            try { await serialReader.cancel(); } catch (e) { }
+            try { serialReader.releaseLock(); } catch (e) { }
+            serialReader = null;
+        }
+    } catch (e) { }
+
+    try {
+        if (serialPort) {
+            await serialPort.close();
+        }
+    } catch (e) { }
+
+    serialPort = null;
+    updateBoardStatus(false);
+}
+
 function sendSerialCommand(command) {
+    if (window.BNetTabGuard && window.BNetTabGuard.isBlocked()) return;
     serialTask(async () => {
+        if (window.BNetTabGuard && window.BNetTabGuard.isBlocked()) return;
         if (await openSerial(false)) {
             await serialWriter.write(new TextEncoder().encode(command));
         }
@@ -148,6 +183,7 @@ function shouldLock(filteredClientData, selectedIndex, clientData, changerDispen
 }
 
 function syncArduinoState(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen) {
+    if (window.BNetTabGuard && window.BNetTabGuard.isBlocked()) return;
     const shouldBeLocked = shouldLock(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen);
     sendSerialCommand(shouldBeLocked ? 'L' : 'U');
 
@@ -162,11 +198,13 @@ if ('serial' in navigator) {
         serialWriter = null;
         serialPort = null;
         updateBoardStatus(false);
+        if (window.BNetTabGuard && window.BNetTabGuard.isBlocked()) return;
         if (typeof showPressAnyKey === 'function') {
             showPressAnyKey();
         }
     });
     navigator.serial.addEventListener('connect', () => {
+        if (window.BNetTabGuard && window.BNetTabGuard.isBlocked()) return;
         // Re-open the board and re-sync lock state; openSerial() reports the real status.
         syncArduinoState(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen);
     });

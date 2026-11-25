@@ -53,6 +53,12 @@ if errorlevel 1 (
     exit /b 1
 )
 
+tasklist /fi "imagename eq BNetBrowser.exe" 2>nul | find /i "BNetBrowser.exe" >nul
+if not errorlevel 1 (
+    echo BNetBrowser is already running. Nothing to do.
+    exit /b
+)
+
 echo Running scheduled task "%TASK_NAME%"...
 schtasks /run /tn "%TASK_NAME%"
 if errorlevel 1 (
@@ -66,6 +72,13 @@ exit /b
 
 :TASK_DONE
 cd /d "%SCRIPT_DIR%"
+
+:: Already running? Do nothing (prevents duplicate kiosk windows)
+tasklist /fi "imagename eq BNetBrowser.exe" 2>nul | find /i "BNetBrowser.exe" >nul
+if not errorlevel 1 (
+    echo [%DATE% %TIME%] BNetBrowser already running - skipping launch. >> "%LOG_FILE%"
+    exit /b
+)
 echo [%DATE% %TIME%] TASK_DONE started in "%SCRIPT_DIR%" > "%LOG_FILE%"
 
 :: ============================================================
