@@ -167,8 +167,6 @@ function validateVoucherForm() {
     if (errors.length > 0) {
         if (typeof ShowAlert === 'function') {
             ShowAlert(errors);
-        } else {
-            alert(errors.join('\n'));
         }
         if (durInput && mins <= 0) durInput.focus();
         return false;
@@ -177,29 +175,73 @@ function validateVoucherForm() {
     return true;
 }
 
-function copyVoucherCode(code) {
+function showCopyPopup(anchorEl, message, isError) {
+    var target = anchorEl || (document.activeElement && document.activeElement.closest ? document.activeElement.closest('.copy-anchor, button, a') : null);
+    if (!target) return;
+
+    var container = target.classList && target.classList.contains('copy-anchor')
+        ? target
+        : (target.closest ? target.closest('.copy-anchor') : null);
+
+    if (!container) {
+        container = target;
+        if (!container.style.position) {
+            container.style.position = 'relative';
+        }
+    }
+
+    var existing = container.querySelector('.copy-popup');
+    if (existing) {
+        if (existing._hideTimer) clearTimeout(existing._hideTimer);
+        existing.remove();
+    }
+
+    var popup = document.createElement('span');
+    popup.className = 'copy-popup' + (isError ? ' is-error' : '');
+    popup.textContent = message;
+    container.appendChild(popup);
+
+    requestAnimationFrame(function () {
+        popup.classList.add('show');
+    });
+
+    popup._hideTimer = setTimeout(function () {
+        popup.classList.remove('show');
+        setTimeout(function () {
+            if (popup.parentNode) popup.parentNode.removeChild(popup);
+        }, 180);
+    }, 1500);
+}
+
+function copyVoucherCode(code, triggerEl) {
     if (!code) return;
+    var cleanCode = String(code);
+    var btn = triggerEl || (window.event && window.event.currentTarget) || null;
+
     if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(code).then(function () {
-            alert('Voucher code copied: ' + code);
+        navigator.clipboard.writeText(cleanCode).then(function () {
+            showCopyPopup(btn, 'Copied!', false);
         }, function () {
-            fallbackCopyVoucherText(code);
+            fallbackCopyVoucherText(cleanCode, btn);
         });
     } else {
-        fallbackCopyVoucherText(code);
+        fallbackCopyVoucherText(cleanCode, btn);
     }
 }
 
-function fallbackCopyVoucherText(text) {
+function fallbackCopyVoucherText(text, triggerEl) {
     var temp = document.createElement('textarea');
     temp.value = text;
+    temp.setAttribute('readonly', '');
+    temp.style.position = 'fixed';
+    temp.style.opacity = '0';
     document.body.appendChild(temp);
     temp.select();
     try {
-        document.execCommand('copy');
-        alert('Voucher code copied: ' + text);
+        var copied = document.execCommand('copy');
+        showCopyPopup(triggerEl, copied ? 'Copied!' : 'Failed', !copied);
     } catch (e) {
-        alert('Code: ' + text);
+        showCopyPopup(triggerEl, 'Failed', true);
     }
     document.body.removeChild(temp);
 }

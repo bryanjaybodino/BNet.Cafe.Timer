@@ -113,12 +113,12 @@
                                         Style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px; font-size: 12px; white-space: nowrap;">
                                         <i class="fa-solid fa-print"></i> Print
                                     </asp:LinkButton>
-                                    <button type="button"
-                                        class="btn btn-secondary"
-                                        style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px; font-size: 12px; white-space: nowrap;"
-                                        onclick="copyVoucherCode('<%# Eval("DBCode") %>')">
-                                        <i class="fa-solid fa-copy"></i> Copy
-                                    </button>
+                                    <span class="copy-anchor">
+                                        <button type="button" class="btn btn-secondary voucher-copy-btn"
+                                            onclick='<%# "copyVoucherCode(\"" + Eval("DBCode") + "\", this)" %>'>
+                                            <i class="fa-solid fa-copy"></i> Copy
+                                        </button>
+                                    </span>
                                 </div>
                             </ItemTemplate>
                         </asp:TemplateField>

@@ -3,8 +3,17 @@
     r.DBComputerId,
     c.DBComputerName,
     r.DBUserId,
-    IFNULL(u.DBEmail, '--') AS DBEmail,
-    IFNULL(u.DBName, 'Guest / Walk-in') AS DBName,
+    r.DBUserId,
+        CASE
+            WHEN u.DBEmail IS NOT NULL AND u.DBEmail <> '' THEN u.DBEmail
+            WHEN r.DBUserId IS NOT NULL AND r.DBUserId <> '' AND r.DBUserId REGEXP '[^0-9]' AND r.DBUserId LIKE '%@%' THEN r.DBUserId
+            ELSE '--'
+        END AS DBEmail,
+        CASE
+            WHEN u.DBName IS NOT NULL AND u.DBName <> '' THEN u.DBName
+            WHEN r.DBUserId IS NOT NULL AND r.DBUserId <> '' AND r.DBUserId REGEXP '[^0-9]' THEN r.DBUserId
+            ELSE 'Guest / Walk-in'
+        END AS DBName,
     r.DBDuration,
     CASE 
         WHEN r.DBDuration IS NULL OR r.DBDuration = 0 THEN '0 min'
