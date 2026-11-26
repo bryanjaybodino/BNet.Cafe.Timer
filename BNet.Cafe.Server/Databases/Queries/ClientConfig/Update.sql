@@ -25,6 +25,7 @@ SET
     DBKioskInsertBillTimer = '{DBKioskInsertBillTimer}',
     DBKioskIdleTimer = '{DBKioskIdleTimer}',
     DBKioskType = '{DBKioskType}',
+    DBKioskBillChanger = '{DBKioskBillChanger}',
     DBSharedDataPath = '{DBSharedDataPath}',
     DBId = '{DBId}'
 WHERE DBId = '{DBId}';

@@ -17,19 +17,31 @@
             <div class="config-tabs">
                 <button type="button" class="config-tab-btn active" onclick="switchConfigTab(event, 'tab-timer')">
                     <i class="fa-solid fa-stopwatch"></i>Timer Config
+               
                 </button>
                 <button type="button" class="config-tab-btn" onclick="switchConfigTab(event, 'tab-gamemenu')">
                     <i class="fa-solid fa-gamepad"></i>Game Menu
+               
                 </button>
                 <button type="button" class="config-tab-btn" onclick="switchConfigTab(event, 'tab-schedule')">
                     <i class="fa-solid fa-clock"></i>Schedule Settings
+               
                 </button>
                 <button type="button" class="config-tab-btn" onclick="switchConfigTab(event, 'tab-kiosk')">
                     <i class="fa-solid fa-cash-register"></i>Kiosk
+               
                 </button>
             </div>
 
             <div class="card">
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="<%= TextBox_ComshopName.ClientID %>">Comshop Name</label>
+                    <asp:TextBox ID="TextBox_ComshopName" runat="server" CssClass="form-control" placeholder="Enter Comshop Name" MaxLength="100"></asp:TextBox>
+                </div>
+
+
+
 
                 <!-- ==========================================
                    TAB 1: BNET TIMER CONFIG SECTION
@@ -149,10 +161,6 @@
                         </div>
                         <span style="font-size: 11px; color: var(--text-light-secondary); display: block; margin-top: 6px;">Opens a step-by-step video guide on how to configure and use the game menu.
                         </span>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label for="<%= TextBox_ComshopName.ClientID %>">Comshop Name</label>
-                        <asp:TextBox ID="TextBox_ComshopName" runat="server" CssClass="form-control" placeholder="Enter Comshop Name" MaxLength="100"></asp:TextBox>
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
@@ -297,6 +305,19 @@
                             <asp:ListItem Value="WITH MONITOR" Text="WITH MONITOR"></asp:ListItem>
                             <asp:ListItem Value="WITHOUT MONITOR" Text="WITHOUT MONITOR"></asp:ListItem>
                         </asp:DropDownList>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label for="<%= CheckBox_KioskBillChanger.ClientID %>" class="toggle-label">
+                            <div class="toggle-text">
+                                <span class="toggle-title">Bill Changer</span>
+                                <span class="toggle-desc">Enable or disable bill changer functionality on the kiosk.</span>
+                            </div>
+                            <label class="switch">
+                                <asp:CheckBox ID="CheckBox_KioskBillChanger" runat="server" />
+                                <span class="slider round"></span>
+                            </label>
+                        </label>
                     </div>
                 </div>
                 <!-- ========================================== -->

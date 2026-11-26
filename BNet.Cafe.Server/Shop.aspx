@@ -20,7 +20,6 @@
     <% Response.Write(BNet.Cafe.Server.Services.FileCssHelper.StyleSheetVersion("Assets/Shop/Style.css")); %>
     <% Response.Write(BNet.Cafe.Server.Services.FileCssHelper.StyleSheetVersion("Assets/Pages/Style.css")); %>
     <% Response.Write(BNet.Cafe.Server.Services.FileCssHelper.StyleSheetVersion("Assets/fontawesome/font-awesome.min.css")); %>
-    <script src="Assets/Shop/Script.js" defer></script>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -31,7 +30,7 @@
             <header class="ecom-header">
                 <div class="brand-logo">
                     <i class="fa fa-shopping-bag brand-icon"></i>
-                    <h2>Kiosk Store</h2>
+                    <asp:Label Font-Bold="true" Font-Size="Large" ID="Label_ComshopName" runat="server" Text=""></asp:Label>
                 </div>
                 <div class="header-actions">
                     <button type="button" id="historyToggle" class="cart-toggle-btn" title="View Order History">
@@ -78,11 +77,11 @@
                     <div class="ecom-product-grid">
                         <asp:Repeater ID="Repeater_Products" runat="server">
                             <ItemTemplate>
-                                <div class="ecom-product-card" 
-                                     data-id='<%# Eval("DBId") %>' 
-                                     data-name='<%# Eval("DBItemName") %>' 
-                                     data-price='<%# Eval("DBUnitPrice") %>'
-                                     data-stock='<%# Eval("DBQuantityInStock") %>'>
+                                <div class="ecom-product-card"
+                                    data-id='<%# Eval("DBId") %>'
+                                    data-name='<%# Eval("DBItemName") %>'
+                                    data-price='<%# Eval("DBUnitPrice") %>'
+                                    data-stock='<%# Eval("DBQuantityInStock") %>'>
                                     <div class="product-media">
                                         <img src='<%# GetProductImage(Eval("DBId")) %>' alt='<%# Eval("DBItemName") %>' />
                                         <span class="category-badge"><%# Eval("DBCategory") %></span>
@@ -103,9 +102,10 @@
                                             </div>
                                         </div>
 
-                                        <button type="button" class="btn-add-cart" 
+                                        <button type="button" class="btn-add-cart"
                                             <%# Convert.ToInt32(Eval("DBQuantityInStock")) <= 0 ? "disabled" : "" %>>
-                                            <i class="fa fa-cart-plus"></i> Add to Cart
+                                            <i class="fa fa-cart-plus"></i>Add to Cart
+                                       
                                         </button>
                                     </div>
                                 </div>
@@ -128,10 +128,10 @@
         <div id="cartOverlay" class="cart-overlay"></div>
         <aside id="cartDrawer" class="cart-drawer">
             <div class="cart-header">
-                <h3><i class="fa fa-shopping-cart"></i> Your Kiosk Cart</h3>
+                <h3><i class="fa fa-shopping-cart"></i>Your Kiosk Cart</h3>
                 <button type="button" id="closeCartBtn" class="close-cart-btn">&times;</button>
             </div>
-            
+
             <div id="cartItemsContainer" class="cart-items-body">
                 <!-- Cart items dynamically rendered via Script.js -->
             </div>
@@ -152,10 +152,10 @@
         <div id="historyOverlay" class="cart-overlay"></div>
         <aside id="historyDrawer" class="cart-drawer">
             <div class="cart-header">
-                <h3><i class="fa fa-history"></i> Order History</h3>
+                <h3><i class="fa fa-history"></i>Order History</h3>
                 <button type="button" id="closeHistoryBtn" class="close-cart-btn">&times;</button>
             </div>
-            
+
             <div id="historyItemsContainer" class="cart-items-body">
                 <!-- Order history dynamically rendered via Script.js -->
             </div>

@@ -18,6 +18,13 @@
     <!-- Board Status Indicator (Upper Right) -->
     <div id="boardStatusIndicator" class="board-status disconnected">BOARD DISCONNECTED</div>
 
+    <!-- Shared Comshop Name Header (Visible on both lock and unlock screens) -->
+    <div class="attract-header">
+        <span class="attract-brand">
+            <asp:Label ID="Label_ComshopName" runat="server" Text="BNet Cafe"></asp:Label>
+        </span>
+    </div>
+
     <div class="slider-container" id="slider">
         <div class="loading" id="loadingText">Scanning wallpapers...</div>
     </div>
@@ -38,11 +45,6 @@
 
     <!-- Press Any Key Overlay Screen: full screen cover when locked -->
     <div id="pressAnyKeyScreen">
-        <div class="attract-header">
-            <span class="attract-brand">
-                <asp:Label ID="Label_ComshopName" runat="server" Text="BNet Cafe"></asp:Label>
-            </span>
-        </div>
         <div class="attract-grid" id="attractGrid"></div>
         <div class="attract-footer">
             <div class="attract-banner"><i class="fas fa-hand-pointer"></i><span>PRESS ANY KEY</span></div>
@@ -72,29 +74,11 @@
         <asp:ScriptManager ID="ScriptManager1" EnableCdn="false" EnablePageMethods="true" EnablePartialRendering="true" AsyncPostBackTimeout="99999999" ScriptMode="Release" ValidateRequestMode="Enabled" EnableScriptLocalization="true" EnableScriptGlobalization="true" LoadScriptsBeforeUI="false" CompositeScript-ScriptMode="Release" CompositeScript-ResourceUICultures="Release" runat="server"></asp:ScriptManager>
         <asp:UpdatePanel ID="UpdatePanelModalTrigger" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
-                <asp:Label ID="Label_Layers" ClientIDMode="Static" runat="server" Text="0"></asp:Label>
+                <asp:Label ID="Label_CoinChanger" ClientIDMode="Static" runat="server" Text="0"></asp:Label>
                 <asp:LinkButton ID="LinkButton_ProcessVendo" runat="server"
                     OnClick="LinkButton_ProcessVendo_Click" Style="display: none;" />
                 <asp:HiddenField ID="HiddenField_ModalAmount" runat="server" />
                 <asp:HiddenField ID="HiddenField_ModalComputerName" runat="server" />
-
-                <!-- Trial Mode Activation Button -->
-                <asp:LinkButton ID="LinkButton_ShowActivation" runat="server" CssClass="trial-activation-btn" OnClick="LinkButton_ShowActivation_Click" Visible="false">
-                    <i class="fas fa-key"></i><span id="Span_TrialButtonText" runat="server">Activate License</span>
-                </asp:LinkButton>
-
-                <!-- License Modal -->
-                <asp:Panel ID="licenseModal" runat="server" CssClass="number-modal-overlay visible" Visible="false" ClientIDMode="Static">
-                    <div class="number-modal-box" style="max-width: 420px;">
-                        <div class="number-modal-pc-target">Server Licensing</div>
-                        <div class="number-modal-label" style="margin-top: 10px;">Unique Server Serial Number</div>
-                        <asp:TextBox ID="TextBox_ServerSerial" runat="server" ReadOnly="true" class="license-input" Style="font-family: monospace; font-size: 1.1rem; margin: 10px 0; text-align: center" value=""></asp:TextBox>
-                        <div class="number-modal-label">Enter License Key</div>
-                        <asp:TextBox ID="TextBox_LicenseKey" runat="server" CssClass="license-input" Style="text-align: center" placeholder="Paste license..." /><br />
-                        <asp:LinkButton ID="LinkButton_ActivateLicense" runat="server" CssClass="btn-activate" OnClick="LinkButton_ActivateLicense_Click">Activate License</asp:LinkButton>
-                        <asp:Label ID="Label_LicenseMessage" runat="server" Style="display: block; margin-top: 10px; font-size: 0.85rem;" />
-                    </div>
-                </asp:Panel>
             </ContentTemplate>
         </asp:UpdatePanel>
     </form>

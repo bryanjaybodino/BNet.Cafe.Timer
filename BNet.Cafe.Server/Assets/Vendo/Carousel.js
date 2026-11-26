@@ -36,7 +36,7 @@ function renderPSPMenu(clientData, onSelectCallback) {
         return status === "Available" || status === "Occupied" || status === "Offline" || status === "Paused" || status === "Administrator";
     });
 
-    if (document.getElementById('Label_Layers')?.innerHTML === '3') {
+    if (document.getElementById('Label_CoinChanger')?.innerHTML === 'TRUE') {
         filteredData.push({
             clientName: "Bill Changer",
             status: "Available",

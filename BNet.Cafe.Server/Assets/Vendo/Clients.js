@@ -13,7 +13,7 @@ function getUserType(client) {
         const isMem = /member/i.test(t);
         return { text: isMem ? 'MEMBER' : t.toUpperCase(), cls: 'member', colorClass: 'member-sky', userClass: 'user-member' };
     }
-    return { text: 'GUEST', cls: 'guest', colorClass: 'member-sky', userClass: 'user-member' };
+    return { text: 'GUEST', cls: 'guest', colorClass: 'guest-indigo', userClass: 'user-guest' };
 }
 
 function buildAttractCard(client, index) {
@@ -43,10 +43,14 @@ function buildAttractCard(client, index) {
         if (user.cls === 'vip') {
             theme = status === 'Paused' ? 'theme-orange vip-gold' : 'theme-red vip-gold';
             colorThemeClass = 'vip-gold';
+        } else if (user.cls === 'guest') {
+            theme = status === 'Paused' ? 'theme-orange guest-indigo' : 'theme-red guest-indigo';
+            colorThemeClass = 'guest-indigo';
         } else {
             theme = status === 'Paused' ? 'theme-orange member-sky' : 'theme-red member-sky';
             colorThemeClass = 'member-sky';
         }
+
     }
 
     const name = client.ClientName || `PC-${String(index + 1).padStart(2, '0')}`;

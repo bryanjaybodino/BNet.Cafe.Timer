@@ -1,39 +1,91 @@
-﻿/* Disable text selection and browser interactions */
+﻿/* =====================================================================
+   BNet Vendo Kiosk - Stylesheet (refactored)
+   Same selectors / class names as before, so no JS or HTML changes needed.
+
+   Sections
+     1. Design tokens
+     2. Base / reset
+     3. Wallpaper slider
+     4. PSP carousel + cards + badges
+     5. Number & warning modals
+     6. License modal
+     7. Lock screen ("press any key") + attract cards
+     8. User-type themes (VIP / Member / Guest)
+     9. Misc UI (board status, trial button)
+   ===================================================================== */
+
+
+/* =====================================================================
+   1. DESIGN TOKENS
+   Colors are stored as space-separated RGB triplets so one value can be
+   reused at any opacity:  rgb(var(--green) / 0.4)
+   ===================================================================== */
+:root {
+    --font-ui: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-display: 'Orbitron', 'Segoe UI', system-ui, sans-serif;
+    --font-digits: 'Orbitron', 'Consolas', 'Courier New', monospace;
+    --green: 46 204 113;
+    --danger: 255 59 48;
+    --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+    --shadow-card: 0 20px 45px rgb(0 0 0 / 0.9);
+}
+
+
+/* =====================================================================
+   2. BASE / RESET
+   ===================================================================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     user-select: none;
     -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html,
+body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
     background-color: #000;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-ui);
     touch-action: pan-y;
 }
 
-/* --- Fullscreen Wallpaper Slider --- */
-.slider-container {
-    position: absolute;
-    top: 0;
-    left: 0;
+/* Elements that cover the whole screen share one size rule (position is set per element) */
+.slider-container,
+.vignette-overlay,
+.psp-container,
+.number-modal-overlay,
+#pressAnyKeyScreen {
+    inset: 0;
     width: 100vw;
     height: 100vh;
+}
+
+/* Inputs must stay selectable */
+#licenseModal,
+#serverSerialDisplay,
+input,
+textarea {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+}
+
+
+/* =====================================================================
+   3. WALLPAPER SLIDER
+   ===================================================================== */
+.slider-container {
+    position: absolute;
     z-index: 1;
 }
 
 .slide {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
     background-size: cover;
@@ -50,29 +102,36 @@ html, body {
 
 .vignette-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
     z-index: 2;
-    background: radial-gradient(circle, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.3) 100%);
+    background: radial-gradient(circle, rgb(0 0 0 / 0.02) 0%, rgb(0 0 0 / 0.3) 100%);
     pointer-events: none;
 }
 
-/* --- Perfectly Centered PSP Carousel Viewport --- */
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: rgb(0 0 0 / 0.8);
+    color: #fff;
+    font-size: clamp(0.85rem, 2vw, 1rem);
+}
+
+
+/* =====================================================================
+   4. PSP CAROUSEL, CARDS & BADGES
+   ===================================================================== */
 .psp-container {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     overflow: hidden;
     cursor: grab;
-    -webkit-transform: translateZ(0);
     transform: translateZ(0);
 }
 
@@ -84,213 +143,187 @@ html, body {
     display: flex;
     align-items: center;
     gap: clamp(12px, 3vw, 28px);
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    padding-left: 0;
+    transition: transform 0.4s var(--ease-out);
     will-change: transform;
-    padding-left: 0px;
 }
 
-/* --- Fully Responsive Mobile-Optimized Cards --- */
+/* ---- Card -----------------------------------------------------------
+   Neutral (white) by default; a status class tints the border/glow.
+     --border-a : border opacity
+     --glow-r / --glow-a : glow radius / opacity
+   ------------------------------------------------------------------- */
 .psp-card {
-    width: clamp(150px, 38vw, 280px);
-    height: clamp(220px, 75svh, 400px);
-    border-radius: clamp(16px, 3.5vw, 28px);
-    background: linear-gradient(135deg, rgba(30, 34, 45, 0.95) 0%, rgba(18, 20, 26, 0.98) 100%);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
-    border: 3px solid rgba(255, 255, 255, 0.15);
+    --accent: 255 255 255;
+    --border-a: 0.15;
+    --glow-r: 30px;
+    --glow-a: 0.25;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    width: clamp(150px, 38vw, 280px);
+    height: clamp(220px, 75svh, 400px);
     padding: clamp(10px, 2vh, 28px) clamp(10px, 2vw, 20px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+    border: 3px solid rgb(var(--accent) / var(--border-a));
+    border-radius: clamp(16px, 3.5vw, 28px);
+    background: linear-gradient(135deg, rgb(30 34 45 / 0.95) 0%, rgb(18 20 26 / 0.98) 100%);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 15px 35px rgb(0 0 0 / 0.8);
     opacity: 0.4;
-    -webkit-transform: scale(0.82);
     transform: scale(0.82);
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-    flex-shrink: 0;
+    transition: transform 0.4s var(--ease-out), opacity 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
     pointer-events: auto;
     cursor: pointer;
 }
 
-    .psp-card.active {
-        opacity: 1;
-        -webkit-transform: scale(1.05);
-        transform: scale(1.05);
-        border-color: rgba(255, 255, 255, 0.9);
-        box-shadow: 0 0 30px rgba(255, 255, 255, 0.25), 0 20px 45px rgba(0, 0, 0, 0.9);
-        background: linear-gradient(135deg, rgba(40, 46, 60, 0.98) 0%, rgba(22, 26, 34, 0.98) 100%);
-    }
+/* ---- Status color tokens --------------------------------------------
+   Shared by .psp-card and .psp-badge. Must stay AFTER the .psp-card
+   rule so it overrides the card's default white --accent.
+     --accent : RGB triplet used for borders and glows
+     --grad   : gradient stops used for badge backgrounds
+   ------------------------------------------------------------------- */
+.status-administrator {
+    --accent: 155 89 182;
+    --grad: #9b59b6, #8e44ad;
+}
 
-    .psp-card.status-administrator {
-        border-color: rgba(155, 89, 182, 0.6);
-    }
+.status-paused {
+    --accent: 230 126 34;
+    --grad: #e67e22, #d35400;
+}
 
-    .psp-card.status-paused {
-        border-color: rgba(230, 126, 34, 0.6);
-    }
+.status-occupied {
+    --accent: 231 76 60;
+    --grad: #e74c3c, #c0392b;
+}
 
-    .psp-card.status-occupied {
-        border-color: rgba(231, 76, 60, 0.6);
-    }
+.status-available {
+    --accent: 46 204 113;
+    --grad: #2ecc71, #27ae60;
+}
 
-    .psp-card.status-available {
-        border-color: rgba(46, 204, 113, 0.6);
-    }
+.status-offline {
+    --accent: 127 140 141;
+    --grad: #7f8c8d, #6c7a89;
+}
 
-    .psp-card.status-offline {
-        border-color: rgba(127, 140, 141, 0.6);
-    }
+.status-coin-changer {
+    --accent: 241 196 15;
+    --grad: #f1c40f, #d68910;
+}
 
-    .psp-card.status-coin-changer {
-        border-color: rgba(241, 196, 15, 0.6);
-    }
+/* Inactive cards with a status get a softer tinted border */
+.psp-card.status-administrator,
+.psp-card.status-paused,
+.psp-card.status-occupied,
+.psp-card.status-available,
+.psp-card.status-offline,
+.psp-card.status-coin-changer {
+    --border-a: 0.6;
+}
 
-    .psp-card.active.status-administrator {
-        border-color: #9b59b6;
-        box-shadow: 0 0 25px rgba(155, 89, 182, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
-    }
+.psp-card.active {
+    --border-a: 0.9;
+    opacity: 1;
+    transform: scale(1.05);
+    background: linear-gradient(135deg, rgb(40 46 60 / 0.98) 0%, rgb(22 26 34 / 0.98) 100%);
+    box-shadow: 0 0 var(--glow-r) rgb(var(--accent) / var(--glow-a)), var(--shadow-card);
+}
 
-    .psp-card.active.status-paused {
-        border-color: #e67e22;
-        box-shadow: 0 0 25px rgba(230, 126, 34, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
-    }
-
-    .psp-card.active.status-occupied {
-        border-color: #e74c3c;
-        box-shadow: 0 0 25px rgba(231, 76, 60, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
-    }
-
-    .psp-card.active.status-available {
-        border-color: #2ecc71;
-        box-shadow: 0 0 25px rgba(46, 204, 113, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
-    }
-
-    .psp-card.active.status-offline {
-        border-color: #7f8c8d;
-        box-shadow: 0 0 25px rgba(127, 140, 141, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
-    }
-
+    /* Active + status = solid border and a colored glow */
     .psp-card.active.status-user-vip {
-        border-color: #FFC107;
-        box-shadow: 0 0 25px rgba(255, 193, 7, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
+        --accent: 255 193 7;
     }
 
-    .psp-card.active.status-coin-changer {
-        border-color: #f1c40f;
-        box-shadow: 0 0 25px rgba(241, 196, 15, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
+    .psp-card.active:is( .status-administrator, .status-paused, .status-occupied, .status-available, .status-offline, .status-user-vip, .status-coin-changer ) {
+        --border-a: 1;
+        --glow-r: 25px;
+        --glow-a: 0.6;
     }
 
+/* ---- Card contents ---- */
 .pc-icon-wrapper {
-    width: clamp(42px, 10vw, 70px);
-    height: clamp(42px, 10vw, 70px);
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: clamp(42px, 10vw, 70px);
+    height: clamp(42px, 10vw, 70px);
+    border: 1px solid rgb(255 255 255 / 0.15);
+    border-radius: 18px;
+    background: rgb(255 255 255 / 0.08);
+    box-shadow: inset 0 2px 5px rgb(255 255 255 / 0.1);
     color: #fff;
     font-size: clamp(1.3rem, 3.5vw, 2.2rem);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: inset 0 2px 5px rgba(255,255,255,0.1);
 }
 
 .pc-title {
+    margin: 4px 0;
+    color: var(--user-tint, #fff); /* VIP / Member / Guest tint, white otherwise */
     font-size: clamp(1.1rem, 3vw, 3rem);
     font-weight: 900;
-    color: #ffffff;
     letter-spacing: 1px;
     text-transform: uppercase;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
-    margin: 4px 0;
+    text-shadow: 0 2px 6px rgb(0 0 0 / 0.9);
 }
 
+    .pc-title.bill-changer-title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: clamp(1.2rem, 3.5vw, 2.5rem);
+        line-height: 1.1;
+        text-align: center;
+    }
+
 .pc-details {
+    width: 100%;
+    padding: clamp(6px, 1vh, 10px);
+    border: 1px solid rgb(255 255 255 / 0.05);
+    border-radius: 12px;
+    background: rgb(0 0 0 / 0.25);
+    color: rgb(255 255 255 / 0.85);
     font-size: clamp(0.7rem, 1.6vw, 0.95rem);
-    color: rgba(255, 255, 255, 0.85);
     font-weight: 600;
     line-height: 1.4;
     text-align: center;
-    background: rgba(0, 0, 0, 0.25);
-    width: 100%;
-    padding: clamp(6px, 1vh, 10px);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* ---- Badge ---- */
 .psp-badge {
+    --badge-a: 0.4;
+    width: 100%;
     padding: clamp(5px, 1vh, 8px) clamp(12px, 2.5vw, 20px);
     border-radius: 24px;
+    background: linear-gradient(135deg, var(--grad));
+    box-shadow: 0 4px 12px rgb(var(--accent) / var(--badge-a));
+    color: #fff;
     font-size: clamp(0.65rem, 1.6vw, 0.85rem);
     font-weight: 800;
     letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: #fff;
-    width: 100%;
     text-align: center;
+    text-transform: uppercase;
 }
 
-    .psp-badge.status-administrator {
-        background: linear-gradient(135deg, #9b59b6, #8e44ad);
-        box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
-    }
 
-    .psp-badge.status-paused {
-        background: linear-gradient(135deg, #e67e22, #d35400);
-        box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4);
-    }
-
-    .psp-badge.status-occupied {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
-    }
-
-    .psp-badge.status-available {
-        background: linear-gradient(135deg, #2ecc71, #27ae60);
-        box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4);
-    }
-
-    .psp-badge.status-offline {
-        background: linear-gradient(135deg, #7f8c8d, #6c7a89);
-        box-shadow: 0 4px 12px rgba(127, 140, 141, 0.4);
-    }
-
-    .psp-badge.status-coin-changer {
-        background: linear-gradient(135deg, #f1c40f, #d68910);
-        box-shadow: 0 4px 12px rgba(241, 196, 15, 0.4);
-    }
-
-.loading {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #fff;
-    font-size: clamp(0.85rem, 2vw, 1rem);
-    z-index: 5;
-    background: rgba(0,0,0,0.8);
-    padding: 10px 20px;
-    border-radius: 10px;
-}
-
-/* --- Number Input Modal Styles --- */
+/* =====================================================================
+   5. NUMBER & WARNING MODALS
+   ===================================================================== */
 .number-modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
     z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
+    background: rgb(0 0 0 / 0.6);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
-    padding: 20px;
 }
 
     .number-modal-overlay.visible {
@@ -299,16 +332,16 @@ html, body {
     }
 
 .number-modal-box {
-    background: rgba(26, 29, 38, 0.95);
-    border: 2px solid rgba(255, 255, 255, 0.25);
-    border-radius: 24px;
-    padding: clamp(20px, 4vh, 35px) clamp(25px, 6vw, 50px);
-    text-align: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(46, 204, 113, 0.2);
-    transform: scale(0.9);
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     width: 100%;
     max-width: 360px;
+    padding: clamp(20px, 4vh, 35px) clamp(25px, 6vw, 50px);
+    border: 2px solid rgb(255 255 255 / 0.25);
+    border-radius: 24px;
+    background: rgb(26 29 38 / 0.95);
+    box-shadow: 0 20px 40px rgb(0 0 0 / 0.8), 0 0 30px rgb(var(--green) / 0.2);
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s var(--ease-out);
 }
 
 .number-modal-overlay.visible .number-modal-box {
@@ -316,207 +349,219 @@ html, body {
 }
 
 .number-modal-pc-target {
-    font-size: clamp(1rem, 3vw, 1.2rem);
-    font-weight: 800;
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 6px 16px;
-    border-radius: 12px;
     display: inline-block;
     margin-bottom: 12px;
+    padding: 6px 16px;
+    border: 1px solid rgb(255 255 255 / 0.15);
+    border-radius: 12px;
+    background: rgb(255 255 255 / 0.1);
+    color: #fff;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-weight: 800;
     letter-spacing: 1px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .number-modal-label {
-    font-size: clamp(0.7rem, 2vw, 0.8rem);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: rgba(255, 255, 255, 0.6);
     margin-bottom: 4px;
+    color: rgb(255 255 255 / 0.6);
+    font-size: clamp(0.7rem, 2vw, 0.8rem);
     font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 .number-modal-display {
+    color: rgb(var(--green));
     font-size: clamp(2.5rem, 10vw, 3.5rem);
     font-weight: 800;
-    color: #2ecc71;
-    text-shadow: 0 0 15px rgba(46, 204, 113, 0.4);
     letter-spacing: 2px;
+    text-shadow: 0 0 15px rgb(var(--green) / 0.4);
 }
 
 .number-modal-timer {
-    font-size: clamp(0.7rem, 1.8vw, 0.75rem);
-    color: rgba(255, 255, 255, 0.4);
     margin-top: 12px;
+    color: rgb(255 255 255 / 0.4);
+    font-size: clamp(0.7rem, 1.8vw, 0.75rem);
     letter-spacing: 1px;
 }
 
-/* --- License Modal Enhancements --- */
+
+/* =====================================================================
+   6. LICENSE MODAL
+   ===================================================================== */
+#licenseModal {
+    z-index: 100001;
+}
+
 .license-input {
     width: 100%;
-    padding: 12px 14px;
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #fff;
     margin-bottom: 15px;
+    padding: 12px 14px;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 10px;
+    background: rgb(0 0 0 / 0.6);
+    color: #fff;
     font-size: 0.95rem;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
     .license-input:focus {
-        border-color: #2ecc71;
-        box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+        border-color: rgb(var(--green));
+        box-shadow: 0 0 10px rgb(var(--green) / 0.3);
     }
 
 .btn-activate {
     display: block;
     width: 100%;
     padding: 12px;
-    background: linear-gradient(135deg, #2ecc71, #27ae60);
     border: none;
     border-radius: 10px;
-    color: #ffffff;
-    font-weight: 700;
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    box-shadow: 0 4px 15px rgb(var(--green) / 0.4);
+    color: #fff;
     font-size: 0.95rem;
-    cursor: pointer;
-    text-transform: uppercase;
+    font-weight: 700;
     letter-spacing: 1px;
     text-align: center;
     text-decoration: none;
-    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+    text-transform: uppercase;
+    cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
     .btn-activate:hover {
         transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6);
+        box-shadow: 0 6px 20px rgb(var(--green) / 0.6);
     }
 
     .btn-activate:active {
         transform: translateY(1px);
     }
 
-#licenseModal,
-#serverSerialDisplay,
-input,
-textarea {
-    user-select: text !important;
-    -webkit-user-select: text !important;
-    -moz-user-select: text !important;
-    -ms-user-select: text !important;
-}
 
 /* =====================================================================
-   PRESS ANY KEY SCREEN  -  display-only PC status board
+   7. LOCK SCREEN  -  display-only PC status board
    ===================================================================== */
 #pressAnyKeyScreen {
     position: fixed;
-    top: 0;
-    left: 0;
+    z-index: 9999;
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    z-index: 9999;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    padding: clamp(8px, 1.5vh, 16px) clamp(10px, 2vw, 20px);
+    justify-content: flex-end;
     gap: clamp(6px, 1.2vh, 12px);
-    background: rgba(10, 12, 28, 0.2);
+    padding: clamp(44px, 6.5vh, 68px) clamp(10px, 2vw, 20px) clamp(8px, 1.5vh, 16px);
+    padding-bottom: calc(clamp(8px, 1.5vh, 16px) + env(safe-area-inset-bottom, 0px));
+    background: rgb(10 12 28 / 0.2);
     color: #fff;
     cursor: pointer;
     overflow: hidden;
 }
 
 .attract-header {
-    flex: 0 0 auto;
+    position: fixed;
+    top: clamp(8px, 1.5vh, 16px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    max-width: calc(100vw - 260px);
     text-align: center;
-    max-width: 100%;
+    pointer-events: none;
 }
 
 .attract-brand {
+    color: #fff;
     font-size: clamp(1.15rem, 3.2vmin, 2rem);
     font-weight: 900;
     letter-spacing: clamp(1.5px, 0.4vw, 4px);
     text-transform: uppercase;
-    color: #fff;
-    text-shadow: 0 0 10px rgba(0, 200, 255, 0.8), 0 0 22px rgba(255, 0, 200, 0.5);
+    text-shadow: 0 0 10px rgb(0 200 255 / 0.8), 0 0 22px rgb(255 0 200 / 0.5);
 }
 
 .attract-grid {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     min-height: 0;
     width: 100%;
     max-width: 1920px;
     display: grid;
     grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr));
-    gap: clamp(4px, 0.6vw, 10px);
-    pointer-events: none;
+    grid-auto-rows: minmax(0, 1fr);
     justify-content: center;
-    align-content: center;
+    align-content: stretch;
+    align-items: center;
+    justify-items: center;
+    gap: clamp(4px, 0.6vw, 10px);
     padding: 4px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
+    pointer-events: none;
 }
 
 @media (max-width: 700px) {
     .attract-grid {
-        grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)) !important;
+        grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
     }
 }
 
+/* ---- Attract card (one per PC) ----
+   Theme tokens:
+     --c      main color      --c-glow  glow color
+     --digit  clock digits    --pill    status-pill color
+*/
 .atc-wrap {
     container-type: size;
     width: 100%;
-    aspect-ratio: 16 / 11;
-    max-height: 100%;
+    height: 100%;
+    max-width: calc(100cqh * (16 / 11));
+    max-height: calc(100cqw * (11 / 16));
     min-width: 0;
     min-height: 0;
+    aspect-ratio: 16 / 11;
     filter: drop-shadow(0 0 4px var(--c-glow));
 }
 
     .atc-wrap.theme-green {
         --c: #2ecc71;
-        --c-glow: rgba(46, 204, 113, 0.55);
+        --c-glow: rgb(46 204 113 / 0.55);
         --digit: #55ff99;
     }
 
     .atc-wrap.theme-red {
         --c: #e74c3c;
-        --c-glow: rgba(231, 76, 60, 0.55);
+        --c-glow: rgb(231 76 60 / 0.55);
         --digit: #ff7b6b;
     }
 
     .atc-wrap.theme-orange {
         --c: #ff9a1f;
-        --c-glow: rgba(255, 154, 31, 0.55);
+        --c-glow: rgb(255 154 31 / 0.55);
         --digit: #ffd08a;
     }
 
     .atc-wrap.theme-purple {
         --c: #b46bff;
-        --c-glow: rgba(180, 107, 255, 0.6);
+        --c-glow: rgb(180 107 255 / 0.6);
         --digit: #e6d0ff;
     }
 
     .atc-wrap.theme-gray {
         --c: #7f8c8d;
-        --c-glow: rgba(127, 140, 141, 0.55);
+        --c-glow: rgb(127 140 141 / 0.55);
         --digit: #bdc3c7;
     }
 
+/* Angled-corner frame (outer border + inner panel share the same cut) */
 .atc,
 .atc-in {
     --cut: 3cqw;
-    clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut));
+    clip-path: polygon( var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut) );
 }
 
 .atc {
-    --u: min(1cqw, 1.55cqh);
+    --u: min(1cqw, 1.55cqh); /* base unit: everything inside scales from this */
     width: 100%;
     height: 100%;
     padding: max(2px, calc(var(--u) * 1.1));
@@ -530,16 +575,16 @@ textarea {
     flex-direction: column;
     justify-content: space-between;
     gap: calc(var(--u) * 1.5);
-    padding: calc(var(--u) * 3) calc(var(--u) * 4) calc(var(--u) * 3);
-    background: linear-gradient(160deg, rgba(11, 16, 32, 0.85) 0%, rgba(5, 6, 13, 0.90) 100%);
-    font-family: 'Orbitron', 'Segoe UI', system-ui, sans-serif;
+    padding: calc(var(--u) * 3) calc(var(--u) * 4);
+    background: linear-gradient(160deg, rgb(11 16 32 / 0.85) 0%, rgb(5 6 13 / 0.9) 100%);
+    font-family: var(--font-display);
 }
 
 .atc-top {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: calc(var(--u) * 1);
+    gap: var(--u);
     min-width: 0;
 }
 
@@ -561,8 +606,8 @@ textarea {
     flex: 1;
     min-width: 0;
     font-size: calc(var(--u) * 9);
-    font-weight: 900;
     font-style: italic;
+    font-weight: 900;
     letter-spacing: 1px;
     text-transform: uppercase;
     white-space: nowrap;
@@ -570,13 +615,14 @@ textarea {
     text-overflow: ellipsis;
 }
 
+/* ---- Status pill ---- */
 .atc-pill {
     display: inline-flex;
     align-items: center;
     gap: calc(var(--u) * 1.5);
     padding: calc(var(--u) * 0.8) calc(var(--u) * 2.5);
+    border: max(1px, calc(var(--u) * 0.5)) solid var(--pill);
     border-radius: 999px;
-    border: max(1px, calc(var(--u) * .5)) solid var(--pill);
     color: var(--pill);
     font-size: calc(var(--u) * 3.5);
     font-weight: 800;
@@ -614,11 +660,12 @@ textarea {
     --pill: #7f8c8d;
 }
 
+/* ---- Time box ---- */
 .atc-time {
-    border: max(1px, calc(var(--u) * .5)) solid color-mix(in srgb, var(--c) 55%, transparent);
-    border-radius: calc(var(--u) * 2.5);
     padding: calc(var(--u) * 2) calc(var(--u) * 3);
-    background: rgba(0, 0, 0, 0.35);
+    border: max(1px, calc(var(--u) * 0.5)) solid color-mix(in srgb, var(--c) 55%, transparent);
+    border-radius: calc(var(--u) * 2.5);
+    background: rgb(0 0 0 / 0.35);
 }
 
 .atc-label {
@@ -636,13 +683,13 @@ textarea {
     justify-content: center;
     align-items: baseline;
     gap: calc(var(--u) * 2.5);
+    color: var(--digit);
+    font-family: var(--font-digits);
     font-size: calc(var(--u) * 11);
+    font-variant-numeric: tabular-nums;
     font-weight: 700;
     line-height: 1.1;
-    color: var(--digit);
     text-shadow: 0 0 8px var(--c-glow), 0 0 16px var(--c-glow);
-    font-variant-numeric: tabular-nums;
-    font-family: 'Orbitron', 'Consolas', 'Courier New', monospace;
 }
 
     .atc-digits .sep {
@@ -659,17 +706,18 @@ textarea {
     color: var(--c);
     font-size: calc(var(--u) * 3);
     font-weight: 700;
-    letter-spacing: .5px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
+/* ---- Footer banner ---- */
 .attract-footer {
     flex: 0 0 auto;
     display: flex;
     justify-content: center;
     width: 100%;
     max-width: 100%;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    z-index: 2;
 }
 
 .attract-banner {
@@ -677,189 +725,154 @@ textarea {
     align-items: center;
     justify-content: center;
     gap: clamp(6px, 1.2vmin, 18px);
+    max-width: 96vw;
     padding: clamp(6px, 1vh, 10px) clamp(14px, 4vw, 50px);
-    font-size: clamp(0.85rem, 2.8vmin, 2.1rem);
-    font-weight: 900;
-    font-style: italic;
-    letter-spacing: clamp(1px, 0.25vw, 2px);
-    color: #fff;
     border: 2px solid #19b8ff;
     border-radius: 12px;
-    background: rgba(8, 10, 30, 0.85);
-    box-shadow: 0 0 14px rgba(25, 184, 255, 0.6), 0 0 14px rgba(255, 47, 208, 0.45), inset 0 0 10px rgba(255, 47, 208, 0.35);
+    background: rgb(8 10 30 / 0.85);
+    box-shadow: 0 0 14px rgb(25 184 255 / 0.6), 0 0 14px rgb(255 47 208 / 0.45), inset 0 0 10px rgb(255 47 208 / 0.35);
+    color: #fff;
+    font-size: clamp(0.85rem, 2.8vmin, 2.1rem);
+    font-style: italic;
+    font-weight: 900;
+    letter-spacing: clamp(1px, 0.25vw, 2px);
     text-shadow: 0 0 10px #19b8ff, 0 0 20px #ff2fd0;
-    max-width: 96vw;
     white-space: nowrap;
     animation: atcPulse 1.4s ease-in-out infinite;
 }
 
     .attract-banner i {
         color: #ffc926;
-        text-shadow: 0 0 8px rgba(255, 201, 38, 0.8);
+        text-shadow: 0 0 8px rgb(255 201 38 / 0.8);
     }
 
 @keyframes atcBlink {
     50% {
-        opacity: .25;
+        opacity: 0.25;
     }
 }
 
 @keyframes atcPulse {
     50% {
-        opacity: .65;
-        transform: scale(.98);
+        opacity: 0.65;
+        transform: scale(0.98);
     }
 }
 
-/* =====================================================
-   VIP MEMBER = ALL GOLD (replaces the red/orange color)
-   Change the gold here:  #FFC107  /  255, 193, 7
-   ===================================================== */
 
-/* Carousel card border */
-.psp-card.status-occupied.vip-gold,
-.psp-card.status-paused.vip-gold {
-    border-color: rgba(255, 193, 7, 0.6);
+/* =====================================================================
+   8. USER-TYPE THEMES  (replace the red / orange of Occupied / Paused)
+
+   To change a color, edit ONE block below:
+     --user-rgb   : border, glow, pill, lock-screen card
+     --user-grad  : carousel badge gradient
+     --user-tint  : carousel card title
+     --user-digit : lock-screen clock digits
+   Class pairs: .vip-gold / .user-vip, .member-sky / .user-member,
+                .guest-indigo / .user-guest
+   ===================================================================== */
+.vip-gold,
+.user-vip {
+    --user-rgb: 255 193 7; /* gold #FFC107 */
+    --user-grad: #FFD54F, #FFC107, #B8860B;
+    --user-tint: #FFD54F;
+    --user-digit: #FFE082;
 }
 
-.psp-card.active.status-occupied.vip-gold,
-.psp-card.active.status-paused.vip-gold {
-    border-color: #FFC107;
-    box-shadow: 0 0 25px rgba(255, 193, 7, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
+.member-sky,
+.user-member {
+    --user-rgb: 0 191 255; /* sky blue #00BFFF */
+    --user-grad: #87CEEB, #00BFFF, #0A7FB5;
+    --user-tint: #87CEEB;
+    --user-digit: #B3E5FC;
 }
 
-.psp-card.vip-gold .pc-title {
-    color: #FFD54F;
+.guest-indigo,
+.user-guest {
+    --user-rgb: 88 80 236; /* indigo #5850EC */
+    --user-grad: #7A73F5, #5850EC, #3730A3;
+    --user-tint: #8D86F7;
+    --user-digit: #A5A0FA;
+}
+
+/* Carousel card: border + glow take the user color */
+.psp-card:is(.status-occupied, .status-paused):is(.vip-gold, .member-sky, .guest-indigo) {
+    --accent: var(--user-rgb);
 }
 
 /* Carousel badge */
-.psp-badge.status-occupied.user-vip,
-.psp-badge.status-paused.user-vip {
-    background: linear-gradient(135deg, #FFD54F, #FFC107, #B8860B);
-    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.5);
-    color: white;
+.psp-badge:is(.status-occupied, .status-paused):is(.user-vip, .user-member, .user-guest) {
+    --accent: var(--user-rgb);
+    --grad: var(--user-grad);
+    --badge-a: 0.5;
 }
 
-/* Lock screen card (border, glow, time digits, labels) */
-.atc-wrap.theme-red.vip-gold,
-.atc-wrap.theme-orange.vip-gold {
-    --c: #FFC107;
-    --c-glow: rgba(255, 193, 7, 0.55);
-    --digit: #FFE082;
+/* Lock-screen card */
+.atc-wrap:is(.theme-red, .theme-orange):is(.vip-gold, .member-sky, .guest-indigo) {
+    --c: rgb(var(--user-rgb));
+    --c-glow: rgb(var(--user-rgb) / 0.55);
+    --digit: var(--user-digit);
 }
 
-/* Lock screen pill */
-.atc-pill.user-vip {
-    --pill: #FFC107;
+/* Lock-screen pill */
+.atc-pill:is(.user-vip, .user-member, .user-guest) {
+    --pill: rgb(var(--user-rgb));
 }
 
 
-/* =====================================================
-   MEMBER = SKY BLUE (replaces the red/orange color)
-   Change the sky blue here:  #00BFFF  /  0, 191, 255
-   ===================================================== */
-
-.psp-card.status-occupied.member-sky,
-.psp-card.status-paused.member-sky {
-    border-color: rgba(0, 191, 255, 0.6);
-}
-
-.psp-card.active.status-occupied.member-sky,
-.psp-card.active.status-paused.member-sky {
-    border-color: #00BFFF;
-    box-shadow: 0 0 25px rgba(0, 191, 255, 0.6), 0 20px 45px rgba(0, 0, 0, 0.9);
-}
-
-.psp-card.member-sky .pc-title {
-    color: #87CEEB;
-}
-
-.psp-badge.status-occupied.user-member,
-.psp-badge.status-paused.user-member {
-    background: linear-gradient(135deg, #87CEEB, #00BFFF, #0A7FB5);
-    box-shadow: 0 4px 12px rgba(0, 191, 255, 0.5);
-    color: white;
-}
-
-.atc-wrap.theme-red.member-sky,
-.atc-wrap.theme-orange.member-sky {
-    --c: #00BFFF;
-    --c-glow: rgba(0, 191, 255, 0.55);
-    --digit: #B3E5FC;
-}
-
-.atc-pill.user-member {
-    --pill: #00BFFF;
-}
-
-/* --- Board Status Indicator --- */
+/* =====================================================================
+   9. MISC UI
+   ===================================================================== */
 .board-status {
     position: fixed;
     top: 20px;
     right: 20px;
     z-index: 10000;
-    background: rgba(18, 20, 26, 0.85);
+    padding: 8px 16px;
+    border: 2px solid rgb(var(--danger) / 0.5);
+    border-radius: 12px;
+    background: rgb(18 20 26 / 0.85);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 59, 48, 0.5);
-    padding: 8px 16px;
-    border-radius: 12px;
-    color: #ff3b30;
-    font-weight: 800;
+    box-shadow: 0 4px 20px rgb(0 0 0 / 0.6), 0 0 15px rgb(var(--danger) / 0.2);
+    color: rgb(var(--danger));
+    font-family: var(--font-ui);
     font-size: 0.8rem;
+    font-weight: 800;
     letter-spacing: 1.5px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 59, 48, 0.2);
     transition: all 0.3s ease;
-    font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
     .board-status.connected {
-        border-color: rgba(46, 204, 113, 0.5);
-        color: #2ecc71;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(46, 204, 113, 0.2);
+        border-color: rgb(var(--green) / 0.5);
+        box-shadow: 0 4px 20px rgb(0 0 0 / 0.6), 0 0 15px rgb(var(--green) / 0.2);
+        color: rgb(var(--green));
     }
-
-.pc-title.bill-changer-title {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    line-height: 1.1;
-    font-size: clamp(1.2rem, 3.5vw, 2.5rem);
-    text-align: center;
-}
 
 .trial-activation-btn {
     position: fixed;
     top: 15px;
     left: 20px;
-    z-index: 100;
-    background: rgba(0, 123, 255, 0.85);
-    color: white;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     padding: 8px 16px;
+    border: none;
     border-radius: 20px;
+    background: rgb(0 123 255 / 0.85);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.3);
+    color: #fff;
     font-family: inherit;
     font-size: 0.85rem;
     font-weight: 600;
     text-decoration: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(5px);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: background 0.2s, transform 0.2s;
     cursor: pointer;
-    border: none;
+    transition: background 0.2s, transform 0.2s;
 }
 
     .trial-activation-btn:hover {
-        background: rgba(0, 123, 255, 1);
+        background: rgb(0 123 255 / 1);
         transform: translateY(-1px);
     }
-
-.trial-activation-btn {
-    z-index: 100000; /* was 100 */
-}
-
-#licenseModal {
-    z-index: 100001;
-}
