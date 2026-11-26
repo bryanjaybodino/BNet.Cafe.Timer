@@ -65,6 +65,17 @@
             <!-- Maintenance, Clean Up, Patch & Wake On LAN Controls -->
             <div class="card" style="display: flex; flex-direction: column; gap: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); padding: 24px;">
 
+                <!-- Server Patch Command -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-radius: 8px; background-color: var(--bg-light-tertiary); flex-wrap: wrap; gap: 16px;">
+                    <div>
+                        <h3 style="font-size: 16px; font-weight: 600; color: var(--text-light); margin-bottom: 4px;">Server Patch Command</h3>
+                        <span style="font-size: 13px; color: var(--text-light-secondary);">Runs patcher.bat on the server machine via the WebSocket service.</span>
+                    </div>
+                    <div>
+                        <span class="btn btn-primary" onclick="openMaintenanceModal('SERVER_PATCH', 'Server')">Server Patch</span>
+                    </div>
+                </div>
+
                 <!-- Global Maintenance Command -->
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-radius: 8px; background-color: var(--bg-light-tertiary); flex-wrap: wrap; gap: 16px;">
                     <div>

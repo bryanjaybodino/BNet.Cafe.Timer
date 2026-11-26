@@ -45,7 +45,12 @@
         detailsEl.style.display = 'none';
         detailsEl.innerHTML = '';
 
-        if (actionType.includes('MAINTENANCE')) {
+        if (actionType === 'SERVER_PATCH') {
+            titleEl.innerText = 'Confirm Server Patch';
+            msgEl.innerHTML = 'Are you sure you want to run <strong>patcher.bat</strong> on <strong>' + targetName + '</strong>?';
+            confirmBtn.className = 'btn btn-primary';
+            confirmBtn.innerText = 'Run Server Patch';
+        } else if (actionType.includes('MAINTENANCE')) {
             titleEl.innerText = 'Confirm Maintenance Mode';
             msgEl.innerHTML = 'Are you sure you want to put <strong>' + targetName + '</strong> into Maintenance mode?';
             confirmBtn.className = 'btn btn-danger';
