@@ -48,8 +48,8 @@ c54f00188a2c643942ea661a8ea55a9f1e4733c7	Assets/BNetSelect/Script.js
 b8dd5e4f8c75094eb405ec8c0ee9f0693005586a	Assets/BNetTable/Style.css
 a4016ee606ac72d3225a1619388f0f7898de0b21	Assets/ClientChat/Script.js
 39e57e309abbd7e24f5aff4cea10f5d49201a9f2	Assets/ClientChat/Style.css
-3ed5945743f70e703d9c1280d34d869ef148dc95	Assets/Login/Script.js
-20d479dcec353671e1994fc9b8e3d2597e0aefaa	Assets/Login/Style.css
+f865416affed632171885e72e041667f8c468a43	Assets/Login/Script.js
+bec050b79072d95dc6b31455ee9a6634b870a804	Assets/Login/Style.css
 d56366f74c372ca9e0799462fa052b266399bf1a	Assets/Pages/AutoCreditSettings.js
 fd4a9191a29dbd2409a301575121242805b3fcd0	Assets/Pages/ComputerManage.js
 5e4f0c9ed21c5e41a27241b0323f3ef7baf5b4dc	Assets/Pages/Computers.js
@@ -298,7 +298,7 @@ bb01db93c79211b702269ae9a252949d492afe97	Kiosk/kiosk-mode.ps1
 28f7ab0e8a34d62944063add68685addd4beff2d	Kiosk/runtimes/win-x64/native/WebView2Loader.dll
 0388b953d743b5e3e39a195e40a12679993d48c9	Kiosk/runtimes/win-x86/native/WebView2Loader.dll
 4ea1f432bcb368de87ba8e8d98d87cfdea411357	LicenseBackupCode.aspx
-f076ad8ed5abb8fdc7924b57a0bad1dd3b2a80af	Login.aspx
+129b838dee5d7e9e134ad2e08757d5462b3d2143	Login.aspx
 253230fcbe9e7923b913711766fdacd130051ce5	Mailer/Template.html
 1a83a3f86b50ec0195c44d2091b63b1b6511036e	Offline Packages/Microsoft.ReportViewer/Microsoft.ReportViewer.Common.dll
 10433f67b1624db1913727e7402b7026dc793f2e	Offline Packages/Microsoft.ReportViewer/Microsoft.ReportViewer.ProcessingObjectModel.dll
@@ -311,7 +311,7 @@ d4dd789939d82c83eb2720bf5868234ffafca86d	Offline Packages/Microsoft.ReportViewer
 4bb5792ba6e2231164ba438e4087fe3a40e90b22	Offline Packages/System.Runtime.Caching/System.Runtime.Caching.dll
 77956847c349c7391a9448c2287e700007ac2ee5	Offline Packages/System.Runtime.CompilerServices.Unsafe/System.Runtime.CompilerServices.Unsafe.dll
 5b682aeaf22e1521f78268033f98d9dfd7c7185b	Offline Packages/zxing/zxing.dll
-2acf86aeba6a96cc43aa73c6f1d20c45a0a223c6	Portal.aspx
+2114cd6b9eb5c07f174a45eb08e5dd53b1d2e2c7	Portal.aspx
 d42a546e28ca321606f6e2c20afb2ed80e08fc1a	Print.aspx
 d05b48efaba44c7230a04707964e353235a0915f	Remote.html
 05b019913ff615f415fbd4162d5965d6578f02a8	Reports/DataSet1.xsc
@@ -338,8 +338,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-c4a92328c10b2a38a0bd0ecadc2491c59da413cb	bin/BNet.Cafe.Server.dll
-0b281cfc182a6f045a347c2db01b8e0fc1dba3fd	bin/BNet.Cafe.Server.pdb
+7bbae76ec5b93f46e4168a6f36bae842ac01516e	bin/BNet.Cafe.Server.dll
+008786209f06b151efeca03b2f5dc7e1f38bda0e	bin/BNet.Cafe.Server.pdb
 4fdbb6aeb2f027198bc9e0bc1dbaad26226a761a	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 865b555703d2f27700e49b5f5a9a908f10429982	bin/BNet.Cafe.Websocket.pdb
