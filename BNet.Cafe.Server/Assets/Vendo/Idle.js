@@ -2,6 +2,12 @@
 let lockCountdownInterval = null;
 let lockRemainingSeconds = 15;
 
+function isInsertSessionActive(isModalOpen, changerDispensing) {
+    return (typeof isModalOpen === 'function' && isModalOpen())
+        || !!changerDispensing
+        || (typeof isClientInsertingCoin === 'function' && isClientInsertingCoin());
+}
+
 function resetIdleTimer(isModalOpen, changerDispensing, updateCarouselPosition) {
     if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
     if (lockCountdownInterval) { clearInterval(lockCountdownInterval); lockCountdownInterval = null; }
@@ -12,12 +18,12 @@ function resetIdleTimer(isModalOpen, changerDispensing, updateCarouselPosition) 
     const psp = document.getElementById('pspContainer');
     const isMainMenuViewable = psp && psp.style.display !== 'none';
 
-    if (isMainMenuViewable && !isModalOpen()) {
+    if (isMainMenuViewable && !isInsertSessionActive(isModalOpen, changerDispensing)) {
         // Use fetched kioskIdleTimer configuration (converted to milliseconds), defaulting to 10000ms (10s)
         const idleTimeoutMs = (typeof kioskConfig !== 'undefined' && kioskConfig.kioskIdleTimer) ? kioskConfig.kioskIdleTimer * 1000 : 10000;
 
         idleTimer = setTimeout(() => {
-            if (isModalOpen() || changerDispensing) { cancelIdleLock(); return; }
+            if (isInsertSessionActive(isModalOpen, changerDispensing)) { cancelIdleLock(); return; }
             startLockCountdown(isModalOpen, changerDispensing);
         }, idleTimeoutMs);
     }
@@ -31,6 +37,11 @@ function cancelIdleLock() {
 }
 
 function startLockCountdown(isModalOpen, changerDispensing) {
+    if (isInsertSessionActive(isModalOpen, changerDispensing)) {
+        cancelIdleLock();
+        return;
+    }
+
     const idleFooter = document.getElementById('idleCountdownFooter');
     const bannerIcon = document.getElementById('bannerIcon');
     const bannerText = document.getElementById('bannerText');
@@ -47,7 +58,7 @@ function startLockCountdown(isModalOpen, changerDispensing) {
     if (lockCountdownInterval) clearInterval(lockCountdownInterval);
 
     lockCountdownInterval = setInterval(() => {
-        if (isModalOpen() || changerDispensing) { cancelIdleLock(); return; }
+        if (isInsertSessionActive(isModalOpen, changerDispensing)) { cancelIdleLock(); return; }
 
         lockRemainingSeconds--;
         if (bannerText) bannerText.innerText = `LOCKING IN ${lockRemainingSeconds}s`;

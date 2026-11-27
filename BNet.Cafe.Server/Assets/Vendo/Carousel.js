@@ -323,6 +323,7 @@ function initCarouselEvents(updateCallback) {
 
 // The PC whose "Insert Coin" modal is currently open on the client side.
 let insertCoinTargetClient = null;
+let lastInsertCoinClient = null;
 
 function isClientInsertingCoin() {
     return insertCoinTargetClient !== null;
@@ -375,18 +376,49 @@ function sameClientName(a, b) {
     return String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase();
 }
 
+function getCanonicalClientName(name) {
+    const wanted = String(name || '').trim().toLowerCase();
+    if (!wanted) return String(name || '').trim();
+
+    const lists = [
+        Array.isArray(filteredClientData) ? filteredClientData : [],
+        Array.isArray(clientData) ? clientData : []
+    ];
+
+    for (const list of lists) {
+        const match = list.find(c => {
+            const raw = c && (c.clientName || c.ClientName);
+            return raw && String(raw).trim().toLowerCase() === wanted;
+        });
+        if (match) {
+            return String(match.clientName || match.ClientName).trim();
+        }
+    }
+
+    return String(name || '').trim();
+}
+
+function isAuthorizedInsertClient(clientName) {
+    if (!clientName) return false;
+    if (insertCoinTargetClient && sameClientName(insertCoinTargetClient, clientName)) return true;
+    if (lastInsertCoinClient && sameClientName(lastInsertCoinClient, clientName)) return true;
+    return false;
+}
+
 // Send the amount typed in on the kiosk to the PC that is inserting (only if it owns the kiosk).
 function reportInsertedAmount(pcName, amount) {
-    if (!insertCoinTargetClient || !sameClientName(insertCoinTargetClient, pcName)) return;
+    const activeTarget = insertCoinTargetClient || lastInsertCoinClient;
+    if (!activeTarget || !sameClientName(activeTarget, pcName)) return;
     if (typeof sendInsertAmountToPC === 'function') {
-        sendInsertAmountToPC(insertCoinTargetClient, amount);
+        sendInsertAmountToPC(getCanonicalClientName(activeTarget), amount);
     }
 }
 
 // Kiosk just locked -> close that PC's Insert Coin modal (once).
 function closeInsertCoinModalOnClient() {
     if (!insertCoinTargetClient) return;
-    const target = insertCoinTargetClient;
+    const target = getCanonicalClientName(insertCoinTargetClient);
+    lastInsertCoinClient = target;
     insertCoinTargetClient = null;
     setClientInsertOverlay(null); // Hide warning overlay
     if (typeof sendCloseModalToPC === 'function') sendCloseModalToPC(target);
@@ -395,6 +427,7 @@ function closeInsertCoinModalOnClient() {
 // Client closed its Insert Coin modal -> unlock UI and lock the kiosk.
 function lockKioskForClient(clientName) {
     if (!insertCoinTargetClient || !sameClientName(insertCoinTargetClient, clientName)) return;
+    lastInsertCoinClient = getCanonicalClientName(insertCoinTargetClient);
     insertCoinTargetClient = null;
     setClientInsertOverlay(null); // Hide warning overlay
 
@@ -415,16 +448,19 @@ function autoSelectClientInCarousel(targetClientName) {
         resetIdle();
     }
 
+    const canonicalName = getCanonicalClientName(targetClientName);
+
     // Remember who is inserting and display the blocking message overlay
-    insertCoinTargetClient = targetClientName;
-    setClientInsertOverlay(targetClientName);
+    insertCoinTargetClient = canonicalName;
+    lastInsertCoinClient = canonicalName;
+    setClientInsertOverlay(canonicalName);
 
     if (!filteredClientData || filteredClientData.length === 0) {
         syncBoard();
         return;
     }
 
-    const wanted = String(targetClientName).trim().toLowerCase();
+    const wanted = String(canonicalName).trim().toLowerCase();
     const targetIndex = filteredClientData.findIndex(client => {
         const name = client.clientName || client.ClientName || '';
         return String(name).trim().toLowerCase() === wanted;
@@ -436,7 +472,7 @@ function autoSelectClientInCarousel(targetClientName) {
         updateCarouselPosition(0);
 
         if (typeof speakText === 'function') {
-            speakText(`Terminal ${targetClientName} selected.`);
+            speakText(`Terminal ${canonicalName} selected.`);
         }
     }
 

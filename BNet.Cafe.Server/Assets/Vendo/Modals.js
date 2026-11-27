@@ -28,6 +28,10 @@ let warningCloseTimer = null;
 let warningCountdownInterval = null;
 let warningRemainingSeconds = 5;
 
+let isProcessingVendoSubmit = false;
+let lastSubmittedVendoKey = null;
+let lastSubmittedVendoAt = 0;
+
 // Report the kiosk's number modal open/closed state so client PCs can lock their Insert Coin button.
 // Observing the class covers every open/close path (typing, timeout, force credit, bill changer).
 if (numberModal) {
@@ -60,13 +64,61 @@ function showNumberModal(pcName) {
     numberModal.classList.add('visible');
 }
 
-function hideNumberModal(syncArduinoStateCb) {
+function resolveTargetComputerName(fallbackName) {
+    if (fallbackName && typeof getCanonicalClientName === 'function') {
+        return getCanonicalClientName(fallbackName);
+    }
+    if (fallbackName) return String(fallbackName).trim();
+
+    if (typeof filteredClientData !== 'undefined' && Array.isArray(filteredClientData) && filteredClientData[selectedIndex]) {
+        const client = filteredClientData[selectedIndex];
+        const raw = client.clientName || client.ClientName;
+        if (raw) return String(raw).trim();
+    }
+
+    const activeCard = document.querySelector('.psp-card.active');
+    const titleEl = activeCard ? activeCard.querySelector('.pc-title') : null;
+    const textName = titleEl ? titleEl.innerText.trim() : "PC-01";
+    return typeof getCanonicalClientName === 'function' ? getCanonicalClientName(textName) : textName;
+}
+
+function triggerProcessVendoOnce(amount, computerName) {
+    const cleanAmount = parseInt(amount, 10) || 0;
+    const cleanName = resolveTargetComputerName(computerName);
+    if (cleanAmount <= 0 || !cleanName) return;
+
+    const now = Date.now();
+    const key = `${cleanName.toLowerCase()}|${cleanAmount}`;
+    if (isProcessingVendoSubmit || (lastSubmittedVendoKey === key && (now - lastSubmittedVendoAt) < 1500)) {
+        return;
+    }
+
+    isProcessingVendoSubmit = true;
+    lastSubmittedVendoKey = key;
+    lastSubmittedVendoAt = now;
+
+    try {
+        const amountField = document.querySelector('[id$="HiddenField_ModalAmount"]');
+        const nameField = document.querySelector('[id$="HiddenField_ModalComputerName"]');
+        const triggerBtn = document.querySelector('[id$="LinkButton_ProcessVendo"]');
+
+        if (amountField) amountField.value = cleanAmount;
+        if (nameField) nameField.value = cleanName;
+        if (triggerBtn) triggerBtn.click();
+    } finally {
+        setTimeout(() => {
+            isProcessingVendoSubmit = false;
+        }, 500);
+    }
+}
+
+function hideNumberModal(syncArduinoStateCb, skipVendoProcess) {
     if (changerDispensing) return;
 
-    const insertedAmount = parseInt(modalNumberDisplay.innerText, 10) || 0;
+    const insertedAmount = parseInt(modalNumberDisplay.innerText, 10) || totalAmount || 0;
     const activeCard = document.querySelector('.psp-card.active');
 
-    if (activeCard && insertedAmount > 0) {
+    if (!skipVendoProcess && activeCard && insertedAmount > 0) {
         const t = activeCard.querySelector('.pc-title');
         const name = t ? t.innerText : "";
         if (activeCard.classList.contains('status-coin-changer') || name === "Bill Changer") {
@@ -75,11 +127,11 @@ function hideNumberModal(syncArduinoStateCb) {
         }
     }
 
-    numberModal.classList.remove('visible');
-    if (modalCloseTimer) clearTimeout(modalCloseTimer);
-    if (modalCountdownInterval) clearInterval(modalCountdownInterval);
+    if (numberModal) numberModal.classList.remove('visible');
+    if (modalCloseTimer) { clearTimeout(modalCloseTimer); modalCloseTimer = null; }
+    if (modalCountdownInterval) { clearInterval(modalCountdownInterval); modalCountdownInterval = null; }
 
-    if (activeCard) {
+    if (!skipVendoProcess && activeCard) {
         const titleEl = activeCard.querySelector('.pc-title');
         const computerName = titleEl ? titleEl.innerText : "PC-01";
         const isBillChangerCard = activeCard.classList.contains('status-coin-changer') || computerName === "Bill Changer";
@@ -90,19 +142,14 @@ function hideNumberModal(syncArduinoStateCb) {
             }
         } else {
             if (insertedAmount > 0) {
-                const amountField = document.querySelector('[id$="HiddenField_ModalAmount"]');
-                const nameField = document.querySelector('[id$="HiddenField_ModalComputerName"]');
-                const triggerBtn = document.querySelector('[id$="LinkButton_ProcessVendo"]');
-
-                if (amountField) amountField.value = insertedAmount;
-                if (nameField) nameField.value = computerName;
-                if (triggerBtn) triggerBtn.click();
+                triggerProcessVendoOnce(insertedAmount, computerName);
             }
         }
     }
 
     totalAmount = 0;
     pendingDigits = "";
+    if (modalNumberDisplay) modalNumberDisplay.innerText = "0";
     if (syncArduinoStateCb) syncArduinoStateCb();
 }
 
@@ -336,26 +383,17 @@ function hideWarningModal() {
     }
 }
 function forceProcessCreditOnKiosk(clientName) {
-    if (!insertCoinTargetClient || !sameClientName(insertCoinTargetClient, clientName)) return;
+    if (typeof isAuthorizedInsertClient === 'function' && !isAuthorizedInsertClient(clientName)) return;
 
-    if (modalCloseTimer) clearTimeout(modalCloseTimer);
-    if (modalCountdownInterval) clearInterval(modalCountdownInterval);
+    if (modalCloseTimer) { clearTimeout(modalCloseTimer); modalCloseTimer = null; }
+    if (modalCountdownInterval) { clearInterval(modalCountdownInterval); modalCountdownInterval = null; }
 
-    const insertedAmount = parseInt(modalNumberDisplay.innerText, 10) || 0;
+    const insertedAmount = parseInt(modalNumberDisplay.innerText, 10) || totalAmount || 0;
     if (insertedAmount > 0) {
         const activeCard = document.querySelector('.psp-card.active');
-        if (activeCard) {
-            const t = activeCard.querySelector('.pc-title');
-            const computerName = t ? t.innerText : clientName;
-
-            const amountField = document.querySelector('[id$="HiddenField_ModalAmount"]');
-            const nameField = document.querySelector('[id$="HiddenField_ModalComputerName"]');
-            const triggerBtn = document.querySelector('[id$="LinkButton_ProcessVendo"]');
-
-            if (amountField) amountField.value = insertedAmount;
-            if (nameField) nameField.value = computerName;
-            if (triggerBtn) triggerBtn.click();
-        }
+        const t = activeCard ? activeCard.querySelector('.pc-title') : null;
+        const computerName = resolveTargetComputerName(clientName || (t ? t.innerText : ""));
+        triggerProcessVendoOnce(insertedAmount, computerName);
     }
-    hideNumberModal();
+    hideNumberModal(null, true);
 }

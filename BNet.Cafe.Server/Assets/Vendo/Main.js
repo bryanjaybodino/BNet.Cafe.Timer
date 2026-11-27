@@ -51,6 +51,12 @@ async function fetchClientData() {
     }
 }
 
+function hasActiveInsertSession() {
+    return (typeof isModalOpen === 'function' && isModalOpen())
+        || (typeof isClientInsertingCoin === 'function' && isClientInsertingCoin())
+        || (typeof changerDispensing !== 'undefined' && changerDispensing);
+}
+
 // Bind Global Input Events
 ['mousedown', 'keydown', 'touchstart', 'wheel', 'click'].forEach(event => {
     window.addEventListener(event, () => resetIdleTimer(isModalOpen, changerDispensing, updateCarouselPosition), { passive: true });
@@ -157,6 +163,7 @@ document.addEventListener('keydown', (e) => {
     if (isPressAnyKeyVisible()) {
         if (['arrowleft', 'arrowright', 'z', 'x'].includes(e.key.toLowerCase()) || (e.ctrlKey && ['a', 'c'].includes(e.key.toLowerCase()))) {
             e.preventDefault();
+            if (hasActiveInsertSession()) return;
             serialTask(async () => {
                 if (await openSerial(true)) {
                     hidePressAnyKey(() => updateCarouselPosition(0), () => resetIdleTimer(isModalOpen, changerDispensing, updateCarouselPosition));
@@ -193,21 +200,26 @@ document.addEventListener('keydown', (e) => {
     }
 
     // Block arrow/navigation keys if the modal or client insert is active
-    if (isModalOpen() || (typeof isClientInsertingCoin === 'function' && isClientInsertingCoin())) return;
+    if (hasActiveInsertSession()) {
+        if (['arrowleft', 'arrowright', 'z', 'x'].includes(e.key.toLowerCase())) {
+            e.preventDefault();
+        }
+        return;
+    }
 
     const key = e.key.toLowerCase();
 
     // Block arrow/navigation keys if a client is currently inserting coins
     if (key === 'arrowright' || key === 'x' || (e.ctrlKey && key === 'c')) {
         e.preventDefault();
-        if (typeof isClientInsertingCoin === 'function' && isClientInsertingCoin()) return;
+        if (hasActiveInsertSession()) return;
         if (selectedIndex < filteredClientData.length - 1) {
             selectedIndex++;
             updateCarouselPosition(0, () => syncArduinoState(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen));
         }
     } else if (key === 'arrowleft' || key === 'z' || (e.ctrlKey && key === 'a')) {
         e.preventDefault();
-        if (typeof isClientInsertingCoin === 'function' && isClientInsertingCoin()) return;
+        if (hasActiveInsertSession()) return;
         if (selectedIndex > 0) {
             selectedIndex--;
             updateCarouselPosition(0, () => syncArduinoState(filteredClientData, selectedIndex, clientData, changerDispensing, isModalOpen));
@@ -215,7 +227,13 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-window.addEventListener('blur', () => forceLockSystem(sendSerialCommand));
+window.addEventListener('blur', () => {
+    if (hasActiveInsertSession()) return;
+    forceLockSystem(sendSerialCommand);
+});
 document.addEventListener('visibilitychange', () => {
-    if (document.hidden) forceLockSystem(sendSerialCommand);
+    if (document.hidden) {
+        if (hasActiveInsertSession()) return;
+        forceLockSystem(sendSerialCommand);
+    }
 });
