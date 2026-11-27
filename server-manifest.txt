@@ -92,11 +92,11 @@ ebf4b023fda28b7299ecb0c58cc98834ec9bbafd	Assets/Portal/Script.js
 05040ff052bbca19b0988c4a9dc88bec34a2d91e	Assets/ResetPassword/Style.css
 d614f3cbd2c23e543dc3281d87c4aaf16318cb61	Assets/Shop/Script.js
 af67fcd6463863c4d443d1ef1079e21aa2c119a1	Assets/Shop/Style.css
-62118e3df731c5c9ee36c5e1d4d6f8585c4c4bb2	Assets/Vendo/Carousel.js
+4e2dd7dbeb27c042074bf5cee0cd58628bd60ec7	Assets/Vendo/Carousel.js
 40edcbff958e3d2490a0ff40013bb826f1bd577b	Assets/Vendo/Clients.js
-9a0ebc8681c4b3275c3a51db025910f320f6d60a	Assets/Vendo/Idle.js
-4de6cd0c0349319f6abe53f4d92812108807c0a4	Assets/Vendo/Main.js
-f0ee4736c63ca9a948ac0f5bc10e3037fcd19a48	Assets/Vendo/Modals.js
+63a2970aecfc710ca10507b31c9287c86d565f9a	Assets/Vendo/Idle.js
+bdfd7e3680b3b8bafbeaf31dcd9b7bc2e743b169	Assets/Vendo/Main.js
+004e92396235462358381cdc2787042db3d21a10	Assets/Vendo/Modals.js
 f3e71e112a111504a50c964dcb9ad891e89ee3c2	Assets/Vendo/Serial.js
 92af40f86bea18da544bd3d4bb9cfb25c1e2f601	Assets/Vendo/Style.css
 733a3ded9e85bfe821f728a21f723974ba6610f2	Assets/Vendo/TabGuard.js
@@ -338,8 +338,8 @@ dfeaa8fc1c6f6010c8e2140581d007e9e68eae29	Website/assets/font-awesome.min.css
 455996d2fa80a8c11e6f7f47b9c91796946894cb	Website/index.html
 039acba0f41cd26dc44c378d8b1de62112b5dd12	XamppGuide.aspx
 1663ce648f0e7c37fe681795de1fa6865d618bb1	auto-set-ip.bat
-7bbae76ec5b93f46e4168a6f36bae842ac01516e	bin/BNet.Cafe.Server.dll
-008786209f06b151efeca03b2f5dc7e1f38bda0e	bin/BNet.Cafe.Server.pdb
+b2063906383e327f9637d949256d036aab6d3006	bin/BNet.Cafe.Server.dll
+fb11642c932460e0cb5f6fa7c7ccbcf2b500e26a	bin/BNet.Cafe.Server.pdb
 4fdbb6aeb2f027198bc9e0bc1dbaad26226a761a	bin/BNet.Cafe.Websocket.exe
 bf6b486e28a75019c389f4be7ffd98d311640896	bin/BNet.Cafe.Websocket.exe.config
 865b555703d2f27700e49b5f5a9a908f10429982	bin/BNet.Cafe.Websocket.pdb
