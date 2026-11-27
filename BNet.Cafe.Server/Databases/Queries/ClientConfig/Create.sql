@@ -25,7 +25,6 @@
     DBKioskIdleTimer,
     DBKioskType,
     DBKioskBillChanger,
-    DBSharedDataPath,
     DBDateCreated,
     DBTimeCreated,
     DBIsDeleted
@@ -57,7 +56,6 @@ VALUES (
     '{DBKioskIdleTimer}',
     '{DBKioskType}',
     '{DBKioskBillChanger}',
-    '{DBSharedDataPath}',
     '{DBDateCreated}',
     '{DBTimeCreated}',
     '{DBIsDeleted}'
