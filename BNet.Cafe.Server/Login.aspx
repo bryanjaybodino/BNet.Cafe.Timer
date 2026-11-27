@@ -48,7 +48,7 @@
                 <h2 class="form-heading">Welcome back</h2>
                 <p class="form-desc">Sign in to access your administrative dashboard.</p>
 
-                <form id="form1" runat="server">
+                <form id="form1" runat="server" autocomplete="off">
                     <asp:ScriptManager ID="ScriptManager1" EnableCdn="false" EnablePageMethods="true" EnablePartialRendering="true" AsyncPostBackTimeout="99999999" ScriptMode="Release" ValidateRequestMode="Enabled" EnableScriptLocalization="true" EnableScriptGlobalization="true" LoadScriptsBeforeUI="false" CompositeScript-ScriptMode="Release" CompositeScript-ResourceUICultures="Release" runat="server"></asp:ScriptManager>
                     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
                         <ContentTemplate>
@@ -71,7 +71,7 @@
                                             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                                         </svg>
                                     </span>
-                                    <asp:TextBox ID="TextBox_Email" runat="server" CssClass="field-input" placeholder="Enter your username or email" autocomplete="username" />
+                                    <asp:TextBox ID="TextBox_Email" runat="server" CssClass="field-input" placeholder="Enter your username or email" AutoCompleteType="Disabled" />
                                 </div>
                             </div>
 
@@ -85,7 +85,7 @@
                                             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                                         </svg>
                                     </span>
-                                    <asp:TextBox ID="TextBox_Password" runat="server" TextMode="SingleLine" CssClass="field-input" autocomplete="current-password" />
+                                    <asp:TextBox ID="TextBox_Password" runat="server" TextMode="SingleLine" CssClass="field-input" AutoCompleteType="Disabled" />
                                     <button type="button" class="pw-toggle" id="pwToggleBtn" onclick="togglePw()" title="Show / hide password">
                                         <svg id="pwIconHide" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
@@ -100,7 +100,17 @@
                                 </div>
                             </div>
 
+                            <!-- Remember Me & Forgot Password -->
                             <div class="options">
+                                <label class="remember-wrap" for="chkRememberMe">
+                                    <input type="checkbox" id="chkRememberMe" class="remember-input" />
+                                    <span class="remember-box" aria-hidden="true">
+                                        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="2.5 7.5 5.5 10.5 11.5 3.5" />
+                                        </svg>
+                                    </span>
+                                    <span class="remember-text">Remember me</span>
+                                </label>
                                 <a href="ForgotPassword.aspx" style="display: none" class="forgot">Forgot password?</a>
                             </div>
 

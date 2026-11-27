@@ -124,6 +124,9 @@
                             <asp:LinkButton ID="lnkTabRedeem" runat="server" CssClass="portal-tab" OnClick="lnkTab_Click" CommandArgument="Redeem">
                                 <i class="fa fa-gift"></i> Redeem Rewards
                             </asp:LinkButton>
+                            <asp:LinkButton ID="lnkTabVoucher" runat="server" CssClass="portal-tab" OnClick="lnkTab_Click" CommandArgument="Voucher">
+                                <i class="fa fa-ticket-alt"></i> Redeem Voucher
+                            </asp:LinkButton>
                             <asp:LinkButton ID="lnkTabTransfer" runat="server" CssClass="portal-tab" OnClick="lnkTab_Click" CommandArgument="Transfer">
                                 <i class="fa fa-exchange-alt"></i> Transfer Balance
                             </asp:LinkButton>
@@ -255,7 +258,36 @@
                             </div>
                         </asp:Panel>
 
-                        <!-- Tab 4: Transfer Balance Panel -->
+                        <!-- Tab 4: Redeem Voucher Panel -->
+                        <asp:Panel ID="PanelVoucher" runat="server" CssClass="tab-content-panel" Visible="false" DefaultButton="btnRedeemVoucher">
+                            <div class="user-hero-card" style="flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 20px;">
+                                <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--portal-text-main);">
+                                        <i class="fa fa-ticket-alt" style="color: var(--portal-accent);"></i>Redeem Voucher Code
+                                    </div>
+                                </div>
+                                <div style="font-size: 13px; color: var(--portal-text-muted);">
+                                    Enter a valid voucher code to add its minutes directly to your account balance.
+                                </div>
+
+                                <div style="width: 100%; display: flex; flex-direction: column; gap: 14px; max-width: 480px;">
+                                    <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+                                        <label for="<%= txtVoucherCode.ClientID %>" style="font-size: 13px; font-weight: 700; color: var(--portal-text-main);">
+                                            Voucher Code <span style="color: #ef4444;">*</span>
+                                        </label>
+                                        <asp:TextBox ID="txtVoucherCode" runat="server" MaxLength="64" placeholder="Enter voucher code"
+                                            CssClass="form-control" Style="padding: 10px; border-radius: 10px; background: var(--portal-card-bg); color: var(--portal-text-main); border: 1px solid var(--portal-card-border); text-transform: uppercase;">
+                                        </asp:TextBox>
+                                    </div>
+
+                                    <asp:Button ID="btnRedeemVoucher" runat="server" CssClass="btn-redeem-rate" Text="Redeem Voucher" OnClick="btnRedeemVoucher_Click" Style="margin-top: 8px;" />
+
+                                    <asp:Label ID="litVoucherError" runat="server" CssClass="text-danger" Style="color: #ef4444; font-size: 13px; display: block; margin-top: 4px; font-weight: 600;"></asp:Label>
+                                </div>
+                            </div>
+                        </asp:Panel>
+
+                        <!-- Tab 5: Transfer Balance Panel -->
                         <asp:Panel ID="PanelTransfer" runat="server" CssClass="tab-content-panel" Visible="false" DefaultButton="btnInitTransfer">
                             <div class="user-hero-card" style="flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 20px;">
                                 <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">

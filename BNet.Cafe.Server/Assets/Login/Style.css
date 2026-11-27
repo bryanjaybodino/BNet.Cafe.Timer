@@ -275,6 +275,97 @@ input[type="password"]::-ms-clear {
         transform: translateY(-50%) scale(1.15);
     }
 
+/* Options Row & Remember Me */
+.options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.remember-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+}
+
+    .remember-wrap:hover .remember-text {
+        color: var(--text);
+    }
+
+.remember-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0.001;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.remember-box {
+    position: relative;
+    z-index: 1;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    background: var(--white);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color .16s, border-color .16s, box-shadow .16s, transform .14s;
+    flex-shrink: 0;
+}
+
+    .remember-box svg {
+        width: 12px;
+        height: 12px;
+        opacity: 0;
+        transform: scale(0.75);
+        transition: opacity .15s, transform .15s;
+    }
+
+.remember-input:checked + .remember-box {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+    .remember-input:checked + .remember-box svg {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+.remember-input:focus-visible + .remember-box {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 4px var(--accent-lt);
+}
+
+.remember-input:disabled + .remember-box {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.forgot {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+}
+
+    .forgot:hover {
+        text-decoration: underline;
+    }
+
 /* Submit & OAuth Buttons */
 .submit-btn {
     width: 100%;
@@ -378,25 +469,6 @@ input[type="password"]::-ms-clear {
         width: 18px;
         height: 18px;
         flex-shrink: 0;
-    }
-
-/* Options Row */
-.options {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.forgot {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--accent);
-    text-decoration: none;
-}
-
-    .forgot:hover {
-        text-decoration: underline;
     }
 
 /* Footer */

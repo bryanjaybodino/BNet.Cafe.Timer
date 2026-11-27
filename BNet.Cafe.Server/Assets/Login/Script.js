@@ -26,7 +26,104 @@ function togglePw() {
     inp.focus();
 }
 
-// 3. Login Lock Enforcement & LocalStorage Backup
+// 3. Remember Me Helpers (Username/Email + Password)
+var REMEMBER_USER_KEY = 'bnet_remembered_user';
+var REMEMBER_PASS_KEY = 'bnet_remembered_pass';
+var REMEMBER_FLAG_KEY = 'bnet_remember_me';
+
+function getRememberCheckbox() {
+    return document.getElementById('chkRememberMe');
+}
+
+function encodePass(val) {
+    try {
+        return btoa(unescape(encodeURIComponent(val)));
+    } catch (e) {
+        return val;
+    }
+}
+
+function decodePass(val) {
+    try {
+        return decodeURIComponent(escape(atob(val)));
+    } catch (e) {
+        return val;
+    }
+}
+
+function applyRememberedCredentials() {
+    var emailEl = document.getElementById('TextBox_Email');
+    var pwEl = document.getElementById('TextBox_Password');
+    var cbEl = getRememberCheckbox();
+    var savedFlag = localStorage.getItem(REMEMBER_FLAG_KEY) === 'true';
+    var savedUser = localStorage.getItem(REMEMBER_USER_KEY) || '';
+    var savedPassEncoded = localStorage.getItem(REMEMBER_PASS_KEY) || '';
+
+    if (cbEl) {
+        cbEl.checked = savedFlag;
+    }
+
+    if (savedFlag) {
+        if (savedUser && emailEl && !emailEl.value) {
+            emailEl.value = savedUser;
+        }
+        if (savedPassEncoded && pwEl && !pwEl.value) {
+            pwEl.value = decodePass(savedPassEncoded);
+        }
+    }
+}
+
+function saveRememberedCredentials() {
+    var emailEl = document.getElementById('TextBox_Email');
+    var pwEl = document.getElementById('TextBox_Password');
+    var cbEl = getRememberCheckbox();
+    var isChecked = cbEl ? cbEl.checked : false;
+
+    if (isChecked) {
+        localStorage.setItem(REMEMBER_FLAG_KEY, 'true');
+        if (emailEl) {
+            localStorage.setItem(REMEMBER_USER_KEY, emailEl.value.trim());
+        }
+        if (pwEl && pwEl.value !== '') {
+            localStorage.setItem(REMEMBER_PASS_KEY, encodePass(pwEl.value));
+        }
+    } else {
+        localStorage.setItem(REMEMBER_FLAG_KEY, 'false');
+        localStorage.removeItem(REMEMBER_USER_KEY);
+        localStorage.removeItem(REMEMBER_PASS_KEY);
+    }
+}
+
+function bindRememberListeners() {
+    var cbEl = getRememberCheckbox();
+    var emailEl = document.getElementById('TextBox_Email');
+    var pwEl = document.getElementById('TextBox_Password');
+
+    if (cbEl && !cbEl.dataset.bound) {
+        cbEl.dataset.bound = 'true';
+        cbEl.addEventListener('change', saveRememberedCredentials);
+    }
+    if (emailEl && !emailEl.dataset.rememberBound) {
+        emailEl.dataset.rememberBound = 'true';
+        emailEl.addEventListener('input', function () {
+            var currentCb = getRememberCheckbox();
+            if (currentCb && currentCb.checked) {
+                saveRememberedCredentials();
+            }
+        });
+    }
+    if (pwEl && !pwEl.dataset.rememberBound) {
+        pwEl.dataset.rememberBound = 'true';
+        pwEl.addEventListener('input', function () {
+            var currentCb = getRememberCheckbox();
+            if (currentCb && currentCb.checked) {
+                saveRememberedCredentials();
+            }
+        });
+    }
+}
+
+// 4. Login Lock Enforcement & LocalStorage Backup
 var _loginTimerInterval = null;
 
 function enforceLoginLock(seconds) {
@@ -47,10 +144,12 @@ function enforceLoginLock(seconds) {
 function lockUI() {
     var emailEl = document.getElementById('TextBox_Email');
     var pwEl = document.getElementById('TextBox_Password');
+    var cbEl = getRememberCheckbox();
     var btnEl = document.getElementById('LinkButton_Login');
 
     if (emailEl) { emailEl.disabled = true; emailEl.setAttribute('readonly', 'readonly'); }
     if (pwEl) { pwEl.disabled = true; pwEl.setAttribute('readonly', 'readonly'); }
+    if (cbEl) { cbEl.disabled = true; }
     if (btnEl) { btnEl.disabled = true; btnEl.style.pointerEvents = 'none'; btnEl.style.opacity = '0.5'; }
 }
 
@@ -60,10 +159,12 @@ function unlockUI() {
 
     var emailEl = document.getElementById('TextBox_Email');
     var pwEl = document.getElementById('TextBox_Password');
+    var cbEl = getRememberCheckbox();
     var btnEl = document.getElementById('LinkButton_Login');
 
     if (emailEl) { emailEl.disabled = false; emailEl.removeAttribute('readonly'); }
     if (pwEl) { pwEl.disabled = false; pwEl.removeAttribute('readonly'); }
+    if (cbEl) { cbEl.disabled = false; }
     if (btnEl) { btnEl.disabled = false; btnEl.style.pointerEvents = ''; btnEl.style.opacity = ''; }
 
     hideError();
@@ -94,8 +195,11 @@ function runCountdown() {
     _loginTimerInterval = setInterval(update, 1000);
 }
 
-// 4. Auto-Check Storage Lock state on DOM Load / Refresh
+// 5. Auto-Check Storage Lock & Remember Me on DOM Load / Refresh
 document.addEventListener('DOMContentLoaded', function () {
+    bindRememberListeners();
+    applyRememberedCredentials();
+
     var lockUntil = parseInt(localStorage.getItem('bnet_login_lock_until') || '0', 10);
     if (lockUntil > Date.now()) {
         lockUI();
@@ -103,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// 5. Global Error Box Controllers
+// 6. Global Error Box Controllers
 function showError(msg) {
     var box = document.getElementById('errorBox');
     var txt = document.getElementById('errorMsg');
@@ -117,13 +221,13 @@ function hideError() {
     if (box) box.style.display = 'none';
 }
 
-// 6. Form Submission Handler
+// 7. Form Submission Handler
 function handleSubmit() {
     hideError();
     var u = document.getElementById('TextBox_Email');
     var p = document.getElementById('TextBox_Password');
 
-    if (u && !u.value) {
+    if (u && !u.value.trim()) {
         showError('Please enter your username or email.');
         return false;
     }
@@ -132,21 +236,23 @@ function handleSubmit() {
         return false;
     }
 
+    saveRememberedCredentials();
+
     var btn = document.getElementById('LinkButton_Login');
     if (btn) btn.classList.add('loading');
     return true;
 }
 
-// 7. Reset button state after partial postback
+// 8. Re-apply state & reset button after partial postback
 (function wireEndRequest() {
     if (typeof Sys === 'undefined') { window.addEventListener('load', wireEndRequest); return; }
     Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
         var btn = document.getElementById('LinkButton_Login');
         if (btn) btn.classList.remove('loading');
+        bindRememberListeners();
+        applyRememberedCredentials();
     });
 })();
-
-
 
 // Disable right-click context menu
 document.addEventListener('contextmenu', function (e) {
