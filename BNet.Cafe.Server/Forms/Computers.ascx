@@ -211,13 +211,13 @@
 
                         <asp:TemplateField HeaderText="Time Start" ItemStyle-Width="200px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_TimeStart" runat="server" Text='<%# Eval("TimeStart") %>'></asp:Label>
+                                <asp:Label ID="Label_TimeStart" runat="server" Text='<%# Eval("TimeStart") %>' data-raw-start='<%# Eval("RawTimeStart") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
 
                         <asp:TemplateField HeaderText="Time End" ItemStyle-Width="200px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_TimeEnd" runat="server" Text='<%# Eval("TimeEnd") %>'></asp:Label>
+                                <asp:Label ID="Label_TimeEnd" runat="server" Text='<%# Eval("TimeEnd") %>' data-raw-end='<%# Eval("RawTimeEnd") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
 
@@ -243,7 +243,7 @@
 
                         <asp:TemplateField HeaderText="Billing" ItemStyle-Width="200px">
                             <ItemTemplate>
-                                <asp:Label ID="Label_Billing" runat="server" Text='<%# Eval("Billing") %>'></asp:Label>
+                                <asp:Label ID="Label_Billing" runat="server" Text='<%# Eval("Billing") %>' data-role='<%# Eval("CustomerRole") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
