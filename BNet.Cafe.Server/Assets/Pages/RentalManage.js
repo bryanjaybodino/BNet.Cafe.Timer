@@ -450,3 +450,31 @@ if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManage
 document.addEventListener('DOMContentLoaded', () => {
     initRentalForm();
 });
+
+
+
+function getFreeTimeMinutes() {
+    var freeTimeInput = document.querySelector('[id$="TextBox_FreeTime"]');
+    if (!freeTimeInput || freeTimeInput.value === '') return 0;
+    var val = parseInt(freeTimeInput.value, 10);
+    return isNaN(val) || val < 0 ? 0 : val;
+}
+
+function updateFreeTimeDisplay() {
+    var freeMins = getFreeTimeMinutes();
+    var totalFreeTimeInput = document.querySelector('[id$="TextBox_TotalFreeTime"]');
+    if (totalFreeTimeInput) {
+        totalFreeTimeInput.value = freeMins;
+    }
+
+    var breakdown = document.getElementById('display_FreeTimeBreakdown');
+    if (breakdown) {
+        if (freeMins > 0) {
+            breakdown.textContent = '+ ' + freeMins + ' min' + (freeMins === 1 ? '' : 's') + ' free time';
+            breakdown.style.display = 'block';
+        } else {
+            breakdown.textContent = '';
+            breakdown.style.display = 'none';
+        }
+    }
+}

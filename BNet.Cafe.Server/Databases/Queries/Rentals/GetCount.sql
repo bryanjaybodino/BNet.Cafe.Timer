@@ -20,7 +20,17 @@
             CONCAT(FLOOR(SUM(r.DBDuration) / 60), IF(FLOOR(SUM(r.DBDuration) / 60) = 1, ' hr', ' hrs'))
         ELSE 
             CONCAT((SUM(r.DBDuration) % 60), IF((SUM(r.DBDuration) % 60) = 1, ' min', ' mins'))
-    END AS DBTotalFormattedDuration
+    END AS DBTotalFormattedDuration,
+    IFNULL(SUM(r.DBFreeTime), 0) AS DBTotalFreeTime,
+    CASE 
+        WHEN SUM(r.DBFreeTime) IS NULL OR SUM(r.DBFreeTime) = 0 THEN '0 min'
+        WHEN FLOOR(SUM(r.DBFreeTime) / 60) > 0 AND (SUM(r.DBFreeTime) % 60) > 0 THEN 
+            CONCAT(FLOOR(SUM(r.DBFreeTime) / 60), IF(FLOOR(SUM(r.DBFreeTime) / 60) = 1, ' hr ', ' hrs '), (SUM(r.DBFreeTime) % 60), IF((SUM(r.DBFreeTime) % 60) = 1, ' min', ' mins'))
+        WHEN FLOOR(SUM(r.DBFreeTime) / 60) > 0 THEN 
+            CONCAT(FLOOR(SUM(r.DBFreeTime) / 60), IF(FLOOR(SUM(r.DBFreeTime) / 60) = 1, ' hr', ' hrs'))
+        ELSE 
+            CONCAT((SUM(r.DBFreeTime) % 60), IF((SUM(r.DBFreeTime) % 60) = 1, ' min', ' mins'))
+    END AS DBTotalFormattedFreeTime
 
 FROM rentals r
 LEFT JOIN computers c ON r.DBComputerId = c.DBId

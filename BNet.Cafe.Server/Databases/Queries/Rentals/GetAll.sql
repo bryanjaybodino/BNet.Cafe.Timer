@@ -15,6 +15,7 @@
             ELSE 'Guest / Walk-in'
         END AS DBName,
     r.DBDuration,
+    r.DBFreeTime,
     CASE 
         WHEN r.DBDuration IS NULL OR r.DBDuration = 0 THEN '0 min'
         WHEN FLOOR(r.DBDuration / 60) > 0 AND (r.DBDuration % 60) > 0 THEN 
@@ -24,6 +25,15 @@
         ELSE 
             CONCAT((r.DBDuration % 60), IF((r.DBDuration % 60) = 1, ' min', ' mins'))
     END AS DBFormattedDuration,
+    CASE 
+        WHEN r.DBFreeTime IS NULL OR r.DBFreeTime = '' OR r.DBFreeTime = 0 THEN '0 min'
+        WHEN FLOOR(r.DBFreeTime / 60) > 0 AND (r.DBFreeTime % 60) > 0 THEN 
+            CONCAT(FLOOR(r.DBFreeTime / 60), IF(FLOOR(r.DBFreeTime / 60) = 1, ' hr ', ' hrs '), (r.DBFreeTime % 60), IF((r.DBFreeTime % 60) = 1, ' min', ' mins'))
+        WHEN FLOOR(r.DBFreeTime / 60) > 0 THEN 
+            CONCAT(FLOOR(r.DBFreeTime / 60), IF(FLOOR(r.DBFreeTime / 60) = 1, ' hr', ' hrs'))
+        ELSE 
+            CONCAT((r.DBFreeTime % 60), IF((r.DBFreeTime % 60) = 1, ' min', ' mins'))
+    END AS DBFormattedFreeTime,
     FORMAT(r.DBAmount, 2) AS DBAmount,
     r.DBDateCreated,
     r.DBTimeCreated,

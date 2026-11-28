@@ -8,6 +8,7 @@
     <ContentTemplate>
         <!-- Hidden fields to store loaded DB state -->
         <asp:HiddenField ID="HiddenField_InitialDuration" runat="server" Value="0" />
+        <asp:HiddenField ID="HiddenField_InitialFreeTime" runat="server" Value="0" />
         <asp:HiddenField ID="HiddenField_InitialAmount" runat="server" Value="0.00" />
         <asp:HiddenField ID="HiddenField_Role" runat="server" />
         <asp:Panel ID="Panel_Form" runat="server">
@@ -58,11 +59,16 @@
                             <label for="<%= TextBox_Amount.ClientID %>">Total Input Amount (₱)</label>
                             <asp:TextBox ID="TextBox_Amount" runat="server" CssClass="form-control" placeholder="Enter extra amount (e.g. 20)" TextMode="Number" oninput="NumberOnly(this); calculateTimeFromAmount();"></asp:TextBox>
                         </div>
+                        <div class="form-group">
+                            <label for="<%= TextBox_FreeTime.ClientID %>">Free Time (Minutes)</label>
+                            <asp:TextBox ID="TextBox_FreeTime" runat="server" CssClass="form-control" placeholder="Enter free mins (default 0)" TextMode="Number" min="0" oninput="NumberOnly(this); updateFreeTimeDisplay();"></asp:TextBox>
+                        </div>
                     </div>
                 </div>
                 <div style="display: none;">
                     <asp:TextBox ID="TextBox_TotalAmount" runat="server"></asp:TextBox>
                     <asp:TextBox ID="TextBox_TotalDuration" runat="server"></asp:TextBox>
+                    <asp:TextBox ID="TextBox_TotalFreeTime" runat="server"></asp:TextBox>
                 </div>
 
                 <!-- Highlighted Summary Display Box -->
@@ -70,6 +76,7 @@
                     <div class="summary-item">
                         <span class="summary-label"><i class="fa-solid fa-hourglass-half"></i>Total Time</span>
                         <span id="display_FormattedTime" class="summary-value highlight-time">0 hrs 0 mins</span>
+                        <small id="display_FreeTimeBreakdown" style="display: none; color: #6b7280; font-size: 12px; margin-top: 4px;"></small>
                         <small id="display_TimeBreakdown" style="display: none; color: #6b7280; font-size: 12px; margin-top: 4px;"></small>
                     </div>
                     <div class="summary-divider"></div>

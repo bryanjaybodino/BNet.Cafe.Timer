@@ -109,7 +109,7 @@
                                 </span>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        
+
                         <asp:TemplateField HeaderText="Customer" ItemStyle-Width="200px">
                             <ItemTemplate>
                                 <span class='<%# Eval("DBName").ToString() == "Guest / Walk-in" ? "bnet-badge-status gray" : "bnet-badge-status blue" %>'>
@@ -117,7 +117,7 @@
                                 </span>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        
+
                         <asp:TemplateField HeaderText="Email" ItemStyle-Width="200px">
                             <ItemTemplate>
                                 <asp:Label ID="Label_DBEmail" runat="server" Text='<%# Eval("DBEmail") %>'></asp:Label>
@@ -127,6 +127,12 @@
                         <asp:TemplateField HeaderText="Duration" ItemStyle-Width="150px">
                             <ItemTemplate>
                                 <asp:Label ID="Label_DBFormattedDuration" runat="server" Text='<%# Eval("DBFormattedDuration") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Free Time" ItemStyle-Width="150px">
+                            <ItemTemplate>
+                                <asp:Label ID="Label_DBFormattedFreeTime" runat="server" Text='<%# Eval("DBFormattedFreeTime") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
 
